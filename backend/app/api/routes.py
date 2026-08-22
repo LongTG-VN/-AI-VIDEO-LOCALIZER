@@ -25,6 +25,19 @@ store = ProjectStore(settings.data_dir / "projects")
 media = MediaService(settings.ffprobe_bin, settings.ffmpeg_bin)
 
 
+def _create_project_ocr_engine():
+    return create_ocr_engine(
+        settings.ocr_engine,
+        ffmpeg_bin=settings.ffmpeg_bin,
+        fps=settings.ocr_fps,
+        crop_top_ratio=settings.ocr_crop_top_ratio,
+        crop_bottom_ratio=settings.ocr_crop_bottom_ratio,
+        crop_left_ratio=settings.ocr_crop_left_ratio,
+        crop_right_ratio=settings.ocr_crop_right_ratio,
+        change_threshold=settings.ocr_change_diff_threshold,
+    )
+
+
 @router.get("/health")
 def health() -> dict:
     return {"status": "ok", "app": settings.app_name}
@@ -114,12 +127,7 @@ def ocr_project(project_id: str) -> Project:
     except FileNotFoundError as exc:
         raise HTTPException(status_code=404, detail="Project not found") from exc
     try:
-        engine = create_ocr_engine(
-            settings.ocr_engine,
-            ffmpeg_bin=settings.ffmpeg_bin,
-            fps=settings.ocr_fps,
-            crop_top_ratio=settings.ocr_crop_top_ratio,
-        )
+        engine = _create_project_ocr_engine()
         project.cues = engine.extract_subtitles(Path(project.source_video_path))
     except (RuntimeError, ValueError) as exc:
         raise HTTPException(status_code=500, detail=str(exc)) from exc
@@ -144,12 +152,7 @@ def analyze_project(project_id: str) -> Project:
             spk_model=settings.funasr_spk_model,
             device=settings.funasr_device,
         )
-        ocr_engine = create_ocr_engine(
-            settings.ocr_engine,
-            ffmpeg_bin=settings.ffmpeg_bin,
-            fps=settings.ocr_fps,
-            crop_top_ratio=settings.ocr_crop_top_ratio,
-        )
+        ocr_engine = _create_project_ocr_engine()
         asr_cues = asr_engine.transcribe(audio_path, project.source_language)
         ocr_cues = ocr_engine.extract_subtitles(Path(project.source_video_path))
         project.cues = fuse_cues(asr_cues, ocr_cues) if ocr_cues else asr_cues
@@ -250,10 +253,16 @@ def render_project(project_id: str, options: RenderOptions) -> dict:
 
     output = settings.data_dir / "renders" / f"{project.id}.mp4"
     try:
-        Renderer(settings.ffmpeg_bin).render(project, output, options)
+        renderer = Renderer(settings.ffmpeg_bin, settings.ffprobe_bin)
+        renderer.render(project, output, options)
     except RenderError as exc:
         raise HTTPException(status_code=500, detail=str(exc)) from exc
-    return {"project_id": project.id, "output": str(output.resolve()), "download_url": f"/api/renders/{project.id}.mp4"}
+    return {
+        "project_id": project.id,
+        "output": str(output.resolve()),
+        "download_url": f"/api/renders/{project.id}.mp4",
+        "render_metrics": renderer.last_render_metrics,
+    }
 
 
 @router.get("/renders/{filename}")
