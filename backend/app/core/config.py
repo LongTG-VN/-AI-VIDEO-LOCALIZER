@@ -17,7 +17,11 @@ class Settings(BaseSettings):
     funasr_spk_model: str = "cam++"
     funasr_device: str = "cpu"
     ocr_fps: float = 2.0
-    ocr_crop_top_ratio: float = 0.62
+    ocr_crop_top_ratio: float = 0.65
+    ocr_crop_bottom_ratio: float = 0.95
+    ocr_crop_left_ratio: float = 0.06
+    ocr_crop_right_ratio: float = 0.94
+    ocr_change_diff_threshold: float = 16.0
     llm_base_url: str = ""
     llm_api_key: str = ""
     llm_model: str = ""
