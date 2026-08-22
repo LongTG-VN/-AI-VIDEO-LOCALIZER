@@ -16,7 +16,7 @@ from app.services.media import MediaError, MediaService
 from app.services.ocr.factory import create_ocr_engine
 from app.services.renderer import RenderError, Renderer
 from app.services.store import ProjectStore
-from app.services.subtitles import parse_srt, to_srt
+from app.services.subtitles import parse_srt, to_ass, to_srt
 from app.services.translation import OpenAICompatibleTranslator, TranslationError
 
 router = APIRouter(prefix="/api")
@@ -182,6 +182,25 @@ def export_srt(project_id: str) -> PlainTextResponse:
         to_srt(project.cues, translated=True),
         media_type="application/x-subrip; charset=utf-8",
         headers={"Content-Disposition": f'attachment; filename="{project.name}.srt"'},
+    )
+
+
+@router.get("/projects/{project_id}/subtitles.ass")
+def export_ass(project_id: str) -> PlainTextResponse:
+    try:
+        project = store.get(project_id)
+    except FileNotFoundError as exc:
+        raise HTTPException(status_code=404, detail="Project not found") from exc
+    return PlainTextResponse(
+        to_ass(
+            project.cues,
+            RenderOptions(),
+            width=project.width or 852,
+            height=project.height or 480,
+            translated=True,
+        ),
+        media_type="text/x-ssa; charset=utf-8",
+        headers={"Content-Disposition": f'attachment; filename="{project.name}.ass"'},
     )
 
 
