@@ -1,0 +1,3 @@
+# PaddlePaddle installation differs by CPU/CUDA platform; install the appropriate
+# PaddlePaddle wheel first, then install:
+paddleocr

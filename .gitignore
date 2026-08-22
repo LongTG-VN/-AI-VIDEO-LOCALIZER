@@ -1,0 +1,28 @@
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+backend/.env
+backend/data/
+
+# Node
+frontend/node_modules/
+frontend/dist/
+
+# Media / local projects
+*.mp4
+*.mkv
+*.mov
+*.avi
+*.wav
+*.mp3
+*.ass
+*.srt
+!backend/tests/fixtures/*.srt
+
+# IDE / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

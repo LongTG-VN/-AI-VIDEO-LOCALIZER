@@ -1,0 +1,73 @@
+from __future__ import annotations
+
+from difflib import SequenceMatcher
+
+from app.models.project import SubtitleCue
+
+
+def temporal_overlap(a: SubtitleCue, b: SubtitleCue) -> float:
+    overlap = max(0.0, min(a.end, b.end) - max(a.start, b.start))
+    shortest = max(0.001, min(a.end - a.start, b.end - b.start))
+    return overlap / shortest
+
+
+def text_similarity(a: str, b: str) -> float:
+    left = "".join(a.split())
+    right = "".join(b.split())
+    return SequenceMatcher(None, left, right).ratio()
+
+
+def fuse_cues(asr_cues: list[SubtitleCue], ocr_cues: list[SubtitleCue]) -> list[SubtitleCue]:
+    """Fuse ASR and hard-subtitle OCR evidence without destroying timestamps.
+
+    ASR remains the timing/speaker backbone. OCR can correct text when temporally aligned
+    and its confidence is stronger. Unmatched OCR cues are retained so dialogue missed by
+    ASR still reaches review.
+    """
+    fused: list[SubtitleCue] = []
+    used_ocr: set[str] = set()
+
+    for asr in asr_cues:
+        candidates = [
+            ocr
+            for ocr in ocr_cues
+            if ocr.id not in used_ocr and temporal_overlap(asr, ocr) >= 0.35
+        ]
+        if not candidates:
+            fused.append(asr.model_copy(deep=True))
+            continue
+        best = max(
+            candidates,
+            key=lambda ocr: (
+                temporal_overlap(asr, ocr),
+                text_similarity(asr.source_text, ocr.source_text),
+                ocr.ocr_confidence or ocr.confidence or 0.0,
+            ),
+        )
+        used_ocr.add(best.id)
+        asr_conf = asr.asr_confidence or asr.confidence
+        ocr_conf = best.ocr_confidence or best.confidence
+        similarity = text_similarity(asr.source_text, best.source_text)
+        choose_ocr = (ocr_conf or 0) > (asr_conf or 0) + 0.03 or similarity >= 0.9
+        text = best.source_text if choose_ocr else asr.source_text
+        evidence = [value for value in [asr_conf, ocr_conf] if value is not None]
+        confidence = min(1.0, max(evidence, default=0.0) + (0.05 if similarity >= 0.9 else 0.0))
+        fused.append(
+            SubtitleCue(
+                id=asr.id,
+                start=asr.start,
+                end=asr.end,
+                speaker_id=asr.speaker_id,
+                addressee_id=asr.addressee_id,
+                source_text=text,
+                translated_text=asr.translated_text,
+                asr_confidence=asr_conf,
+                ocr_confidence=ocr_conf,
+                confidence=confidence if evidence else None,
+            )
+        )
+
+    for cue in ocr_cues:
+        if cue.id not in used_ocr:
+            fused.append(cue.model_copy(deep=True))
+    return sorted(fused, key=lambda cue: (cue.start, cue.end))
