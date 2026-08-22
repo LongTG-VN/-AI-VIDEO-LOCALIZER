@@ -94,6 +94,10 @@ class Renderer:
 
     def _create_cleaner(self, options: RenderOptions) -> HardSubCleaner:
         return HardSubCleaner(
+            crop_top_ratio=options.hardsub_crop_top_ratio,
+            crop_bottom_ratio=options.hardsub_crop_bottom_ratio,
+            crop_left_ratio=options.hardsub_crop_left_ratio,
+            crop_right_ratio=options.hardsub_crop_right_ratio,
             mask_dilate_radius=options.hardsub_mask_dilate_radius,
             mask_dilate_iterations=options.hardsub_mask_dilate_iterations,
             local_contrast_threshold=options.hardsub_local_contrast_threshold,
@@ -101,6 +105,9 @@ class Renderer:
             max_mask_coverage=options.hardsub_max_mask_coverage,
             scene_cut_threshold=options.hardsub_scene_cut_threshold,
             temporal_max_distance_frames=options.hardsub_temporal_max_distance_frames,
+            temporal_difference_threshold=options.hardsub_temporal_difference_threshold,
+            temporal_local_score_threshold=options.hardsub_temporal_local_score_threshold,
+            ocr_min_confidence=options.hardsub_ocr_min_confidence,
             ffmpeg_bin=self.ffmpeg_bin,
         )
 
@@ -121,7 +128,7 @@ class Renderer:
         cleanup_metrics: dict[str, Any] = {}
 
         try:
-            # 1. Chinese Hard-Sub Cleanup. "auto" uses the temporal-quality hybrid.
+            # 1. Chinese Hard-Sub Cleanup. "auto" uses the guarded temporal-quality hybrid.
             if options.hardsub_removal_mode not in {"none", "off"}:
                 logger.info("Starting Chinese hard-sub cleanup (mode: %s)...", options.hardsub_removal_mode)
                 cleaner = self._create_cleaner(options)
