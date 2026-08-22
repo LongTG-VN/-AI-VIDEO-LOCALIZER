@@ -7,10 +7,10 @@ from uuid import uuid4
 from fastapi import APIRouter, File, Form, HTTPException, UploadFile
 from fastapi.responses import FileResponse, PlainTextResponse
 
-from app.core.config import get_settings
-from app.models.project import Project, ProjectPatch, RenderOptions
+from app.models.project import DubbingMetrics, DubbingOptions, Project, ProjectPatch, RenderOptions
 from app.services.asr.factory import create_asr_engine
 from app.services.context_analyzer import ContextAnalyzer, ContextAnalysisError
+from app.services.dubbing import DubbingService
 from app.services.fusion import fuse_cues
 from app.services.media import MediaError, MediaService
 from app.services.ocr.factory import create_ocr_engine
@@ -266,6 +266,42 @@ def render_project(project_id: str, options: RenderOptions) -> dict:
         "output": str(output.resolve()),
         "download_url": f"/api/renders/{project.id}.mp4",
         "render_metrics": renderer.last_render_metrics,
+    }
+
+
+@router.post("/projects/{project_id}/dub")
+async def dub_project_endpoint(project_id: str, options: DubbingOptions | None = None) -> dict:
+    try:
+        project = store.get(project_id)
+    except FileNotFoundError as exc:
+        raise HTTPException(status_code=404, detail="Project not found") from exc
+    if not project.cues:
+        raise HTTPException(status_code=400, detail="Project has no subtitle cues")
+
+    source_path = Path(project.source_video_path)
+    if not source_path.exists():
+        raise HTTPException(status_code=404, detail="Source video file not found")
+
+    output = settings.data_dir / "renders" / f"{project.id}_dubbed.mp4"
+    if options is None:
+        options = DubbingOptions()
+
+    dubber = DubbingService(ffmpeg_bin=settings.ffmpeg_bin)
+    try:
+        out_path, metrics = await dubber.dub_project(
+            project=project,
+            source_video_path=source_path,
+            output_video_path=output,
+            options=options,
+        )
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail=f"Dubbing failed: {exc}") from exc
+
+    return {
+        "project_id": project.id,
+        "output": str(out_path.resolve()),
+        "download_url": f"/api/renders/{out_path.name}",
+        "dubbing_metrics": metrics.model_dump(),
     }
 
 

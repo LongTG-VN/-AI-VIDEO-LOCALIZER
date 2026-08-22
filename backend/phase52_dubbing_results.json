@@ -1,0 +1,36 @@
+{
+  "candidate": 1,
+  "all_gates_pass": true,
+  "v8_video": "D:\\codex\\FINAL_VI_QUALITY_V8.mp4",
+  "output_video": "D:\\codex\\FINAL_VI_DUBBED_V1.mp4",
+  "v8_duration": 90.1,
+  "dub_duration": 90.1,
+  "duration_diff_ms": 0.0,
+  "dubbing_metrics": {
+    "total_cues": 39,
+    "synthesized_cues": 39,
+    "succeeded_cues": 39,
+    "failed_cues": 0,
+    "time_stretched_cues": 38,
+    "llm_compressed_cues": 0,
+    "still_overlong_cues": 37,
+    "avg_speed_factor": 1.2435897435897436,
+    "max_speed_factor": 1.25,
+    "separation_mode": "demucs",
+    "separation_duration_s": 6.673423528671265,
+    "mixing_duration_s": 0.3816361427307129,
+    "final_duration_s": 38.13419032096863,
+    "final_peak_db": -1.0024456031689797
+  },
+  "video_stream": {
+    "codec": "h264",
+    "width": 852,
+    "height": 480,
+    "r_frame_rate": "30/1"
+  },
+  "audio_stream": {
+    "codec": "aac",
+    "sample_rate": "44100",
+    "channels": 2
+  }
+}

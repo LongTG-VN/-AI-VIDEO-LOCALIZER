@@ -166,6 +166,45 @@ class Project(BaseModel):
     cues: list[SubtitleCue] = Field(default_factory=list)
 
 
+class CharacterVoiceProfile(BaseModel):
+    character_id: str
+    voice_id: str = "vi-VN-HoaiMyNeural"
+    gender_style: str | None = None
+    age_style: str | None = None
+    base_rate: str = "+0%"
+    pitch_offset: str = "+0Hz"
+    volume: str = "+0%"
+
+
+class DubbingOptions(BaseModel):
+    tts_engine: str = "edge"
+    separation_engine: str = "demucs"  # "demucs" | "overdub_fallback"
+    ducking_dialogue_db: float = Field(default=-24.0, le=0.0)
+    ducking_music_db: float = Field(default=-3.5, le=0.0)
+    crossfade_ms: int = Field(default=20, ge=5, le=100)
+    target_lufs: float = -16.0
+    max_acceptable_speed: float = Field(default=1.25, ge=1.0, le=1.6)
+    min_acceptable_speed: float = Field(default=0.90, ge=0.7, le=1.0)
+    voice_profiles: dict[str, CharacterVoiceProfile] = Field(default_factory=dict)
+
+
+class DubbingMetrics(BaseModel):
+    total_cues: int = 0
+    synthesized_cues: int = 0
+    succeeded_cues: int = 0
+    failed_cues: int = 0
+    time_stretched_cues: int = 0
+    llm_compressed_cues: int = 0
+    still_overlong_cues: int = 0
+    avg_speed_factor: float = 1.0
+    max_speed_factor: float = 1.0
+    separation_mode: str = "demucs"
+    separation_duration_s: float = 0.0
+    mixing_duration_s: float = 0.0
+    final_duration_s: float = 0.0
+    final_peak_db: float = 0.0
+
+
 class ProjectPatch(BaseModel):
     name: str | None = None
     target_language: Literal["vi", "en"] | None = None
@@ -174,3 +213,4 @@ class ProjectPatch(BaseModel):
     relationships: list[RelationshipRule] | None = None
     glossary: list[GlossaryEntry] | None = None
     cues: list[SubtitleCue] | None = None
+
