@@ -17,12 +17,20 @@ def text_similarity(a: str, b: str) -> float:
     return SequenceMatcher(None, left, right).ratio()
 
 
-def fuse_cues(asr_cues: list[SubtitleCue], ocr_cues: list[SubtitleCue]) -> list[SubtitleCue]:
-    """Fuse ASR and hard-subtitle OCR evidence without destroying timestamps.
+def _ocr_visual_start(cue: SubtitleCue) -> float:
+    return float(cue.ocr_start if cue.ocr_start is not None else cue.start)
 
-    ASR remains the timing/speaker backbone. OCR can correct text when temporally aligned
-    and its confidence is stronger. Unmatched OCR cues are retained so dialogue missed by
-    ASR still reaches review.
+
+def _ocr_visual_end(cue: SubtitleCue) -> float:
+    return float(cue.ocr_end if cue.ocr_end is not None else cue.end)
+
+
+def fuse_cues(asr_cues: list[SubtitleCue], ocr_cues: list[SubtitleCue]) -> list[SubtitleCue]:
+    """Fuse ASR and hard-subtitle OCR evidence without destroying either timeline.
+
+    ASR remains the dialogue timing/speaker backbone. OCR can correct text when temporally
+    aligned, while its own visual start/end are preserved independently for hard-sub cleanup.
+    Unmatched OCR cues are retained so dialogue missed by ASR still reaches review.
     """
     fused: list[SubtitleCue] = []
     used_ocr: set[str] = set()
@@ -63,11 +71,21 @@ def fuse_cues(asr_cues: list[SubtitleCue], ocr_cues: list[SubtitleCue]) -> list[
                 translated_text=asr.translated_text,
                 asr_confidence=asr_conf,
                 ocr_confidence=ocr_conf,
+                ocr_start=_ocr_visual_start(best),
+                ocr_end=_ocr_visual_end(best),
+                ocr_text=best.ocr_text or best.source_text,
                 confidence=confidence if evidence else None,
             )
         )
 
     for cue in ocr_cues:
         if cue.id not in used_ocr:
-            fused.append(cue.model_copy(deep=True))
+            copy = cue.model_copy(deep=True)
+            if copy.ocr_start is None:
+                copy.ocr_start = copy.start
+            if copy.ocr_end is None:
+                copy.ocr_end = copy.end
+            if copy.ocr_text is None:
+                copy.ocr_text = copy.source_text
+            fused.append(copy)
     return sorted(fused, key=lambda cue: (cue.start, cue.end))
