@@ -15,6 +15,15 @@ def _subtitle_like_roi(height: int = 140, width: int = 740) -> np.ndarray:
     return roi
 
 
+def _textured_frame(height: int = 480, width: int = 852) -> np.ndarray:
+    yy, xx = np.mgrid[0:height, 0:width]
+    frame = np.zeros((height, width, 3), dtype=np.uint8)
+    frame[..., 0] = (40 + (xx % 90)).astype(np.uint8)
+    frame[..., 1] = (60 + (yy % 100)).astype(np.uint8)
+    frame[..., 2] = (80 + ((xx + yy) % 80)).astype(np.uint8)
+    return frame
+
+
 def test_render_options_default_to_quality_auto_mode():
     options = RenderOptions()
     assert options.hardsub_removal_mode == "auto"
@@ -77,14 +86,11 @@ def test_fast_cleanup_preserves_pixels_outside_text_mask():
         crop_left_ratio=0.06,
         crop_right_ratio=0.94,
     )
-    frame = np.zeros((480, 852, 3), dtype=np.uint8)
-    for row in range(frame.shape[0]):
-        frame[row, :, :] = (row % 255, 80, 120)
+    frame = _textured_frame()
 
     x1, y1, x2, y2 = cleaner._roi_bounds(frame)
     roi = frame[y1:y2, x1:x2]
     subtitle = _subtitle_like_roi(roi.shape[0], roi.shape[1])
-    # Preserve the gradient background and draw only the synthetic white glyph blocks.
     mask_seed = np.all(subtitle > 200, axis=2)
     roi[mask_seed] = 245
 
@@ -108,7 +114,7 @@ def test_quality_mode_uses_clean_temporal_donor_when_alignment_is_safe():
         crop_right_ratio=0.94,
         scene_cut_threshold=40.0,
     )
-    donor = np.full((480, 852, 3), (70, 90, 110), dtype=np.uint8)
+    donor = _textured_frame()
     current = donor.copy()
     x1, y1, x2, y2 = cleaner._roi_bounds(current)
     roi = current[y1:y2, x1:x2]
