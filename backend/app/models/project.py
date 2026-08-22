@@ -94,7 +94,15 @@ class RenderOptions(BaseModel):
     font_name: str = "Arial"
     font_size: int = Field(default=22, ge=8, le=96)
     margin_v: int = Field(default=32, ge=0, le=400)
-    hardsub_removal_mode: Literal["none", "inpaint", "cover", "auto"] = "inpaint"
+    hardsub_removal_mode: Literal["none", "inpaint", "quality", "cover", "auto"] = "auto"
+    hardsub_mask_dilate_radius: int = Field(default=1, ge=0, le=6)
+    hardsub_mask_dilate_iterations: int = Field(default=1, ge=1, le=4)
+    hardsub_inpaint_radius: int = Field(default=2, ge=1, le=8)
+    hardsub_local_contrast_threshold: int = Field(default=18, ge=0, le=255)
+    hardsub_max_mask_coverage: float = Field(default=0.12, gt=0.0, le=0.5)
+    hardsub_scene_cut_threshold: float = Field(default=34.0, gt=0.0, le=255.0)
+    hardsub_temporal_max_distance_frames: int = Field(default=45, ge=0, le=300)
+    hardsub_lossless_intermediate: bool = True
     subtitle_format: Literal["ass", "srt"] = "ass"
     font_color: str = "&H00FFFFFF"
     outline_color: str = "&H00000000"
