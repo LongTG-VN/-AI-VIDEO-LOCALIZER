@@ -1,0 +1,46 @@
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+backend/.env
+backend/data/
+
+# Node
+frontend/node_modules/
+frontend/dist/
+
+# Media / local projects
+*.mp4
+*.mkv
+*.mov
+*.avi
+*.wav
+*.mp3
+*.ass
+*.srt
+!backend/tests/fixtures/*.srt
+
+# IDE / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Local secrets
+.env
+.env.*
+!.env.example
+
+# Local benchmark and build caches
+backend/benchmark_results.json
+backend/phase3_results.json
+backend/blind_qa_results.json
+backend/phase4_optimized_cues.json
+backend/phase4_results.json
+backend/phase5_render_results.json
+backend/phase51_render_results.json
+backend/phase51b_render_results.json
+backend/smart_ocr_cues.json
+frontend/tsconfig.app.tsbuildinfo
+frontend/tsconfig.node.tsbuildinfo
