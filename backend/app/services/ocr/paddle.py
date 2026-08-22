@@ -145,6 +145,12 @@ class PaddleSubtitleOCREngine(OCREngine):
         avg_score = sum(s for _, s, _ in text_lines) / len(text_lines)
         return merged_text, avg_score, noise_count, multiline_count
 
+    @staticmethod
+    def _extend_ocr_cue(cue: SubtitleCue, end: float) -> None:
+        """Extend both dialogue and visual OCR timing while OCR owns the cue."""
+        cue.end = round(end, 2)
+        cue.ocr_end = cue.end
+
     def extract_subtitles(self, video_path: Path) -> list[SubtitleCue]:
         if not video_path.exists():
             raise RuntimeError(f"Video not found: {video_path}")
@@ -229,7 +235,7 @@ class PaddleSubtitleOCREngine(OCREngine):
 
                     # If text length is stable and thumbnail diff is below threshold, extend active cue!
                     if dw < 0.35 and diff < self.change_threshold:
-                        current_cue.end = round(timestamp + frame_duration, 2)
+                        self._extend_ocr_cue(current_cue, timestamp + frame_duration)
                         frames_skipped += 1
                         prev_thumb = thumb
                         prev_bbox = (bx, by, bw, bh)
@@ -245,17 +251,23 @@ class PaddleSubtitleOCREngine(OCREngine):
 
                 if text:
                     if current_cue is not None and _similar(current_cue.source_text, text) >= 0.85:
-                        current_cue.end = round(timestamp + frame_duration, 2)
+                        self._extend_ocr_cue(current_cue, timestamp + frame_duration)
                         current_cue.ocr_confidence = max(current_cue.ocr_confidence or 0.0, score)
                         current_cue.confidence = current_cue.ocr_confidence
+                        current_cue.ocr_text = text
                     else:
                         if current_cue is not None:
                             raw_cues.append(current_cue)
+                        start = round(timestamp, 2)
+                        end = round(timestamp + frame_duration, 2)
                         current_cue = SubtitleCue(
-                            start=round(timestamp, 2),
-                            end=round(timestamp + frame_duration, 2),
+                            start=start,
+                            end=end,
                             source_text=text,
                             ocr_confidence=round(score, 4),
+                            ocr_start=start,
+                            ocr_end=end,
+                            ocr_text=text,
                             confidence=round(score, 4),
                         )
                     prev_thumb = thumb
@@ -284,7 +296,9 @@ class PaddleSubtitleOCREngine(OCREngine):
             prev = normalized_cues[-1]
             if _similar(prev.source_text, cue.source_text) >= 0.85 and (cue.start - prev.end) <= 0.45:
                 prev.end = max(prev.end, cue.end)
+                prev.ocr_end = max(prev.ocr_end or prev.end, cue.ocr_end or cue.end)
                 prev.ocr_confidence = max(prev.ocr_confidence or 0.0, cue.ocr_confidence or 0.0)
+                prev.ocr_text = cue.ocr_text or cue.source_text
                 prev.confidence = prev.ocr_confidence
             else:
                 normalized_cues.append(cue)
