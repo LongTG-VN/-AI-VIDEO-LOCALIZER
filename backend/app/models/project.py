@@ -93,7 +93,15 @@ class RenderOptions(BaseModel):
     stickers: list[StickerOverlay] = Field(default_factory=list)
     font_name: str = "Arial"
     font_size: int = Field(default=22, ge=8, le=96)
-    margin_v: int = Field(default=36, ge=0, le=400)
+    margin_v: int = Field(default=32, ge=0, le=400)
+    hardsub_removal_mode: Literal["none", "inpaint", "cover", "auto"] = "inpaint"
+    subtitle_format: Literal["ass", "srt"] = "ass"
+    font_color: str = "&H00FFFFFF"
+    outline_color: str = "&H00000000"
+    outline_width: float = Field(default=2.5, ge=0.0, le=10.0)
+    shadow_depth: float = Field(default=1.0, ge=0.0, le=10.0)
+    max_line_chars: int = Field(default=36, ge=10, le=100)
+    use_nvenc: bool = True
 
 
 class Project(BaseModel):
