@@ -36,30 +36,33 @@ def fuse_cues(asr_cues: list[SubtitleCue], ocr_cues: list[SubtitleCue]) -> list[
     used_ocr: set[str] = set()
 
     for asr in asr_cues:
-        candidates = [
-            ocr
-            for ocr in ocr_cues
-            if ocr.id not in used_ocr and temporal_overlap(asr, ocr) >= 0.35
-        ]
+        asr_dur = max(0.01, asr.end - asr.start)
+        candidates: list[tuple[float, SubtitleCue]] = []
+        for ocr in ocr_cues:
+            overlap = max(0.0, min(asr.end, ocr.end) - max(asr.start, ocr.start))
+            if overlap <= 0.05:
+                continue
+            sim = text_similarity(asr.source_text, ocr.source_text)
+            coverage = overlap / asr_dur
+            if coverage >= 0.15 or overlap >= 0.20 or sim >= 0.35:
+                score = coverage * 0.4 + sim * 0.4 + (ocr.ocr_confidence or 0.5) * 0.2
+                candidates.append((score, ocr))
+
         if not candidates:
             fused.append(asr.model_copy(deep=True))
             continue
-        best = max(
-            candidates,
-            key=lambda ocr: (
-                temporal_overlap(asr, ocr),
-                text_similarity(asr.source_text, ocr.source_text),
-                ocr.ocr_confidence or ocr.confidence or 0.0,
-            ),
-        )
+
+        candidates.sort(key=lambda item: item[0], reverse=True)
+        best = candidates[0][1]
         used_ocr.add(best.id)
+
         asr_conf = asr.asr_confidence or asr.confidence
         ocr_conf = best.ocr_confidence or best.confidence
         similarity = text_similarity(asr.source_text, best.source_text)
-        choose_ocr = (ocr_conf or 0) > (asr_conf or 0) + 0.03 or similarity >= 0.9
+        choose_ocr = (ocr_conf or 0) > (asr_conf or 0) + 0.03 or similarity >= 0.85
         text = best.source_text if choose_ocr else asr.source_text
         evidence = [value for value in [asr_conf, ocr_conf] if value is not None]
-        confidence = min(1.0, max(evidence, default=0.0) + (0.05 if similarity >= 0.9 else 0.0))
+        confidence = min(1.0, max(evidence, default=0.0) + (0.05 if similarity >= 0.85 else 0.0))
         fused.append(
             SubtitleCue(
                 id=asr.id,
@@ -74,6 +77,7 @@ def fuse_cues(asr_cues: list[SubtitleCue], ocr_cues: list[SubtitleCue]) -> list[
                 ocr_start=_ocr_visual_start(best),
                 ocr_end=_ocr_visual_end(best),
                 ocr_text=best.ocr_text or best.source_text,
+                ocr_regions=list(best.ocr_regions),
                 confidence=confidence if evidence else None,
             )
         )

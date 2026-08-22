@@ -9,7 +9,7 @@ from typing import Any
 import cv2
 import numpy as np
 
-from app.models.project import SubtitleCue
+from app.models.project import OCRRegion, SubtitleCue
 
 logger = logging.getLogger(__name__)
 
@@ -17,14 +17,15 @@ NOISE_FILTER = {"10.5o", "10:50", "MILK", "MILK MILK", "IN-CN", "CN-IN", "755135
 
 
 class HardSubCleaner:
-    """Remove burned-in subtitles conservatively while preserving the real background.
+    """Remove burned-in subtitles conservatively using OCR geometry and temporal restoration.
 
-    Quality mode deliberately separates three concerns:
-    - *when* text is visible: OCR visual timing, never translated/ASR timing when available;
-    - *where* text is visible: subtitle-like connected components inside a configurable ROI;
-    - *what* background should replace it: aligned clean temporal donor, with Telea fallback.
+    Architecture (Phase 5.1D):
+    - *when* text is visible: exact OCR visual timestamps (`ocr_start`/`ocr_end`), avoiding ASR dialogue overhang;
+    - *where* text is visible: tight OCR bounding polygons (`ocr_regions`) restricting search area;
+    - *how* glyphs are detected: high-contrast white seed + edge-aware dark outline/shadow extension + temporal diff;
+    - *what* background replaces it: aligned clean temporal donor with guarded Telea inpainting.
 
-    Every pixel outside the final text mask is copied from the source frame unchanged.
+    Every pixel outside the extracted subtitle glyph/outline mask is preserved 100% untouched.
     """
 
     def __init__(
@@ -45,6 +46,8 @@ class HardSubCleaner:
         temporal_local_score_threshold: float = 22.0,
         ocr_min_confidence: float = 0.35,
         timing_pad_seconds: float = 0.015,
+        geometry_enabled: bool = True,
+        geometry_padding_px: int = 4,
         ffmpeg_bin: str = "ffmpeg",
     ) -> None:
         self.crop_top_ratio = crop_top_ratio
@@ -63,9 +66,11 @@ class HardSubCleaner:
         self.temporal_local_score_threshold = temporal_local_score_threshold
         self.ocr_min_confidence = ocr_min_confidence
         self.timing_pad_seconds = timing_pad_seconds
+        self.geometry_enabled = geometry_enabled
+        self.geometry_padding_px = geometry_padding_px
         self.ffmpeg_bin = ffmpeg_bin
 
-        self._metrics: dict[str, float | int] = {}
+        self._metrics: dict[str, Any] = {}
 
     def _roi_bounds(self, frame: np.ndarray) -> tuple[int, int, int, int]:
         h, w = frame.shape[:2]
@@ -192,6 +197,149 @@ class HardSubCleaner:
             return None
 
         return filtered
+
+    def extract_geometry_mask(
+        self,
+        frame: np.ndarray,
+        regions: list[OCRRegion],
+        temporal_donors: list[np.ndarray] | None = None,
+    ) -> tuple[np.ndarray | None, dict[str, Any]]:
+        """Extract high-recall, high-precision Chinese subtitle glyph + outline mask strictly inside OCR polygons."""
+        if not regions:
+            return None, {}
+
+        h, w = frame.shape[:2]
+        combined_mask = np.zeros((h, w), dtype=np.uint8)
+        coverages: list[float] = []
+        outline_added = 0
+        bboxes: list[tuple[int, int, int, int]] = []
+        pad_x = max(8, self.geometry_padding_px + 4)
+        pad_y = max(4, self.geometry_padding_px)
+
+        for region in regions:
+            if not region.points or len(region.points) < 3:
+                continue
+
+            poly_pts = np.array(
+                [
+                    [
+                        int(round(max(0.0, min(1.0, float(pt[0]))) * w)),
+                        int(round(max(0.0, min(1.0, float(pt[1]))) * h)),
+                    ]
+                    for pt in region.points
+                    if len(pt) >= 2
+                ],
+                dtype=np.int32,
+            )
+            if len(poly_pts) < 3:
+                continue
+
+            rx, ry, rw, rh = cv2.boundingRect(poly_pts)
+            if rw <= 4 or rh <= 4:
+                continue
+
+            x1 = max(0, rx - pad_x)
+            y1 = max(0, ry - pad_y)
+            x2 = min(w, rx + rw + pad_x)
+            y2 = min(h, ry + rh + pad_y)
+            bboxes.append((x1, y1, x2, y2))
+
+            patch = frame[y1:y2, x1:x2]
+            if patch.size == 0:
+                continue
+
+            ph, pw = patch.shape[:2]
+            local_poly = poly_pts - np.array([x1, y1])
+            local_poly_mask = np.zeros((ph, pw), dtype=np.uint8)
+            cv2.fillPoly(local_poly_mask, [local_poly], 255)
+
+            k_pad_x = 2 * pad_x + 1
+            k_pad_y = 2 * pad_y + 1
+            local_poly_dilated = cv2.dilate(
+                local_poly_mask,
+                cv2.getStructuringElement(cv2.MORPH_RECT, (k_pad_x, k_pad_y)),
+                iterations=1,
+            )
+
+            # 1. Stroke interior seed detection
+            gray = cv2.cvtColor(patch, cv2.COLOR_BGR2GRAY)
+            local_mean = cv2.GaussianBlur(gray, (0, 0), sigmaX=2.0, sigmaY=2.0)
+            contrast = cv2.subtract(gray, local_mean)
+            gradient = cv2.morphologyEx(
+                gray,
+                cv2.MORPH_GRADIENT,
+                cv2.getStructuringElement(cv2.MORPH_RECT, (3, 3)),
+            )
+
+            bright = gray >= 140
+            high_contrast = contrast >= 8
+            strong_edge = gradient >= 10
+            seed = (bright & (high_contrast | strong_edge)).astype(np.uint8) * 255
+            seed = cv2.bitwise_and(seed, local_poly_dilated)
+
+            # 2. Outline / Dark Stroke Extension
+            # Dilate seed to capture dark outline/stroke contours while staying inside local polygon
+            dilated_seed = cv2.dilate(
+                seed,
+                cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (5, 5)),
+                iterations=1,
+            )
+            dark_outline = (gray <= (local_mean.astype(float) - 4.0)) | (gradient >= 10)
+            outline_mask = cv2.bitwise_and(
+                ((dilated_seed > 0) & (dark_outline | (seed > 0))).astype(np.uint8) * 255,
+                local_poly_dilated,
+            )
+
+            initial_white_count = int(np.sum(seed > 0))
+            total_outline_count = int(np.sum(outline_mask > 0))
+            outline_added += max(0, total_outline_count - initial_white_count)
+
+            region_mask = outline_mask
+
+            # 3. Temporal difference guidance if clean donor candidate is available
+            if temporal_donors:
+                for donor in temporal_donors:
+                    if donor.shape == frame.shape:
+                        donor_patch = donor[y1:y2, x1:x2]
+                        diff = cv2.absdiff(patch, donor_patch)
+                        diff_gray = np.max(diff, axis=2)
+                        changed = (diff_gray >= self.temporal_difference_threshold).astype(np.uint8) * 255
+                        temporal_glyph = cv2.bitwise_and(changed, local_poly_mask)
+                        region_mask = cv2.bitwise_or(region_mask, temporal_glyph)
+
+            # Morphological cleanup inside region
+            region_mask = cv2.morphologyEx(
+                region_mask,
+                cv2.MORPH_CLOSE,
+                cv2.getStructuringElement(cv2.MORPH_RECT, (2, 2)),
+            )
+            region_mask = cv2.bitwise_and(region_mask, local_poly_dilated)
+
+            # Coverage check per local OCR region
+            cov = float(np.mean(region_mask > 0))
+            if cov > 0.85:
+                # Do NOT inpaint entire bbox! Keep tight glyph seed
+                region_mask = cv2.bitwise_and(seed, local_poly_mask)
+                cov = float(np.mean(region_mask > 0))
+
+            if cov > 0.0:
+                coverages.append(cov)
+                combined_mask[y1:y2, x1:x2] = cv2.bitwise_or(
+                    combined_mask[y1:y2, x1:x2], region_mask
+                )
+
+        total_mask_pixels = int(np.sum(combined_mask > 0))
+        if total_mask_pixels == 0:
+            return None, {}
+
+        stats = {
+            "region_coverages": coverages,
+            "avg_coverage": float(np.mean(coverages)) if coverages else 0.0,
+            "max_coverage": float(np.max(coverages)) if coverages else 0.0,
+            "outline_pixels_added": outline_added,
+            "bboxes": bboxes,
+        }
+        return combined_mask, stats
 
     def build_active_intervals(
         self,
@@ -483,10 +631,99 @@ class HardSubCleaner:
         mode: str = "inpaint",
         is_subtitle_active: bool = True,
         temporal_donors: list[np.ndarray] | None = None,
+        ocr_regions: list[OCRRegion] | None = None,
     ) -> tuple[np.ndarray, bool]:
         """Clean one frame while leaving every pixel outside the subtitle mask untouched."""
         if mode in {"none", "off"} or not is_subtitle_active:
             return frame, False
+
+        h, w = frame.shape[:2]
+
+        # 1. Primary Path: Geometry-Guided Cleanup (if regions are available)
+        if self.geometry_enabled and ocr_regions:
+            geo_mask, geo_stats = self.extract_geometry_mask(frame, ocr_regions, temporal_donors)
+            if geo_mask is not None:
+                self._metrics["geometry_frames"] = int(self._metrics.get("geometry_frames", 0)) + 1
+                self._metrics["geometry_mask_success"] = int(self._metrics.get("geometry_mask_success", 0)) + 1
+                self._metrics["outline_pixels_added"] = (
+                    int(self._metrics.get("outline_pixels_added", 0))
+                    + geo_stats.get("outline_pixels_added", 0)
+                )
+                if geo_stats.get("region_coverages"):
+                    all_covs = list(self._metrics.get("_region_coverages_list", []))
+                    all_covs.extend(geo_stats["region_coverages"])
+                    self._metrics["_region_coverages_list"] = all_covs
+                    self._metrics["max_region_mask_coverage"] = round(float(max(all_covs)), 3)
+                    self._metrics["avg_region_mask_coverage"] = round(float(np.mean(all_covs)), 3)
+
+                if mode == "cover":
+                    cleaned = frame.copy()
+                    for bx1, by1, bx2, by2 in geo_stats.get("bboxes", []):
+                        overlay = cleaned.copy()
+                        cv2.rectangle(overlay, (bx1, by1), (bx2, by2), (0, 0, 0), -1)
+                        cleaned = cv2.addWeighted(overlay, 0.45, cleaned, 0.55, 0)
+                    return cleaned, True
+
+                pts = cv2.findNonZero(geo_mask)
+                if pts is None:
+                    return frame, False
+
+                bx, by, bw, bh = cv2.boundingRect(pts)
+                pad_box = max(2, self.geometry_padding_px)
+                bx1 = max(0, bx - pad_box)
+                by1 = max(0, by - pad_box)
+                bx2 = min(w, bx + bw + pad_box)
+                by2 = min(h, by + bh + pad_box)
+
+                patch = frame[by1:by2, bx1:bx2]
+                mask_patch = geo_mask[by1:by2, bx1:bx2]
+
+                cleaned = frame.copy()
+                if mode in {"quality", "auto"} and temporal_donors:
+                    donor_patches = [
+                        d[by1:by2, bx1:bx2] for d in temporal_donors if d.shape == frame.shape
+                    ]
+                    cleaned_patch, used_temporal, t_score = self._quality_inpaint_roi(
+                        patch, mask_patch, donor_patches
+                    )
+                    if used_temporal:
+                        self._metrics["geometry_temporal_frames"] = (
+                            int(self._metrics.get("geometry_temporal_frames", 0)) + 1
+                        )
+                        self._metrics["temporal_frames"] = (
+                            int(self._metrics.get("temporal_frames", 0)) + 1
+                        )
+                        if t_score is not None:
+                            self._metrics["temporal_score_sum"] = (
+                                float(self._metrics.get("temporal_score_sum", 0.0)) + t_score
+                            )
+                    else:
+                        self._metrics["geometry_telea_frames"] = (
+                            int(self._metrics.get("geometry_telea_frames", 0)) + 1
+                        )
+                        self._metrics["fallback_inpaint_frames"] = (
+                            int(self._metrics.get("fallback_inpaint_frames", 0)) + 1
+                        )
+                else:
+                    cleaned_patch = self._fast_inpaint_roi(patch, mask_patch)
+                    self._metrics["geometry_telea_frames"] = (
+                        int(self._metrics.get("geometry_telea_frames", 0)) + 1
+                    )
+                    if mode in {"quality", "auto"}:
+                        self._metrics["fallback_inpaint_frames"] = (
+                            int(self._metrics.get("fallback_inpaint_frames", 0)) + 1
+                        )
+
+                cleaned[by1:by2, bx1:bx2] = cleaned_patch
+                return cleaned, True
+            else:
+                self._metrics["geometry_mask_fail"] = int(self._metrics.get("geometry_mask_fail", 0)) + 1
+
+        # 2. Fallback Path: V3 Heuristic ROI detection
+        if is_subtitle_active:
+            self._metrics["geometry_missing_fallback_frames"] = (
+                int(self._metrics.get("geometry_missing_fallback_frames", 0)) + 1
+            )
 
         x1, y1, x2, y2 = self._roi_bounds(frame)
         sub_roi = frame[y1:y2, x1:x2]
@@ -683,6 +920,12 @@ class HardSubCleaner:
             elif cv_writer is not None:
                 cv_writer.write(frame)
 
+        cues_list = cues or []
+        geometry_cues = len([c for c in cues_list if c.ocr_regions])
+        geometry_regions = sum(len(c.ocr_regions) for c in cues_list)
+        self._metrics["geometry_cues"] = geometry_cues
+        self._metrics["geometry_regions"] = geometry_regions
+
         frames_processed = 0
         frames_inpainted = 0
         frames_bypassed = 0
@@ -691,6 +934,7 @@ class HardSubCleaner:
         loaded_donor_interval = -1
         t0 = time.time()
         frame_idx = 0
+        pad = self.timing_pad_seconds
 
         try:
             while cap.isOpened():
@@ -714,6 +958,16 @@ class HardSubCleaner:
                     frames_bypassed += 1
                     frame_idx += 1
                     continue
+
+                # Find active OCR regions for this timestamp
+                active_regions: list[OCRRegion] = []
+                for cue in cues_list:
+                    c_start = cue.ocr_start if cue.ocr_start is not None else cue.start
+                    c_end = cue.ocr_end if cue.ocr_end is not None else cue.end
+                    if (c_start - pad) <= timestamp <= (c_end + pad):
+                        for r in cue.ocr_regions:
+                            if r.points:
+                                active_regions.append(r)
 
                 temporal_donors: list[np.ndarray] = []
                 if donor_cap is not None:
@@ -751,6 +1005,7 @@ class HardSubCleaner:
                     mode=mode,
                     is_subtitle_active=True,
                     temporal_donors=temporal_donors,
+                    ocr_regions=active_regions if active_regions else None,
                 )
                 if was_cleaned:
                     frames_inpainted += 1
@@ -781,21 +1036,40 @@ class HardSubCleaner:
             "timing_source_explicit_ocr": int(self._metrics.get("timing_source_explicit_ocr", 0)),
             "timing_source_legacy_ocr": int(self._metrics.get("timing_source_legacy_ocr", 0)),
             "timing_source_fallback": int(self._metrics.get("timing_source_fallback", 0)),
+            "geometry_cues": geometry_cues,
+            "geometry_regions": geometry_regions,
+            "geometry_frames": int(self._metrics.get("geometry_frames", 0)),
+            "geometry_missing_fallback_frames": int(
+                self._metrics.get("geometry_missing_fallback_frames", 0)
+            ),
+            "geometry_mask_success": int(self._metrics.get("geometry_mask_success", 0)),
+            "geometry_mask_fail": int(self._metrics.get("geometry_mask_fail", 0)),
+            "geometry_temporal_frames": int(self._metrics.get("geometry_temporal_frames", 0)),
+            "geometry_telea_frames": int(self._metrics.get("geometry_telea_frames", 0)),
+            "avg_region_mask_coverage": float(self._metrics.get("avg_region_mask_coverage", 0.0)),
+            "max_region_mask_coverage": float(self._metrics.get("max_region_mask_coverage", 0.0)),
+            "outline_pixels_added": int(self._metrics.get("outline_pixels_added", 0)),
             "temporal_frames": temporal_frames,
             "fallback_inpaint_frames": int(self._metrics.get("fallback_inpaint_frames", 0)),
             "temporal_scene_rejects": int(self._metrics.get("temporal_scene_rejects", 0)),
-            "temporal_local_motion_rejects": int(self._metrics.get("temporal_local_motion_rejects", 0)),
+            "temporal_local_motion_rejects": int(
+                self._metrics.get("temporal_local_motion_rejects", 0)
+            ),
             "temporal_alignment_failures": int(self._metrics.get("temporal_alignment_failures", 0)),
             "temporal_mask_refined": int(self._metrics.get("temporal_mask_refined", 0)),
-            "temporal_mask_refine_rejects": int(self._metrics.get("temporal_mask_refine_rejects", 0)),
+            "temporal_mask_refine_rejects": int(
+                self._metrics.get("temporal_mask_refine_rejects", 0)
+            ),
             "avg_temporal_score": round(temporal_score_sum / max(1, temporal_frames), 2),
             "mask_rejected_coverage": int(self._metrics.get("mask_rejected_coverage", 0)),
-            "mask_rejected_no_components": int(self._metrics.get("mask_rejected_no_components", 0)),
+            "mask_rejected_no_components": int(
+                self._metrics.get("mask_rejected_no_components", 0)
+            ),
             "mask_rejected_no_text_row": int(self._metrics.get("mask_rejected_no_text_row", 0)),
             "lossless_intermediate": lossless_intermediate,
             "clean_runtime": round(total_time, 2),
             "fps_speed": round(frames_processed / max(0.01, total_time), 1),
             "output_path": str(output_path),
         }
-        logger.info("HardSub Quality V3 completed: %s", metrics)
+        logger.info("HardSub Cleaner completed: %s", metrics)
         return metrics

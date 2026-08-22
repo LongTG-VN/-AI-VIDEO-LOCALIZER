@@ -32,18 +32,26 @@ def test_multiline_merge_and_sort():
                 "rec_texts": ["只有一件需要时刻打磨的商品", "她的眼里没有女儿"],
                 "rec_scores": [0.98, 0.96],
                 "dt_polys": [
-                    [[100, 420], [300, 420], [300, 440], [100, 440]], # Line 2 (Y=420)
-                    [[100, 390], [300, 390], [300, 410], [100, 410]], # Line 1 (Y=390)
-                ]
+                    [[100, 420], [300, 420], [300, 440], [100, 440]],  # Line 2 (Y=420)
+                    [[100, 390], [300, 390], [300, 410], [100, 410]],  # Line 1 (Y=390)
+                ],
             }
         }
-    
-    text, score, noise_cnt, ml_cnt = engine._filter_and_merge_predictions([MockResult()])
+
+    text, score, noise_cnt, ml_cnt, regions = engine._filter_and_merge_predictions(
+        [MockResult()], x1=50, y1=200, w=852, h=480
+    )
     # Should sort top-to-bottom: "她的眼里没有女儿" then "只有一件需要时刻打磨的商品"
     assert text == "她的眼里没有女儿只有一件需要时刻打磨的商品"
     assert score == pytest.approx(0.97, 0.01)
     assert ml_cnt == 1
     assert noise_cnt == 0
+    assert len(regions) == 2
+    assert regions[0].text == "她的眼里没有女儿"
+    assert regions[1].text == "只有一件需要时刻打磨的商品"
+    # Points should be normalized to full frame [0, 1]
+    assert 0.0 <= regions[0].points[0][0] <= 1.0
+    assert 0.0 <= regions[0].points[0][1] <= 1.0
 
 
 def test_noise_filtering():
@@ -59,14 +67,16 @@ def test_noise_filtering():
                     [[30, 30], [40, 30], [40, 40], [30, 40]],
                     [[100, 400], [300, 400], [300, 430], [100, 430]],
                     [[10, 50], [50, 50], [50, 60], [10, 60]],
-                ]
+                ],
             }
         }
-    
-    text, score, noise_cnt, ml_cnt = engine._filter_and_merge_predictions([MockResult()])
+
+    text, score, noise_cnt, ml_cnt, regions = engine._filter_and_merge_predictions([MockResult()])
     assert text == "领口歪了"
     assert score == pytest.approx(0.99, 0.01)
     assert noise_cnt == 4
+    assert len(regions) == 1
+    assert regions[0].text == "领口歪了"
 
 
 def test_preservation_of_valid_short_chinese():
@@ -77,12 +87,13 @@ def test_preservation_of_valid_short_chinese():
                 "res": {
                     "rec_texts": [valid_word],
                     "rec_scores": [0.92],
-                    "dt_polys": [[[100, 400], [130, 400], [130, 430], [100, 430]]]
+                    "dt_polys": [[[100, 400], [130, 400], [130, 430], [100, 430]]],
                 }
             }
-        text, score, noise_cnt, _ = engine._filter_and_merge_predictions([MockResult()])
+        text, score, noise_cnt, _, regions = engine._filter_and_merge_predictions([MockResult()])
         assert text == valid_word
         assert noise_cnt == 0
+        assert len(regions) == 1
 
 
 def test_temporal_normalization_and_confidence():

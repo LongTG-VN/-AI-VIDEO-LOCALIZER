@@ -27,12 +27,19 @@ class SubtitleCue(BaseModel):
     ocr_start: float | None = Field(default=None, ge=0)
     ocr_end: float | None = Field(default=None, gt=0)
     ocr_text: str | None = None
+    ocr_regions: list[OCRRegion] = Field(default_factory=list)
     translation_confidence: float | None = Field(default=None, ge=0, le=1)
     relationship_confidence: float | None = Field(default=None, ge=0, le=1)
     needs_review: bool = False
     review_notes: str | None = None
     critic_score: float | None = None
     critic_flags: list[str] = Field(default_factory=list)
+
+
+class OCRRegion(BaseModel):
+    text: str | None = None
+    confidence: float | None = None
+    points: list[list[float]] = Field(default_factory=list)  # normalized [0, 1] relative to full frame: [[x, y], ...]
 
 
 class Character(BaseModel):
@@ -116,6 +123,8 @@ class RenderOptions(BaseModel):
     hardsub_temporal_difference_threshold: int = Field(default=14, ge=1, le=255)
     hardsub_temporal_local_score_threshold: float = Field(default=22.0, gt=0.0, le=255.0)
     hardsub_ocr_min_confidence: float = Field(default=0.35, ge=0.0, le=1.0)
+    hardsub_geometry_enabled: bool = True
+    hardsub_geometry_padding_px: int = Field(default=4, ge=0, le=32)
     hardsub_lossless_intermediate: bool = True
     subtitle_format: Literal["ass", "srt"] = "ass"
     font_color: str = "&H00FFFFFF"

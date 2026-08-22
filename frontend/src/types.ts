@@ -15,6 +15,16 @@ export type SubtitleCue = {
   review_notes?: string | null
   critic_score?: number | null
   critic_flags?: string[]
+  ocr_start?: number | null
+  ocr_end?: number | null
+  ocr_text?: string | null
+  ocr_regions?: OCRRegion[]
+}
+
+export type OCRRegion = {
+  text?: string | null
+  confidence?: number | null
+  points: number[][]
 }
 
 export type Character = {

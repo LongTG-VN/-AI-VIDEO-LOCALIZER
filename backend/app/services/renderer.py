@@ -108,6 +108,8 @@ class Renderer:
             temporal_difference_threshold=options.hardsub_temporal_difference_threshold,
             temporal_local_score_threshold=options.hardsub_temporal_local_score_threshold,
             ocr_min_confidence=options.hardsub_ocr_min_confidence,
+            geometry_enabled=options.hardsub_geometry_enabled,
+            geometry_padding_px=options.hardsub_geometry_padding_px,
             ffmpeg_bin=self.ffmpeg_bin,
         )
 
