@@ -39,6 +39,7 @@ backend/blind_qa_results.json
 backend/phase4_optimized_cues.json
 backend/phase4_results.json
 backend/phase5_render_results.json
+backend/phase51_render_results.json
 backend/smart_ocr_cues.json
 frontend/tsconfig.app.tsbuildinfo
 frontend/tsconfig.node.tsbuildinfo
