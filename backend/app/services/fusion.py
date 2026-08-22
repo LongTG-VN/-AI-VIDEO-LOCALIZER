@@ -121,14 +121,15 @@ def align_and_correct_span(
     if k <= len(asr_clean) and len(asr_clean) >= 2:
         best_diff = 999
         best_idx = -1
+        max_allowed_diffs = max(1, k // 4)
         for i in range(len(asr_clean) - k + 1):
             sub_asr = asr_clean[i : i + k]
             diffs = sum(1 for c1, c2 in zip(sub_asr, ocr_clean) if c1 != c2)
-            if diffs == 1 and diffs < best_diff:
+            if 1 <= diffs <= max_allowed_diffs and diffs < best_diff:
                 best_diff = diffs
                 best_idx = i
 
-        if best_idx >= 0 and best_diff == 1:
+        if best_idx >= 0 and best_diff <= max_allowed_diffs:
             target_sub = asr_clean[best_idx : best_idx + k]
             if target_sub in asr_text:
                 corrected = asr_text.replace(target_sub, ocr_clean, 1)

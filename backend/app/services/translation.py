@@ -24,6 +24,7 @@ class TranslationError(RuntimeError):
 
 logger = logging.getLogger(__name__)
 
+
 def build_translation_context(project: Project, cue_index: int) -> dict[str, Any]:
     cue = project.cues[cue_index]
     scene = active_scene(project, cue.start)
@@ -55,6 +56,7 @@ def build_translation_context(project: Project, cue_index: int) -> dict[str, Any
         "speaker_gender": speaker_char.gender if speaker_char else None,
         "addressee": character_name(project, addressee_id),
         "addressee_role": addressee_char.role if addressee_char else None,
+        "addressee_gender": addressee_char.gender if addressee_char else None,
         "relationship": rel_type,
         "preferred_vi_self": self_pronoun,
         "preferred_vi_other": target_pronoun,
@@ -80,12 +82,14 @@ CRITICAL RULES:
 1. Natural Subtitles: Produce fluent, idiomatic, emotionally resonant {target} subtitles. Avoid robotic word-for-word literal translations.
 2. Forms of Address & Pronouns (Vietnamese):
    - Strict adherence to `preferred_vi_self` (how speaker refers to self) and `preferred_vi_other` (how speaker addresses the other person) based on character hierarchy and family relations.
-   - Example: In a mother-daughter relationship (daughter -> mother), the daughter must address the mother as 'mẹ' and refer to herself as 'con' (e.g. '领口歪了' -> 'Cổ áo con bị lệch rồi' when mother speaks, or 'Con đi đây' when daughter speaks).
-3. Glossary & Names: Always translate proper names (e.g. 秦扶栀 -> Tần Phù Chi, 宋知雪 -> Tống Tri Tuyết, 秦砚川 -> Tần Nghiễn Xuyên) and domain terms (KPI -> KPI) matching the glossary.
-4. Stable Cue IDs:
-   - Every input cue MUST have exactly one translated output with the EXACT SAME `cue_id`.
-   - Never merge, skip, drop, or split cues.
-5. Tone & Register: Respect the scene tone (authoritative, cold, sarcastic, emotional, casual).
+   - Example: In family sibling dialogue (brother -> sister), use 'anh / em' (e.g. '你的存在...' -> 'Sự tồn tại của em...'). Never use 'mày / tao' unless explicitly hostile.
+   - Example: In mother-daughter dialogue, use 'mẹ / con'.
+   - In monologue / narration (when addressee is None), use 'tôi' or natural neutral phrasing.
+3. Glossary & Names: Always translate proper names and domain terms matching the glossary.
+4. Gender & Reference: Preserve female referent (她 -> cô ấy/mẹ) and male referent (他 -> anh ấy/bố). Never turn female referents into 'ông ta'.
+5. Clause Completeness: Translate all meaningful clauses (e.g. contrast pairs 'không có... chỉ có...'). Never drop clauses.
+6. Faithful & Hallucination-Free: Do not add unsupported content (e.g. do not add 'cố lên' to '看清楚').
+7. Stable Cue IDs: Every input cue MUST have exactly one translated output with the EXACT SAME `cue_id`.
 
 Return JSON ONLY in this exact structure:
 {{
@@ -102,9 +106,10 @@ Return JSON ONLY in this exact structure:
 
 class OpenAICompatibleTranslator:
     def __init__(self, base_url: str, api_key: str, model: str):
-        self.base_url = base_url.rstrip("/")
+        self.base_url = base_url.rstrip("/") if base_url else ""
         self.api_key = api_key
         self.model = model
+        self.last_metrics: dict[str, Any] = {}
 
     def _validate_config(self) -> None:
         if not self.base_url or not self.model:
@@ -121,10 +126,8 @@ class OpenAICompatibleTranslator:
         ]
 
         if critique_notes:
-            user_msg = (
-                "Please re-translate these specific cues taking into account the following critique feedback:\n"
-                + json.dumps({"cues": batch, "feedback_per_cue": critique_notes}, ensure_ascii=False)
-            )
+            feedback_str = json.dumps({"cues": batch, "feedback_per_cue": critique_notes}, ensure_ascii=False)
+            user_msg = f"Please re-translate these specific cues taking into account the following critique feedback:\n{feedback_str}"
         else:
             user_msg = json.dumps({"cues": batch}, ensure_ascii=False)
 
@@ -157,16 +160,13 @@ class OpenAICompatibleTranslator:
                     continue
                 response.raise_for_status()
                 content = response.json()["choices"][0]["message"]["content"].strip()
-                # Strip markdown code fences
                 if "```" in content:
                     lines = content.splitlines()
                     lines = [l for l in lines if not l.strip().startswith("```")]
                     content = "\n".join(lines).strip()
-                # Find first valid JSON object by scanning
                 parsed = None
                 start_idx = content.find("{")
                 while start_idx != -1:
-                    # Find matching closing brace
                     depth = 0
                     end_idx = start_idx
                     for i, ch in enumerate(content[start_idx:], start_idx):
@@ -200,8 +200,8 @@ class OpenAICompatibleTranslator:
                 logger.warning("Failed to parse translation batch: %s", exc)
                 parsed = {"translations": []}
                 break
+
         if parsed is None:
-            logger.warning("Translation provider: parsed is None after retries, skipping batch.")
             parsed = {"translations": []}
 
         items = parsed.get("translations", [])
@@ -232,75 +232,120 @@ class OpenAICompatibleTranslator:
         project: Project,
         batch_size: int = 12,
         enable_critic: bool = True,
+        max_retries: int = 2,
     ) -> list[SubtitleCue]:
         self._validate_config()
         if not project.cues:
             return []
 
-        # Pass 1: Initial Context-Aware Translation
-        # Only translate cues that are missing translations
+        # 1. Initial Translation Pass
         untranslated_indices = [i for i, c in enumerate(project.cues) if not c.translated_text]
-        contexts = [build_translation_context(project, i) for i in untranslated_indices]
+        contexts_by_id = {c.id: build_translation_context(project, i) for i, c in enumerate(project.cues)}
+        untranslated_contexts = [contexts_by_id[project.cues[i].id] for i in untranslated_indices]
 
-        for start in range(0, len(contexts), batch_size):
-            batch = contexts[start : start + batch_size]
+        for start in range(0, len(untranslated_contexts), batch_size):
+            batch = untranslated_contexts[start : start + batch_size]
             results = self._call_translation_batch(batch, project.target_language)
-            # Apply immediately so partial progress is preserved
             for cue in project.cues:
                 if cue.id in results:
                     cue.translated_text, conf = results[cue.id]
                     cue.translation_confidence = conf
                     cue.confidence = conf
             import time
-            time.sleep(12.0)
+            time.sleep(3.0)
 
-        # Pass 2: Translation Critic & Targeted Retry
+        # 2. Critic & Targeted Retry Pass (Up to max_retries)
+        metrics = {
+            "translated_cues": len(project.cues),
+            "critic_pass_first_try": 0,
+            "critic_retry_1_pass": 0,
+            "critic_retry_2_pass": 0,
+            "critic_final_fail": 0,
+            "meaning_shift_failures": 0,
+            "pronoun_mismatch_failures": 0,
+            "relationship_mismatch_failures": 0,
+            "gender_mismatch_failures": 0,
+            "name_mismatch_failures": 0,
+            "dropped_clause_failures": 0,
+            "hallucination_failures": 0,
+        }
+
         if enable_critic:
             critic = TranslationCritic(self.base_url, self.api_key, self.model)
-            try:
-                evaluations = critic.evaluate_cues(project, project.cues, batch_size=25)
-                eval_by_id = {e.get("cue_id"): e for e in evaluations if e.get("cue_id")}
+            evaluations = critic.evaluate_cues(project, project.cues, batch_size=25)
+            eval_by_id = {e.get("cue_id"): e for e in evaluations if e.get("cue_id")}
 
-                retry_cues: list[dict[str, Any]] = []
-                critique_notes: dict[str, str] = {}
+            first_pass_failed_ids: set[str] = set()
+            for cue in project.cues:
+                ev = eval_by_id.get(cue.id)
+                if not ev:
+                    continue
+                issues = ev.get("issues", [])
+                cue.critic_score = float(ev.get("naturalness_score", 0.9))
+                cue.critic_flags = issues
+                for iss in issues:
+                    if f"{iss}_failures" in metrics:
+                        metrics[f"{iss}_failures"] += 1
+                if ev.get("needs_retry", False) or issues:
+                    cue.needs_review = True
+                    cue.review_notes = ev.get("critique") or ", ".join(issues)
+                    first_pass_failed_ids.add(cue.id)
+                else:
+                    cue.needs_review = False
+                    metrics["critic_pass_first_try"] += 1
 
-                for idx, cue in enumerate(project.cues):
-                    ev = eval_by_id.get(cue.id)
+            # Targeted Retries for failed cues
+            current_failed_ids = set(first_pass_failed_ids)
+            for retry_round in range(1, max_retries + 1):
+                if not current_failed_ids:
+                    break
+                retry_cues = [contexts_by_id[cid] for cid in current_failed_ids if cid in contexts_by_id]
+                critique_notes = {
+                    cid: eval_by_id[cid].get("critique", "Fix pronoun and meaning consistency")
+                    for cid in current_failed_ids if cid in eval_by_id
+                }
+
+                retry_results = self._call_translation_batch(
+                    retry_cues,
+                    project.target_language,
+                    critique_notes=critique_notes,
+                )
+                for cue in project.cues:
+                    if cue.id in retry_results:
+                        retried_text, retried_conf = retry_results[cue.id]
+                        cue.translated_text = retried_text
+                        if retried_conf is not None:
+                            cue.translation_confidence = retried_conf
+                            cue.confidence = retried_conf
+
+                cues_to_reeval = [c for c in project.cues if c.id in current_failed_ids]
+                new_evals = critic.evaluate_cues(project, cues_to_reeval, batch_size=25)
+                new_eval_by_id = {e.get("cue_id"): e for e in new_evals if e.get("cue_id")}
+
+                next_failed_ids: set[str] = set()
+                for cue in cues_to_reeval:
+                    ev = new_eval_by_id.get(cue.id)
                     if not ev:
                         continue
-
+                    issues = ev.get("issues", [])
                     cue.critic_score = float(ev.get("naturalness_score", 0.9))
-                    flags = []
-                    for check in ["meaning", "name_consistency", "pronoun_consistency", "relationship_consistency", "tone", "hallucination", "missing_information"]:
-                        if ev.get(check) == "fail":
-                            flags.append(check)
-                    cue.critic_flags = flags
-
-                    if ev.get("needs_retry", False) or flags:
+                    cue.critic_flags = issues
+                    eval_by_id[cue.id] = ev
+                    if ev.get("needs_retry", False) or issues:
                         cue.needs_review = True
-                        cue.review_notes = ev.get("critique") or ", ".join(flags)
-                        retry_cues.append(contexts[idx])
-                        critique_notes[cue.id] = ev.get("critique", "Fix pronoun/meaning consistency")
+                        cue.review_notes = ev.get("critique") or ", ".join(issues)
+                        next_failed_ids.add(cue.id)
                     else:
                         cue.needs_review = False
+                        if retry_round == 1:
+                            metrics["critic_retry_1_pass"] += 1
+                        elif retry_round == 2:
+                            metrics["critic_retry_2_pass"] += 1
 
-                # Targeted retry for failed cues
-                if retry_cues:
-                    retry_results = self._call_translation_batch(
-                        retry_cues,
-                        project.target_language,
-                        critique_notes=critique_notes,
-                    )
-                    for cue in project.cues:
-                        if cue.id in retry_results:
-                            retried_text, retried_conf = retry_results[cue.id]
-                            cue.translated_text = retried_text
-                            if retried_conf is not None:
-                                cue.translation_confidence = retried_conf
-                                cue.confidence = retried_conf
+                current_failed_ids = next_failed_ids
 
-            except Exception:
-                # If critic fails, keep initial translation and mark review
-                pass
+            metrics["critic_final_fail"] = len(current_failed_ids)
 
+        self.last_metrics = metrics
+        logger.info("Translation & Critic completed with metrics: %s", metrics)
         return project.cues

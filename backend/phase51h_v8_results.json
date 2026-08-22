@@ -1,0 +1,84 @@
+{
+  "timestamp": 1787419599.991903,
+  "candidate": "Candidate 1",
+  "gate_pass": true,
+  "translation_metrics": {
+    "translated_cues": 48,
+    "critic_pass_first_try": 37,
+    "critic_retry_1_pass": 8,
+    "critic_retry_2_pass": 3,
+    "critic_final_fail": 0,
+    "meaning_shift_failures": 0,
+    "pronoun_mismatch_failures": 0,
+    "relationship_mismatch_failures": 0,
+    "gender_mismatch_failures": 0,
+    "name_mismatch_failures": 1,
+    "dropped_clause_failures": 0,
+    "hallucination_failures": 1
+  },
+  "utterance_metrics": {
+    "source_cues": 48,
+    "filtered_cues": 46,
+    "render_cues": 36,
+    "merged_groups": 10,
+    "suppressed_duplicates": 0,
+    "wrong_speaker_merges": 0,
+    "overlap_pairs": 0,
+    "high_cps_cues": 15
+  },
+  "re_ocr_results": {
+    "11.90s": {
+      "clean": true,
+      "chinese_residuals": []
+    },
+    "12.00s": {
+      "clean": true,
+      "chinese_residuals": []
+    },
+    "15.80s": {
+      "clean": true,
+      "chinese_residuals": []
+    },
+    "16.80s": {
+      "clean": true,
+      "chinese_residuals": []
+    },
+    "17.00s": {
+      "clean": true,
+      "chinese_residuals": []
+    },
+    "21.50s": {
+      "clean": true,
+      "chinese_residuals": []
+    },
+    "24.50s": {
+      "clean": true,
+      "chinese_residuals": []
+    },
+    "35.30s": {
+      "clean": true,
+      "chinese_residuals": []
+    },
+    "35.50s": {
+      "clean": true,
+      "chinese_residuals": []
+    },
+    "56.00s": {
+      "clean": true,
+      "chinese_residuals": []
+    },
+    "69.50s": {
+      "clean": true,
+      "chinese_residuals": []
+    },
+    "72.00s": {
+      "clean": true,
+      "chinese_residuals": []
+    },
+    "74.00s": {
+      "clean": true,
+      "chinese_residuals": []
+    }
+  },
+  "render_cues_count": 36
+}
