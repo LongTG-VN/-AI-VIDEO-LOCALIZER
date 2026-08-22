@@ -100,7 +100,6 @@ class TranslationCritic:
             payload = {
                 "model": self.model,
                 "temperature": 0.1,
-                "response_format": {"type": "json_object"},
                 "messages": [
                     {"role": "system", "content": _CRITIC_SYSTEM},
                     {"role": "user", "content": json.dumps({"cues": batch}, ensure_ascii=False)},
@@ -110,18 +109,48 @@ class TranslationCritic:
             if self.api_key:
                 headers["Authorization"] = f"Bearer {self.api_key}"
 
-            try:
-                response = httpx.post(
-                    f"{self.base_url}/chat/completions",
-                    headers=headers,
-                    json=payload,
-                    timeout=120,
-                )
-                response.raise_for_status()
-                parsed = json.loads(response.json()["choices"][0]["message"]["content"])
+            parsed = None
+            for attempt in range(8):
+                try:
+                    response = httpx.post(
+                        f"{self.base_url}/chat/completions",
+                        headers=headers,
+                        json=payload,
+                        timeout=120,
+                    )
+                    if response.status_code == 429:
+                        import time
+                        wait = 6 * (attempt + 1)
+                        print(f"Critic rate limited (429), sleeping {wait}s (attempt {attempt+1}/8)...")
+                        time.sleep(wait)
+                        continue
+                    response.raise_for_status()
+                    raw = response.json()["choices"][0]["message"]["content"].strip()
+                    if raw.startswith("```"):
+                        lines = raw.splitlines()
+                        if lines[0].startswith("```"):
+                            lines = lines[1:]
+                        if lines and lines[-1].startswith("```"):
+                            lines = lines[:-1]
+                        raw = "\n".join(lines).strip()
+                    parsed = json.loads(raw)
+                    break
+                except httpx.HTTPStatusError as exc:
+                    if exc.response.status_code == 429 and attempt < 7:
+                        import time
+                        wait = 6 * (attempt + 1)
+                        print(f"Critic rate limited (429), sleeping {wait}s (attempt {attempt+1}/8)...")
+                        time.sleep(wait)
+                        continue
+                    raise CriticError(f"Critic evaluation error: {exc}") from exc
+                except Exception as exc:
+                    if attempt < 7:
+                        import time
+                        time.sleep(3)
+                        continue
+                    raise CriticError(f"Critic evaluation error: {exc}") from exc
+            if parsed is not None:
                 items = parsed.get("evaluations", [])
                 evaluations.extend(items)
-            except Exception as exc:
-                raise CriticError(f"Critic evaluation error: {exc}") from exc
 
         return evaluations

@@ -143,25 +143,54 @@ class ContextAnalyzer:
         body = {
             "model": self.model,
             "temperature": 0.1,
-            "response_format": {"type": "json_object"},
             "messages": [
                 {"role": "system", "content": _CONTEXT_SYSTEM},
                 {"role": "user", "content": json.dumps(payload, ensure_ascii=False)},
             ],
         }
 
-        try:
-            response = httpx.post(
-                f"{self.base_url}/chat/completions",
-                headers=headers,
-                json=body,
-                timeout=180,
-            )
-            response.raise_for_status()
-            raw = response.json()["choices"][0]["message"]["content"]
-            result = json.loads(raw)
-        except (httpx.HTTPError, KeyError, json.JSONDecodeError) as exc:
-            raise ContextAnalysisError(f"Context provider error: {exc}") from exc
+        result = None
+        for attempt in range(8):
+            try:
+                response = httpx.post(
+                    f"{self.base_url}/chat/completions",
+                    headers=headers,
+                    json=body,
+                    timeout=180,
+                )
+                if response.status_code == 429:
+                    import time
+                    wait = 6 * (attempt + 1)
+                    print(f"Rate limited (429), sleeping {wait}s (attempt {attempt+1}/8)...")
+                    time.sleep(wait)
+                    continue
+                response.raise_for_status()
+                raw = response.json()["choices"][0]["message"]["content"].strip()
+                if raw.startswith("```"):
+                    lines = raw.splitlines()
+                    if lines[0].startswith("```"):
+                        lines = lines[1:]
+                    if lines and lines[-1].startswith("```"):
+                        lines = lines[:-1]
+                    raw = "\n".join(lines).strip()
+                result = json.loads(raw)
+                break
+            except httpx.HTTPStatusError as exc:
+                if exc.response.status_code == 429 and attempt < 7:
+                    import time
+                    wait = 6 * (attempt + 1)
+                    print(f"Rate limited (429), sleeping {wait}s (attempt {attempt+1}/8)...")
+                    time.sleep(wait)
+                    continue
+                raise ContextAnalysisError(f"Context provider error: {exc} -> {exc.response.text}") from exc
+            except (httpx.HTTPError, KeyError, json.JSONDecodeError) as exc:
+                if attempt < 7:
+                    import time
+                    time.sleep(3)
+                    continue
+                raise ContextAnalysisError(f"Context provider error: {exc}") from exc
+        if result is None:
+            raise ContextAnalysisError("Context provider error: Failed after retries.")
 
         # 1. Process Characters
         characters: list[Character] = []

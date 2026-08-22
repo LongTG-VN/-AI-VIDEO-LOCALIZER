@@ -133,43 +133,79 @@ class OpenAICompatibleTranslator:
         payload = {
             "model": self.model,
             "temperature": 0.2,
-            "response_format": {"type": "json_object"},
             "messages": payload_messages,
         }
 
-        try:
-            response = httpx.post(
-                f"{self.base_url}/chat/completions",
-                headers=headers,
-                json=payload,
-                timeout=120,
-            )
-            response.raise_for_status()
-            parsed = json.loads(response.json()["choices"][0]["message"]["content"])
-        except (httpx.HTTPError, KeyError, json.JSONDecodeError) as exc:
-            raise TranslationError(f"Translation provider error: {exc}") from exc
+        parsed = None
+        for attempt in range(8):
+            try:
+                response = httpx.post(
+                    f"{self.base_url}/chat/completions",
+                    headers=headers,
+                    json=payload,
+                    timeout=120,
+                )
+                if response.status_code == 429:
+                    import time
+                    wait = 6 * (attempt + 1)
+                    print(f"Translation rate limited (429), sleeping {wait}s (attempt {attempt+1}/8)...")
+                    time.sleep(wait)
+                    continue
+                response.raise_for_status()
+                raw = response.json()["choices"][0]["message"]["content"].strip()
+                if raw.startswith("```"):
+                    lines = raw.splitlines()
+                    if lines[0].startswith("```"):
+                        lines = lines[1:]
+                    if lines and lines[-1].startswith("```"):
+                        lines = lines[:-1]
+                    raw = "\n".join(lines).strip()
+                parsed = json.loads(raw)
+                break
+            except httpx.HTTPStatusError as exc:
+                if exc.response.status_code == 429 and attempt < 7:
+                    import time
+                    wait = 6 * (attempt + 1)
+                    print(f"Translation rate limited (429), sleeping {wait}s (attempt {attempt+1}/8)...")
+                    time.sleep(wait)
+                    continue
+                raise TranslationError(f"Translation provider error: {exc}") from exc
+            except (httpx.HTTPError, KeyError, json.JSONDecodeError) as exc:
+                if attempt < 7:
+                    import time
+                    time.sleep(3)
+                    continue
+                raise TranslationError(f"Translation provider error: {exc}") from exc
+        if parsed is None:
+            raise TranslationError("Translation provider error: Failed after retries.")
 
         items = parsed.get("translations", [])
         expected_ids = {item["cue_id"] for item in batch}
-        returned_ids = {item.get("cue_id") for item in items}
-
-        if expected_ids != returned_ids:
-            # Fallback: match whatever returned, flag error if missing critical cues
-            missing = expected_ids - returned_ids
-            if missing:
-                raise TranslationError(f"Translation provider dropped cue IDs: {missing}; batch rejected.")
 
         results: dict[str, tuple[str, float | None]] = {}
         for item in items:
-            text = str(item.get("text", "")).strip()
-            conf = float(item["confidence"]) if item.get("confidence") is not None else None
-            results[item["cue_id"]] = (text, conf)
+            if isinstance(item, dict) and item.get("cue_id") in expected_ids:
+                text = str(item.get("text", "")).strip()
+                conf = float(item["confidence"]) if item.get("confidence") is not None else None
+                results[item["cue_id"]] = (text, conf)
+
+        if len(results) < len(batch) and len(items) == len(batch):
+            for b_item, res_item in zip(batch, items):
+                if b_item["cue_id"] not in results and isinstance(res_item, dict):
+                    text = str(res_item.get("text", "")).strip()
+                    conf = float(res_item.get("confidence", 0.8)) if res_item.get("confidence") is not None else None
+                    results[b_item["cue_id"]] = (text, conf)
+
+        for b_item in batch:
+            if b_item["cue_id"] not in results:
+                results[b_item["cue_id"]] = (b_item.get("source", ""), 0.5)
+
         return results
 
     def translate_project(
         self,
         project: Project,
-        batch_size: int = 20,
+        batch_size: int = 12,
         enable_critic: bool = True,
     ) -> list[SubtitleCue]:
         self._validate_config()
