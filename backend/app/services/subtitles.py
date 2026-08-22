@@ -1,11 +1,26 @@
 from __future__ import annotations
 
 import re
+from dataclasses import dataclass
 from pathlib import Path
 
 from app.models.project import RenderOptions, SubtitleCue
 
 _TIME_RE = re.compile(r"(?P<h>\d{2}):(?P<m>\d{2}):(?P<s>\d{2})[,.](?P<ms>\d{3})")
+
+# Noise filter for non-dialogue artifacts
+NOISE_SUBTITLE_PATTERNS = {"10.5o", "10:50", "MILK", "MILK MILK", "IN-CN", "CN-IN", "755135", "CN", "..."}
+
+
+@dataclass
+class RenderCue:
+    """Non-mutating render cue for single-active subtitle lane rendering."""
+    id: str
+    render_start: float
+    render_end: float
+    source_text: str
+    translated_text: str
+    speaker_id: str | None = None
 
 
 def parse_timestamp(value: str) -> float:
@@ -34,10 +49,7 @@ def format_ass_timestamp(seconds: float) -> str:
 
 
 def wrap_vietnamese_text(text: str, max_line_chars: int = 36) -> str:
-    """Intelligently wraps Vietnamese subtitle text into at most 2 balanced lines.
-
-    Preserves full Vietnamese words and prefers splitting at natural punctuation or space.
-    """
+    """Intelligently wraps Vietnamese subtitle text into at most 2 balanced lines."""
     clean = " ".join(text.replace("\r\n", " ").replace("\n", " ").split()).strip()
     if len(clean) <= max_line_chars:
         return clean
@@ -46,7 +58,6 @@ def wrap_vietnamese_text(text: str, max_line_chars: int = 36) -> str:
     if len(words) <= 1:
         return clean
 
-    # Look for punctuation marks near the center (between 30% and 70% of total length)
     mid_idx = len(clean) // 2
     best_split_pos = -1
     min_dist_to_center = float("inf")
@@ -77,6 +88,95 @@ def wrap_vietnamese_text(text: str, max_line_chars: int = 36) -> str:
     return clean
 
 
+def normalize_render_cues(
+    cues: list[SubtitleCue],
+    safe_gap: float = 0.03,
+    min_duration: float = 0.25,
+    translated: bool = True,
+) -> list[RenderCue]:
+    """Normalizes subtitle cues into non-overlapping, single-active render cues.
+
+    Guarantees:
+    1. MAX_ACTIVE_SUBTITLES = 1 (Zero concurrent subtitles).
+    2. cue[i].render_end <= cue[i+1].render_start - safe_gap.
+    3. Positive duration for every cue (duration > 0).
+    4. Merges adjacent identical translations into a single continuous cue.
+    5. Preserves original SubtitleCue objects without mutation.
+    """
+    valid: list[dict] = []
+    for c in cues:
+        raw_text = c.translated_text if translated and c.translated_text else c.source_text
+        if not raw_text:
+            continue
+        txt = raw_text.strip()
+        if txt in NOISE_SUBTITLE_PATTERNS or len(txt) <= 1:
+            continue
+        valid.append({
+            "id": c.id,
+            "start": float(c.start),
+            "end": float(c.end),
+            "source_text": c.source_text,
+            "translated_text": txt,
+            "speaker_id": c.speaker_id,
+        })
+
+    if not valid:
+        return []
+
+    # Sort strictly by start time
+    valid.sort(key=lambda item: item["start"])
+
+    # Merge adjacent identical translations (normalized whitespace and trailing punctuation)
+    merged: list[dict] = []
+    for item in valid:
+        clean_text = item["translated_text"].strip().rstrip(".").rstrip(",")
+        if not merged:
+            merged.append(item)
+            continue
+        prev = merged[-1]
+        prev_clean = prev["translated_text"].strip().rstrip(".").rstrip(",")
+        if prev_clean == clean_text and (item["start"] - prev["end"]) <= 0.50:
+            prev["end"] = max(prev["end"], item["end"])
+        else:
+            merged.append(item)
+
+    # Enforce Single Active Subtitle Policy (MAX_ACTIVE_SUBTITLES = 1)
+    render_cues: list[RenderCue] = []
+    for i, cur in enumerate(merged):
+        r_start = float(cur["start"])
+        r_end = float(cur["end"])
+
+        # Ensure start time does not overlap with previous cue's end
+        if render_cues:
+            prev_end = render_cues[-1].render_end
+            if r_start < prev_end + safe_gap:
+                r_start = round(prev_end + safe_gap, 3)
+
+        # Trim end time so it expires before next cue begins
+        if i < len(merged) - 1:
+            next_start = float(merged[i + 1]["start"])
+            max_allowed_end = round(next_start - safe_gap, 3)
+            if r_end > max_allowed_end:
+                r_end = max_allowed_end
+
+        # Ensure valid positive duration
+        if r_end <= r_start:
+            r_end = round(r_start + min_duration, 3)
+
+        render_cues.append(
+            RenderCue(
+                id=str(cur["id"]),
+                render_start=r_start,
+                render_end=r_end,
+                source_text=cur["source_text"],
+                translated_text=cur["translated_text"],
+                speaker_id=cur.get("speaker_id"),
+            )
+        )
+
+    return render_cues
+
+
 def parse_srt(text: str) -> list[SubtitleCue]:
     normalized = text.replace("\r\n", "\n").strip()
     if not normalized:
@@ -99,9 +199,9 @@ def parse_srt(text: str) -> list[SubtitleCue]:
 
 def to_srt(cues: list[SubtitleCue], translated: bool = True) -> str:
     blocks: list[str] = []
-    for index, cue in enumerate(sorted(cues, key=lambda item: item.start), start=1):
-        text = cue.translated_text if translated and cue.translated_text else cue.source_text
-        blocks.append(f"{index}\n{format_timestamp(cue.start)} --> {format_timestamp(cue.end)}\n{text}")
+    render_cues = normalize_render_cues(cues, safe_gap=0.03, min_duration=0.25, translated=translated)
+    for index, cue in enumerate(render_cues, start=1):
+        blocks.append(f"{index}\n{format_timestamp(cue.render_start)} --> {format_timestamp(cue.render_end)}\n{cue.translated_text}")
     return "\n\n".join(blocks) + ("\n" if blocks else "")
 
 
@@ -118,17 +218,17 @@ def to_ass(
     height: int = 480,
     translated: bool = True,
 ) -> str:
-    """Generates a complete ASS v4.00+ subtitle file with typography styling."""
+    """Generates a complete ASS v4.00+ subtitle file with single-active subtitle timeline."""
     font_name = options.font_name or "Arial"
-    font_size = options.font_size or 22
+    font_size = options.font_size or 24
     margin_v = options.margin_v or 32
-    outline_w = options.outline_width or 2.5
+    outline_w = options.outline_width or 2.8
     shadow_d = options.shadow_depth or 1.0
     font_color = options.font_color or "&H00FFFFFF"
     outline_color = options.outline_color or "&H00000000"
 
     header = f"""[Script Info]
-; Script generated by AI Video Localizer
+; Script generated by AI Video Localizer (Phase 5.1 Single-Active Lane)
 ScriptType: v4.00+
 PlayResX: {width}
 PlayResY: {height}
@@ -143,26 +243,16 @@ Style: Default,{font_name},{font_size},{font_color},&H000000FF,{outline_color},&
 Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
 """
     events: list[str] = []
-    # Filter out standalone noise artifacts (e.g. "10.5o", "10:50")
-    noise_filter = {"10.5o", "10:50", "MILK", "MILK MILK", "IN-CN", "755135", "CN"}
+    # Normalize render cues to guarantee zero concurrent active subtitles
+    render_cues = normalize_render_cues(cues, safe_gap=0.03, min_duration=0.25, translated=translated)
 
-    sorted_cues = sorted(cues, key=lambda item: item.start)
-    for cue in sorted_cues:
-        raw_text = cue.translated_text if translated and cue.translated_text else cue.source_text
-        if not raw_text or raw_text.strip() in noise_filter:
-            continue
-
-        # Duration QA: ensure display duration is at least 300ms
-        start_sec = cue.start
-        end_sec = max(cue.end, start_sec + 0.30)
-
+    for cue in render_cues:
         # Smart Vietnamese line wrapping
-        wrapped_text = wrap_vietnamese_text(raw_text, max_line_chars=options.max_line_chars)
-        # Escape ASS special braces if needed
+        wrapped_text = wrap_vietnamese_text(cue.translated_text, max_line_chars=options.max_line_chars)
         ass_text = wrapped_text.replace("{", r"\{").replace("}", r"\}")
 
-        start_str = format_ass_timestamp(start_sec)
-        end_str = format_ass_timestamp(end_sec)
+        start_str = format_ass_timestamp(cue.render_start)
+        end_str = format_ass_timestamp(cue.render_end)
         events.append(f"Dialogue: 0,{start_str},{end_str},Default,,0,0,0,,{ass_text}")
 
     return header + "\n".join(events) + "\n"
