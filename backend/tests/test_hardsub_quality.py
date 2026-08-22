@@ -27,7 +27,10 @@ def _textured_frame(height: int = 480, width: int = 852) -> np.ndarray:
 def test_render_options_default_to_quality_auto_mode():
     options = RenderOptions()
     assert options.hardsub_removal_mode == "auto"
+    assert options.hardsub_crop_top_ratio == 0.65
+    assert options.hardsub_crop_bottom_ratio == 0.95
     assert options.hardsub_mask_dilate_radius == 1
+    assert options.hardsub_temporal_difference_threshold == 14
     assert options.hardsub_lossless_intermediate is True
 
 
@@ -52,6 +55,23 @@ def test_active_intervals_prefer_ocr_backed_cues():
 
     intervals = cleaner.build_active_intervals(cues, pad_seconds=0.0)
     assert intervals == [(1.0, 2.0)]
+
+
+def test_active_intervals_use_visual_ocr_timing_instead_of_asr_timing():
+    cleaner = HardSubCleaner()
+    cues = [
+        SubtitleCue(
+            start=10.0,
+            end=13.0,
+            source_text="对白持续三秒",
+            ocr_confidence=0.96,
+            ocr_start=10.35,
+            ocr_end=11.80,
+            ocr_text="对白持续三秒",
+        )
+    ]
+    assert cleaner.build_active_intervals(cues, pad_seconds=0.0) == [(10.35, 11.8)]
+    assert cleaner._metrics["timing_source_explicit_ocr"] == 1
 
 
 def test_active_intervals_fallback_when_ocr_metadata_missing():
@@ -106,6 +126,27 @@ def test_fast_cleanup_preserves_pixels_outside_text_mask():
     assert np.array_equal(cleaned[outside], before[outside])
 
 
+def test_temporal_mask_refinement_removes_static_false_positive_area():
+    cleaner = HardSubCleaner(temporal_difference_threshold=12)
+    donor = np.full((120, 500, 3), 70, dtype=np.uint8)
+    current = donor.copy()
+
+    # Real subtitle glyphs differ from the clean donor.
+    cv2.rectangle(current, (180, 45), (190, 64), (245, 245, 245), -1)
+    cv2.rectangle(current, (205, 45), (215, 64), (245, 245, 245), -1)
+
+    candidate = np.zeros((120, 500), dtype=np.uint8)
+    candidate[42:68, 176:220] = 255
+    # Simulate a static bright object accidentally included by a source-only mask.
+    candidate[20:35, 40:80] = 255
+
+    refined, used, ratio = cleaner._refine_mask_from_donor(current, donor, candidate)
+    assert used
+    assert 0.30 <= ratio < 1.0
+    assert np.any(refined[42:68, 176:220] > 0)
+    assert not np.any(refined[20:35, 40:80] > 0)
+
+
 def test_quality_mode_uses_clean_temporal_donor_when_alignment_is_safe():
     cleaner = HardSubCleaner(
         crop_top_ratio=0.65,
@@ -113,6 +154,7 @@ def test_quality_mode_uses_clean_temporal_donor_when_alignment_is_safe():
         crop_left_ratio=0.06,
         crop_right_ratio=0.94,
         scene_cut_threshold=40.0,
+        temporal_local_score_threshold=30.0,
     )
     donor = _textured_frame()
     current = donor.copy()
@@ -134,3 +176,8 @@ def test_quality_mode_uses_clean_temporal_donor_when_alignment_is_safe():
     assert np.mean(np.abs(cleaned.astype(np.int16) - donor.astype(np.int16))) < np.mean(
         np.abs(current.astype(np.int16) - donor.astype(np.int16))
     )
+
+
+def test_blocked_ranges_are_never_used_as_temporal_donors():
+    assert HardSubCleaner._frame_in_ranges(100, [(90, 110)])
+    assert not HardSubCleaner._frame_in_ranges(120, [(90, 110)])
