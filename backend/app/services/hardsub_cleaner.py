@@ -45,7 +45,7 @@ class HardSubCleaner:
         temporal_difference_threshold: int = 14,
         temporal_local_score_threshold: float = 22.0,
         ocr_min_confidence: float = 0.35,
-        timing_pad_seconds: float = 0.04,
+        timing_pad_seconds: float = 0.12,
         geometry_enabled: bool = True,
         geometry_padding_px: int = 4,
         ffmpeg_bin: str = "ffmpeg",
@@ -343,6 +343,34 @@ class HardSubCleaner:
             return []
 
         pad = self.timing_pad_seconds if pad_seconds is None else pad_seconds
+
+        # Priority 1 (V7): Individual OCREvidence intervals
+        evidence_intervals: list[tuple[float, float]] = []
+        for cue in cues:
+            ev_list = getattr(cue, "ocr_evidence", None) or []
+            for ev in ev_list:
+                ev_text = (getattr(ev, "text", "") or "").strip()
+                if len(ev_text) > 1 and ev_text not in NOISE_FILTER:
+                    ev_st = float(getattr(ev, "start", 0.0))
+                    ev_en = float(getattr(ev, "end", 0.0))
+                    if ev_en > ev_st:
+                        evidence_intervals.append((max(0.0, ev_st - pad), ev_en + pad))
+
+        if evidence_intervals:
+            self._metrics["timing_source_ocr_evidence"] = len(evidence_intervals)
+            self._metrics["timing_source_explicit_ocr"] = 0
+            self._metrics["timing_source_legacy_ocr"] = 0
+            self._metrics["timing_source_fallback"] = 0
+            intervals = evidence_intervals
+            intervals.sort(key=lambda item: item[0])
+            merged: list[tuple[float, float]] = []
+            for start, end in intervals:
+                if not merged or start > merged[-1][1]:
+                    merged.append((start, end))
+                else:
+                    merged[-1] = (merged[-1][0], max(merged[-1][1], end))
+            return merged
+
         valid = [
             cue
             for cue in cues
@@ -816,7 +844,10 @@ class HardSubCleaner:
                     self._metrics.get("fallback_inpaint_frames", 0)
                 ) + 1
 
-        cleaned[y1:y2, x1:x2] = cleaned_roi
+        mask_bool = mask_roi > 0
+        roi_target = sub_roi.copy()
+        roi_target[mask_bool] = cleaned_roi[mask_bool]
+        cleaned[y1:y2, x1:x2] = roi_target
         return cleaned, True
 
     def _read_frame_at(self, cap: cv2.VideoCapture, frame_idx: int) -> np.ndarray | None:
@@ -1007,16 +1038,32 @@ class HardSubCleaner:
                     frame_idx += 1
                     continue
 
-                # Find active OCR regions for this timestamp
+                # Find active OCR regions for this timestamp (Per-evidence in V7)
                 active_regions: list[OCRRegion] = []
                 for cue in cues_list:
-                    c_start = float(cue.ocr_start if cue.ocr_start is not None else cue.start)
-                    c_end = float(cue.ocr_end if cue.ocr_end is not None else cue.end)
-                    if (c_start - pad) <= timestamp <= (c_end + pad):
-                        for r in cue.ocr_regions:
-                            r_pts = r.get("points") if isinstance(r, dict) else getattr(r, "points", [])
-                            if r_pts:
-                                active_regions.append(r)
+                    ev_list = getattr(cue, "ocr_evidence", None) or []
+                    if ev_list:
+                        for ev in ev_list:
+                            ev_st = float(getattr(ev, "start", 0.0))
+                            ev_en = float(getattr(ev, "end", 0.0))
+                            if (ev_st - pad) <= timestamp <= (ev_en + pad):
+                                for r in (getattr(ev, "regions", None) or []):
+                                    r_pts = r.get("points") if isinstance(r, dict) else getattr(r, "points", [])
+                                    if r_pts:
+                                        active_regions.append(r)
+                        if not active_regions and (float(cue.start) - pad) <= timestamp <= (float(cue.end) + pad):
+                            for r in cue.ocr_regions:
+                                r_pts = r.get("points") if isinstance(r, dict) else getattr(r, "points", [])
+                                if r_pts:
+                                    active_regions.append(r)
+                    else:
+                        c_start = float(cue.ocr_start if cue.ocr_start is not None else cue.start)
+                        c_end = float(cue.ocr_end if cue.ocr_end is not None else cue.end)
+                        if (c_start - pad) <= timestamp <= (c_end + pad):
+                            for r in cue.ocr_regions:
+                                r_pts = r.get("points") if isinstance(r, dict) else getattr(r, "points", [])
+                                if r_pts:
+                                    active_regions.append(r)
 
                 temporal_donors: list[np.ndarray] = []
                 if donor_cap is not None:

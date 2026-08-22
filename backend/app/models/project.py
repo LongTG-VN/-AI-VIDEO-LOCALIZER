@@ -7,6 +7,24 @@ from uuid import uuid4
 from pydantic import BaseModel, Field
 
 
+class OCRRegion(BaseModel):
+    text: str | None = None
+    confidence: float | None = None
+    points: list[list[float]] = Field(default_factory=list)  # normalized [0, 1] relative to full frame: [[x, y], ...]
+
+
+class OCREvidence(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid4()))
+    text: str
+    confidence: float | None = None
+    start: float = Field(ge=0)
+    end: float = Field(gt=0)
+    regions: list[OCRRegion] = Field(default_factory=list)
+    matched_span_start: int | None = None
+    matched_span_end: int | None = None
+    match_score: float | None = None
+
+
 class SubtitleCue(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid4()))
     start: float = Field(ge=0)
@@ -21,25 +39,20 @@ class SubtitleCue(BaseModel):
     asr_confidence: float | None = Field(default=None, ge=0, le=1)
     ocr_confidence: float | None = Field(default=None, ge=0, le=1)
     # Visual hard-sub timing is intentionally preserved independently from the
-    # ASR-backed dialogue timing used by the rest of the application.  The
+    # ASR-backed dialogue timing used by the rest of the application. The
     # cleaner must follow what is actually visible on screen, not how long the
     # spoken utterance lasts.
     ocr_start: float | None = Field(default=None, ge=0)
     ocr_end: float | None = Field(default=None, gt=0)
     ocr_text: str | None = None
     ocr_regions: list[OCRRegion] = Field(default_factory=list)
+    ocr_evidence: list[OCREvidence] = Field(default_factory=list)
     translation_confidence: float | None = Field(default=None, ge=0, le=1)
     relationship_confidence: float | None = Field(default=None, ge=0, le=1)
     needs_review: bool = False
     review_notes: str | None = None
     critic_score: float | None = None
     critic_flags: list[str] = Field(default_factory=list)
-
-
-class OCRRegion(BaseModel):
-    text: str | None = None
-    confidence: float | None = None
-    points: list[list[float]] = Field(default_factory=list)  # normalized [0, 1] relative to full frame: [[x, y], ...]
 
 
 class Character(BaseModel):
