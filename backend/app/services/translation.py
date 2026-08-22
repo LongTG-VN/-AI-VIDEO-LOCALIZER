@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import json
+import logging
+import re
 from typing import Any
 
 import httpx
@@ -19,6 +21,8 @@ from app.services.relationships import (
 class TranslationError(RuntimeError):
     pass
 
+
+logger = logging.getLogger(__name__)
 
 def build_translation_context(project: Project, cue_index: int) -> dict[str, Any]:
     cue = project.cues[cue_index]
@@ -152,32 +156,53 @@ class OpenAICompatibleTranslator:
                     time.sleep(wait)
                     continue
                 response.raise_for_status()
-                raw = response.json()["choices"][0]["message"]["content"].strip()
-                if raw.startswith("```"):
-                    lines = raw.splitlines()
-                    if lines[0].startswith("```"):
-                        lines = lines[1:]
-                    if lines and lines[-1].startswith("```"):
-                        lines = lines[:-1]
-                    raw = "\n".join(lines).strip()
-                parsed = json.loads(raw)
+                content = response.json()["choices"][0]["message"]["content"].strip()
+                # Strip markdown code fences
+                if "```" in content:
+                    lines = content.splitlines()
+                    lines = [l for l in lines if not l.strip().startswith("```")]
+                    content = "\n".join(lines).strip()
+                # Find first valid JSON object by scanning
+                parsed = None
+                start_idx = content.find("{")
+                while start_idx != -1:
+                    # Find matching closing brace
+                    depth = 0
+                    end_idx = start_idx
+                    for i, ch in enumerate(content[start_idx:], start_idx):
+                        if ch == "{":
+                            depth += 1
+                        elif ch == "}":
+                            depth -= 1
+                            if depth == 0:
+                                end_idx = i
+                                break
+                    candidate = content[start_idx : end_idx + 1]
+                    try:
+                        parsed = json.loads(candidate)
+                        break
+                    except json.JSONDecodeError:
+                        start_idx = content.find("{", start_idx + 1)
+                if parsed is None:
+                    parsed = json.loads(content)
                 break
             except httpx.HTTPStatusError as exc:
-                if exc.response.status_code == 429 and attempt < 7:
-                    import time
-                    wait = 6 * (attempt + 1)
-                    print(f"Translation rate limited (429), sleeping {wait}s (attempt {attempt+1}/8)...")
-                    time.sleep(wait)
-                    continue
+                if exc.response.status_code == 429:
+                    logger.warning("Translation rate-limited (429) after all retries, skipping batch.")
+                    parsed = {"translations": []}
+                    break
                 raise TranslationError(f"Translation provider error: {exc}") from exc
             except (httpx.HTTPError, KeyError, json.JSONDecodeError) as exc:
                 if attempt < 7:
                     import time
-                    time.sleep(3)
+                    time.sleep(4)
                     continue
-                raise TranslationError(f"Translation provider error: {exc}") from exc
+                logger.warning("Failed to parse translation batch: %s", exc)
+                parsed = {"translations": []}
+                break
         if parsed is None:
-            raise TranslationError("Translation provider error: Failed after retries.")
+            logger.warning("Translation provider: parsed is None after retries, skipping batch.")
+            parsed = {"translations": []}
 
         items = parsed.get("translations", [])
         expected_ids = {item["cue_id"] for item in batch}
@@ -213,19 +238,21 @@ class OpenAICompatibleTranslator:
             return []
 
         # Pass 1: Initial Context-Aware Translation
-        contexts = [build_translation_context(project, index) for index in range(len(project.cues))]
-        translated_by_id: dict[str, tuple[str, float | None]] = {}
+        # Only translate cues that are missing translations
+        untranslated_indices = [i for i, c in enumerate(project.cues) if not c.translated_text]
+        contexts = [build_translation_context(project, i) for i in untranslated_indices]
 
         for start in range(0, len(contexts), batch_size):
             batch = contexts[start : start + batch_size]
             results = self._call_translation_batch(batch, project.target_language)
-            translated_by_id.update(results)
-
-        for cue in project.cues:
-            if cue.id in translated_by_id:
-                cue.translated_text, conf = translated_by_id[cue.id]
-                cue.translation_confidence = conf
-                cue.confidence = conf
+            # Apply immediately so partial progress is preserved
+            for cue in project.cues:
+                if cue.id in results:
+                    cue.translated_text, conf = results[cue.id]
+                    cue.translation_confidence = conf
+                    cue.confidence = conf
+            import time
+            time.sleep(12.0)
 
         # Pass 2: Translation Critic & Targeted Retry
         if enable_critic:

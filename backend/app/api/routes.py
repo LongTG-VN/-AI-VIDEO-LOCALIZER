@@ -14,6 +14,7 @@ from app.services.context_analyzer import ContextAnalyzer, ContextAnalysisError
 from app.services.fusion import fuse_cues
 from app.services.media import MediaError, MediaService
 from app.services.ocr.factory import create_ocr_engine
+from app.services.ocr.visual_tracker import VisualBoundaryTracker
 from app.services.renderer import RenderError, Renderer
 from app.services.store import ProjectStore
 from app.services.subtitles import parse_srt, to_ass, to_srt
@@ -155,6 +156,9 @@ def analyze_project(project_id: str) -> Project:
         ocr_engine = _create_project_ocr_engine()
         asr_cues = asr_engine.transcribe(audio_path, project.source_language)
         ocr_cues = ocr_engine.extract_subtitles(Path(project.source_video_path))
+        if ocr_cues:
+            tracker = VisualBoundaryTracker()
+            ocr_cues = tracker.refine_cues(Path(project.source_video_path), ocr_cues)
         project.cues = fuse_cues(asr_cues, ocr_cues) if ocr_cues else asr_cues
     except (MediaError, RuntimeError, NotImplementedError, ValueError) as exc:
         raise HTTPException(status_code=500, detail=str(exc)) from exc

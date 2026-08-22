@@ -45,7 +45,7 @@ class HardSubCleaner:
         temporal_difference_threshold: int = 14,
         temporal_local_score_threshold: float = 22.0,
         ocr_min_confidence: float = 0.35,
-        timing_pad_seconds: float = 0.15,
+        timing_pad_seconds: float = 0.04,
         geometry_enabled: bool = True,
         geometry_padding_px: int = 4,
         ffmpeg_bin: str = "ffmpeg",
@@ -1009,11 +1009,10 @@ class HardSubCleaner:
 
                 # Find active OCR regions for this timestamp
                 active_regions: list[OCRRegion] = []
-                pad_eff = max(0.12, pad)
                 for cue in cues_list:
-                    c_start = min(float(cue.ocr_start), float(cue.start)) if cue.ocr_start is not None else float(cue.start)
-                    c_end = max(float(cue.ocr_end), float(cue.end)) if cue.ocr_end is not None else float(cue.end)
-                    if (c_start - pad_eff) <= timestamp <= (c_end + pad_eff):
+                    c_start = float(cue.ocr_start if cue.ocr_start is not None else cue.start)
+                    c_end = float(cue.ocr_end if cue.ocr_end is not None else cue.end)
+                    if (c_start - pad) <= timestamp <= (c_end + pad):
                         for r in cue.ocr_regions:
                             r_pts = r.get("points") if isinstance(r, dict) else getattr(r, "points", [])
                             if r_pts:
