@@ -1,0 +1,123 @@
+{
+  "project_id": "69cce247-7567-4b4a-a82d-ff0bfb4be448",
+  "output_path": "D:\\codex\\FINAL_VI_QUALITY_V5.mp4",
+  "render_duration": 58.51,
+  "metrics": {
+    "mode": "auto",
+    "frames_processed": 2703,
+    "frames_inpainted": 2248,
+    "frames_bypassed": 455,
+    "inpaint_rate": 83.2,
+    "bypass_rate": 16.8,
+    "active_intervals": 35,
+    "timing_source_explicit_ocr": 61,
+    "timing_source_legacy_ocr": 0,
+    "timing_source_fallback": 0,
+    "geometry_cues": 61,
+    "geometry_regions": 62,
+    "geometry_frames": 2220,
+    "geometry_missing_fallback_frames": 56,
+    "geometry_mask_success": 2220,
+    "geometry_mask_fail": 56,
+    "geometry_temporal_frames": 1,
+    "geometry_telea_frames": 2219,
+    "avg_region_mask_coverage": 0.58,
+    "max_region_mask_coverage": 0.911,
+    "outline_pixels_added": 11037641,
+    "temporal_frames": 1,
+    "fallback_inpaint_frames": 2247,
+    "temporal_scene_rejects": 149,
+    "temporal_local_motion_rejects": 3,
+    "temporal_alignment_failures": 44,
+    "temporal_mask_refined": 1,
+    "temporal_mask_refine_rejects": 0,
+    "avg_temporal_score": 21.4,
+    "mask_rejected_coverage": 0,
+    "mask_rejected_no_components": 32,
+    "mask_rejected_no_text_row": 3,
+    "lossless_intermediate": true,
+    "clean_runtime": 49.67,
+    "fps_speed": 54.4,
+    "output_path": "D:\\codex\\-AI-VIDEO-LOCALIZER\\backend\\data\\renders\\.69cce247-7567-4b4a-a82d-ff0bfb4be448-render\\cleaned_video.mkv"
+  },
+  "utterance_metrics": {
+    "source_cues": 61,
+    "render_cues": 55,
+    "suppressed_duplicates": 0,
+    "merged_groups": 4,
+    "reduction_pct": 9.8,
+    "avg_duration": 1.17,
+    "median_duration": 0.99,
+    "avg_cps": 29.1,
+    "max_cps": 75.7,
+    "high_cps_count": 41
+  },
+  "re_ocr_results": {
+    "11.90s": {
+      "all_texts": [
+        "Cô áo con bi lech ròi."
+      ],
+      "chinese_residual": [],
+      "clean": true
+    },
+    "12.00s": {
+      "all_texts": [
+        "Có áo con bi lêch roi"
+      ],
+      "chinese_residual": [],
+      "clean": true
+    },
+    "15.80s": {
+      "all_texts": [
+        "Hôm nay con đi làm mát",
+        "mt hay đi d tic vy?"
+      ],
+      "chinese_residual": [],
+      "clean": true
+    },
+    "21.50s": {
+      "all_texts": [
+        "1"
+      ],
+      "chinese_residual": [],
+      "clean": true
+    },
+    "24.50s": {
+      "all_texts": [
+        "Quyên s ghi chép kinh",
+        "tévimôhôm qua,"
+      ],
+      "chinese_residual": [],
+      "clean": true
+    },
+    "56.00s": {
+      "all_texts": [],
+      "chinese_residual": [],
+      "clean": true
+    },
+    "69.50s": {
+      "all_texts": [
+        "Cô đãhurng thu cuc",
+        "song le ra thuc vê tôi."
+      ],
+      "chinese_residual": [],
+      "clean": true
+    },
+    "72.00s": {
+      "all_texts": [
+        "Ló'n lên",
+        "trong môt gia đinh bán đo an sáng"
+      ],
+      "chinese_residual": [],
+      "clean": true
+    },
+    "74.00s": {
+      "all_texts": [
+        "Bôn giòsáng",
+        "đã phái dây giúp nhào bôt."
+      ],
+      "chinese_residual": [],
+      "clean": true
+    }
+  }
+}

@@ -45,7 +45,7 @@ class HardSubCleaner:
         temporal_difference_threshold: int = 14,
         temporal_local_score_threshold: float = 22.0,
         ocr_min_confidence: float = 0.35,
-        timing_pad_seconds: float = 0.015,
+        timing_pad_seconds: float = 0.15,
         geometry_enabled: bool = True,
         geometry_padding_px: int = 4,
         ffmpeg_bin: str = "ffmpeg",
@@ -213,11 +213,12 @@ class HardSubCleaner:
         coverages: list[float] = []
         outline_added = 0
         bboxes: list[tuple[int, int, int, int]] = []
-        pad_x = max(8, self.geometry_padding_px + 4)
-        pad_y = max(4, self.geometry_padding_px)
+        pad_x = max(14, self.geometry_padding_px + 8)
+        pad_y = max(10, self.geometry_padding_px + 4)
 
         for region in regions:
-            if not region.points or len(region.points) < 3:
+            r_pts = region.get("points") if isinstance(region, dict) else getattr(region, "points", [])
+            if not r_pts or len(r_pts) < 3:
                 continue
 
             poly_pts = np.array(
@@ -226,7 +227,7 @@ class HardSubCleaner:
                         int(round(max(0.0, min(1.0, float(pt[0]))) * w)),
                         int(round(max(0.0, min(1.0, float(pt[1]))) * h)),
                     ]
-                    for pt in region.points
+                    for pt in r_pts
                     if len(pt) >= 2
                 ],
                 dtype=np.int32,
@@ -253,48 +254,28 @@ class HardSubCleaner:
             local_poly_mask = np.zeros((ph, pw), dtype=np.uint8)
             cv2.fillPoly(local_poly_mask, [local_poly], 255)
 
-            k_pad_x = 2 * pad_x + 1
-            k_pad_y = 2 * pad_y + 1
             local_poly_dilated = cv2.dilate(
                 local_poly_mask,
-                cv2.getStructuringElement(cv2.MORPH_RECT, (k_pad_x, k_pad_y)),
+                cv2.getStructuringElement(cv2.MORPH_RECT, (15, 11)),
                 iterations=1,
             )
 
-            # 1. Stroke interior seed detection
+            # 1. Stroke interior seed detection (solid glyph seed)
             gray = cv2.cvtColor(patch, cv2.COLOR_BGR2GRAY)
-            local_mean = cv2.GaussianBlur(gray, (0, 0), sigmaX=2.0, sigmaY=2.0)
-            contrast = cv2.subtract(gray, local_mean)
-            gradient = cv2.morphologyEx(
-                gray,
-                cv2.MORPH_GRADIENT,
-                cv2.getStructuringElement(cv2.MORPH_RECT, (3, 3)),
-            )
-
-            bright = gray >= 140
-            high_contrast = contrast >= 8
-            strong_edge = gradient >= 10
-            seed = (bright & (high_contrast | strong_edge)).astype(np.uint8) * 255
-            seed = cv2.bitwise_and(seed, local_poly_dilated)
+            seed = ((gray >= 135) & (local_poly_dilated > 0)).astype(np.uint8) * 255
 
             # 2. Outline / Dark Stroke Extension
-            # Dilate seed to capture dark outline/stroke contours while staying inside local polygon
+            # Dilate solid seed by (7, 7) ellipse x 2 iterations to engulf full drop-shadow & outer contour
             dilated_seed = cv2.dilate(
                 seed,
-                cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (5, 5)),
-                iterations=1,
+                cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (7, 7)),
+                iterations=2,
             )
-            dark_outline = (gray <= (local_mean.astype(float) - 4.0)) | (gradient >= 10)
-            outline_mask = cv2.bitwise_and(
-                ((dilated_seed > 0) & (dark_outline | (seed > 0))).astype(np.uint8) * 255,
-                local_poly_dilated,
-            )
+            region_mask = cv2.bitwise_and(dilated_seed, local_poly_dilated)
 
             initial_white_count = int(np.sum(seed > 0))
-            total_outline_count = int(np.sum(outline_mask > 0))
+            total_outline_count = int(np.sum(region_mask > 0))
             outline_added += max(0, total_outline_count - initial_white_count)
-
-            region_mask = outline_mask
 
             # 3. Temporal difference guidance if clean donor candidate is available
             if temporal_donors:
@@ -315,11 +296,15 @@ class HardSubCleaner:
             )
             region_mask = cv2.bitwise_and(region_mask, local_poly_dilated)
 
-            # Coverage check per local OCR region
+            # Coverage check per local OCR region (Guard against over-inpaint)
             cov = float(np.mean(region_mask > 0))
-            if cov > 0.85:
-                # Do NOT inpaint entire bbox! Keep tight glyph seed
-                region_mask = cv2.bitwise_and(seed, local_poly_mask)
+            if cov > 0.75:
+                tight_seed = cv2.dilate(
+                    seed,
+                    cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (3, 3)),
+                    iterations=1,
+                )
+                region_mask = cv2.bitwise_and(region_mask, tight_seed)
                 cov = float(np.mean(region_mask > 0))
 
             if cov > 0.0:
@@ -525,6 +510,17 @@ class HardSubCleaner:
             ) + 1
             return None, global_score, local_score
 
+        # Donor local color/luma validation
+        if int(np.sum(ring_pixels)) >= 20:
+            curr_luma = current_gray[ring_pixels]
+            donor_luma = aligned_gray[ring_pixels]
+            luma_diff = abs(float(np.mean(curr_luma)) - float(np.mean(donor_luma)))
+            if luma_diff > 16.0:
+                self._metrics["donor_local_color_rejects"] = int(
+                    self._metrics.get("donor_local_color_rejects", 0)
+                ) + 1
+                return None, global_score, local_score
+
         return aligned, global_score, local_score
 
     def _refine_mask_from_donor(
@@ -623,6 +619,24 @@ class HardSubCleaner:
             0,
             255,
         ).astype(np.uint8)
+
+        # Black-blob guard: inspect cleaned mask area vs surroundings
+        cleaned_gray = cv2.cvtColor(result, cv2.COLOR_BGR2GRAY)
+        mask_pixels = refined_mask > 0
+        ring = self._local_ring(refined_mask)
+        surround_pixels = ring > 0
+        if int(np.sum(mask_pixels)) >= 15 and int(np.sum(surround_pixels)) >= 15:
+            cleaned_mean = float(np.mean(cleaned_gray[mask_pixels]))
+            surround_mean = float(np.mean(cleaned_gray[surround_pixels]))
+            black_ratio_cleaned = float(np.mean(cleaned_gray[mask_pixels] < 25))
+            black_ratio_surround = float(np.mean(cleaned_gray[surround_pixels] < 25))
+            if (surround_mean - cleaned_mean > 30.0) or (black_ratio_cleaned > 0.35 and black_ratio_surround < 0.10):
+                # Fallback to Telea to prevent black blobs
+                result = fast
+                self._metrics["black_blob_guard_rejects"] = int(
+                    self._metrics.get("black_blob_guard_rejects", 0)
+                ) + 1
+
         return result, True, best_local_score
 
     def clean_frame(
@@ -669,7 +683,7 @@ class HardSubCleaner:
                     return frame, False
 
                 bx, by, bw, bh = cv2.boundingRect(pts)
-                pad_box = max(2, self.geometry_padding_px)
+                pad_box = 16
                 bx1 = max(0, bx - pad_box)
                 by1 = max(0, by - pad_box)
                 bx2 = min(w, bx + bw + pad_box)
@@ -714,7 +728,41 @@ class HardSubCleaner:
                             int(self._metrics.get("fallback_inpaint_frames", 0)) + 1
                         )
 
-                cleaned[by1:by2, bx1:bx2] = cleaned_patch
+                # Cleanup verification & second-pass refinement inside patch
+                res_gray = cv2.cvtColor(cleaned_patch, cv2.COLOR_BGR2GRAY)
+                res_local_mean = cv2.GaussianBlur(res_gray, (0, 0), sigmaX=2.0, sigmaY=2.0)
+                res_edge = cv2.morphologyEx(
+                    res_gray,
+                    cv2.MORPH_GRADIENT,
+                    cv2.getStructuringElement(cv2.MORPH_RECT, (3, 3)),
+                )
+                res_dark = (res_gray < (res_local_mean.astype(float) - 10.0)) & (res_edge >= 12)
+                res_bright = (res_gray >= 148) & (res_edge >= 12)
+                residual_mask = (res_dark | res_bright).astype(np.uint8) * 255
+                residual_mask = cv2.bitwise_and(residual_mask, mask_patch)
+
+                if int(np.sum(residual_mask > 0)) >= 15:
+                    residual_mask_dilated = cv2.dilate(
+                        residual_mask,
+                        cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (3, 3)),
+                        iterations=1,
+                    )
+                    cleaned_patch = cv2.inpaint(
+                        cleaned_patch,
+                        residual_mask_dilated,
+                        inpaintRadius=self.inpaint_radius,
+                        flags=cv2.INPAINT_TELEA,
+                    )
+                    mask_patch = cv2.bitwise_or(mask_patch, residual_mask_dilated)
+                    self._metrics["geometry_second_pass_frames"] = (
+                        int(self._metrics.get("geometry_second_pass_frames", 0)) + 1
+                    )
+
+                # Exact outside mask preservation: bit-identical background outside mask
+                mask_bool = mask_patch > 0
+                patch_target = frame[by1:by2, bx1:bx2].copy()
+                patch_target[mask_bool] = cleaned_patch[mask_bool]
+                cleaned[by1:by2, bx1:bx2] = patch_target
                 return cleaned, True
             else:
                 self._metrics["geometry_mask_fail"] = int(self._metrics.get("geometry_mask_fail", 0)) + 1
@@ -961,12 +1009,14 @@ class HardSubCleaner:
 
                 # Find active OCR regions for this timestamp
                 active_regions: list[OCRRegion] = []
+                pad_eff = max(0.12, pad)
                 for cue in cues_list:
-                    c_start = cue.ocr_start if cue.ocr_start is not None else cue.start
-                    c_end = cue.ocr_end if cue.ocr_end is not None else cue.end
-                    if (c_start - pad) <= timestamp <= (c_end + pad):
+                    c_start = min(float(cue.ocr_start), float(cue.start)) if cue.ocr_start is not None else float(cue.start)
+                    c_end = max(float(cue.ocr_end), float(cue.end)) if cue.ocr_end is not None else float(cue.end)
+                    if (c_start - pad_eff) <= timestamp <= (c_end + pad_eff):
                         for r in cue.ocr_regions:
-                            if r.points:
+                            r_pts = r.get("points") if isinstance(r, dict) else getattr(r, "points", [])
+                            if r_pts:
                                 active_regions.append(r)
 
                 temporal_donors: list[np.ndarray] = []

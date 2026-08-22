@@ -63,10 +63,14 @@ def fuse_cues(asr_cues: list[SubtitleCue], ocr_cues: list[SubtitleCue]) -> list[
         text = best.source_text if choose_ocr else asr.source_text
         evidence = [value for value in [asr_conf, ocr_conf] if value is not None]
         confidence = min(1.0, max(evidence, default=0.0) + (0.05 if similarity >= 0.85 else 0.0))
+        cue_start = asr.start
+        if best.ocr_start is not None and best.ocr_start > asr.start + 0.30:
+            cue_start = best.ocr_start
+
         fused.append(
             SubtitleCue(
                 id=asr.id,
-                start=asr.start,
+                start=cue_start,
                 end=asr.end,
                 speaker_id=asr.speaker_id,
                 addressee_id=asr.addressee_id,

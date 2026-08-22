@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import re
 from dataclasses import dataclass, field
+from difflib import SequenceMatcher
 from typing import Any
 
 from app.models.project import SubtitleCue
@@ -12,26 +13,15 @@ NOISE_SUBTITLE_PATTERNS = {
     "...", "西", "T", "Y", "1", "0", "工", "国", "LAA",
 }
 
-# Polish rules for cinematic Vietnamese subtitle flow
-POLISH_REPLACEMENTS = [
-    (r"Tần Phù Chi,?\s+Quyển sổ ghi chép kinh tế vĩ mô hôm qua,?\s+con đã đọc xong chưa\??", "Tần Phù Chi, quyển sổ kinh tế vĩ mô hôm qua,\ncon đọc xong chưa?"),
-    (r"Tần Phù Chi\s+Quyển sổ ghi chép kinh tế vĩ mô hôm qua,?\s+con đã đọc xong chưa\??", "Tần Phù Chi, quyển sổ kinh tế vĩ mô hôm qua,\ncon đọc xong chưa?"),
-    (r"Sự tồn tại của em,?\s+đã kéo giảm hiệu suất làm việc của Gia đình họ Tần\.?", "Sự tồn tại của em làm giảm\nhiệu suất nhà họ Tần."),
-    (r"Còn tôi thì\.{2,3}\s+lớn lên trong một gia đình", "Còn tôi lớn lên trong một gia đình"),
-    (r"Quyển sổ ghi chép kinh tế vĩ mô hôm qua,?\s+con đã đọc xong chưa\??", "Quyển sổ kinh tế vĩ mô hôm qua,\ncon đọc xong chưa?"),
-    (r"Trong mắt mẹ,?\s+tôi không phải là con gái\.?", "Trong mắt mẹ, tôi không phải con gái,"),
-    (r"Mà chỉ là một món hàng cần được mài giũa không ngừng\.?", "mà chỉ là món hàng cần mài giũa."),
-    (r"Ngay cả thời gian tôi ăn cơm,?\s+ông ấy cũng đánh giá hiệu suất đầu tư của tôi\.?", "Ngay cả lúc tôi ăn cơm,\nông ấy cũng đánh giá hiệu suất đầu tư."),
-    (r"Mẹ tôi\.?\s+Tống Tri Tuyết\.?", "Mẹ tôi là Tống Tri Tuyết."),
-    (r"Anh trai tôi\.?\s+Một quái vật tư bản bước ra từ trang bìa tạp chí tài chính\.?", "Anh trai tôi, quái vật tư bản\nbước ra từ bìa tạp chí tài chính."),
-    (r"Mỗi sáng sáu giờ,?\s+anh ấy xuất hiện đúng giờ,?\s+đúng giờ nói với tôi một câu,?\s+rồi đúng giờ biến mất\.?", "Mỗi sáng 6 giờ xuất hiện đúng giờ,\nnói một câu rồi biến mất."),
-    (r"Nhưng bây giờ tôi\.{2,3}\s+ăn hết chiếc đùi gà đã lén giấu đi này thôi\.?", "Nhưng bây giờ tôi chỉ muốn ăn hết\nchiếc đùi gà lén giấu đi này."),
-    (r"Tôi là Mạnh Kinh Xuân\.?\s+Mới là con gái ruột của Gia đình họ Tần\.?", "Tôi là Mạnh Kinh Xuân,\nmới là con gái ruột của nhà họ Tần."),
-    (r"Hơi nguội rồi\.?\s+Nhưng vẫn ăn được\.?", "Hơi nguội rồi, nhưng vẫn ăn được."),
-    (r"Cô đã đánh cắp 18 năm của tôi\.?\s+Lương tâm cô không cắn rứt sao\??", "Cô đánh cắp 18 năm của tôi,\nlương tâm cô không cắn rứt sao?"),
-    (r"Chị gái\.?\s+Chị gái ruột\.?", "Chị gái! Chị ruột của em ơi!"),
-    (r"Mỉm cười nâng ly\.?\s+Gật đầu mỉm cười\.?", "Mỉm cười nâng ly, gật đầu chào khách."),
-    (r"Gia đình họ Tần", "nhà họ Tần"),
+NOISE_REPLACE_PATTERNS = [
+    r"\bMILK\s+MILK\b",
+    r"\bMILK\b",
+    r"\b10:50\b",
+    r"\b10\.5o\b",
+    r"\bIN-CN\b",
+    r"\bCN-IN\b",
+    r"\b755135\b",
+    r"\bCN\b",
 ]
 
 
@@ -46,6 +36,9 @@ class RenderSubtitleCue:
     translated_text: str
     render_text: str
     speaker_id: str | None = None
+    speaker_character_id: str | None = None
+    source_starts: list[float] = field(default_factory=list)
+    source_ends: list[float] = field(default_factory=list)
     cps: float = 0.0
 
 
@@ -58,15 +51,39 @@ def clean_text_for_comparison(text: str) -> str:
 
 
 def clean_vietnamese_typography(text: str) -> str:
-    """Cleans unnecessary punctuation, applies movie polish, and normalizes spacing."""
+    """Applies clean, domain-generic Vietnamese subtitle typography normalization.
+
+    Strictly avoids character names, dialogue-specific replacements, or story rewrites.
+    """
     res = text.strip()
-    for noise in ["MILK MILK", "MILK", "10:50", "10.5o", "IN-CN", "755135", "CN"]:
-        res = res.replace(noise, "")
-    for pat, repl in POLISH_REPLACEMENTS:
-        res = re.sub(pat, repl, res, flags=re.IGNORECASE)
-    res = re.sub(r",\s*,+", ",", res)
+
+    # 1. Remove isolated OCR noise tokens
+    for pat in NOISE_REPLACE_PATTERNS:
+        res = re.sub(pat, "", res, flags=re.IGNORECASE)
+
+    # 2. Punctuation normalization
+    res = re.sub(r",\s*,+", ",", res)  # duplicate commas
+    res = re.sub(r"\.{4,}", "...", res)  # 4+ dots to ellipsis
+    res = re.sub(r"\s+([,!?;:])", r"\1", res)  # remove space before punctuation (not period)
+    res = re.sub(r"\s+\.(?!\d)", ".", res)  # remove space before period (not decimal)
+    res = re.sub(r"([,!?;:])(?=[A-Za-zÀ-ỹ0-9])", r"\1 ", res)  # space after comma/colon/etc
+    res = re.sub(r"\.(?=[A-Za-zÀ-ỹ])", ". ", res)  # space after period if followed by letter (preserves 0.3)
+
+    # 3. Spacing inside brackets/quotes
+    res = re.sub(r"\(\s+", "(", res)
+    res = re.sub(r"\s+\)", ")", res)
+
+    # 4. Collapse multiple whitespace
     res = re.sub(r"\s+", " ", res).strip()
-    return res
+
+    # 5. Clean leading stray punctuation (e.g. leading comma or dot)
+    res = re.sub(r"^[,.:;]\s*", "", res)
+
+    # 6. Ensure proper capitalization after terminal punctuation if single sentence
+    if res and res[0].islower():
+        res = res[0].upper() + res[1:]
+
+    return res.strip()
 
 
 def semantic_line_break(text: str, max_line_chars: int = 36) -> str:
@@ -122,7 +139,11 @@ def semantic_line_break(text: str, max_line_chars: int = 36) -> str:
 
 
 class UtteranceEngine:
-    """Groups raw speech/OCR fragments into coherent, readable movie subtitles."""
+    """Groups raw speech/OCR fragments into coherent, readable movie subtitles.
+
+    Adheres strictly to chronological source ordering, speaker/narration boundaries,
+    and generic typography rules.
+    """
 
     def __init__(
         self,
@@ -141,10 +162,10 @@ class UtteranceEngine:
         raw_cues: list[SubtitleCue],
         translated: bool = True,
     ) -> tuple[list[RenderSubtitleCue], dict[str, Any]]:
-        # 1. Sort cues
-        cues = sorted(raw_cues, key=lambda x: x.start)
+        # 1. Sort cues strictly by chronological (start, end)
+        cues = sorted(raw_cues, key=lambda x: (float(x.start), float(x.end)))
 
-        # 2. Filter noise and suppress duplicate/redundant fragments
+        # 2. Filter noise and suppress duplicate/redundant fragments with strong evidence
         filtered: list[dict[str, Any]] = []
         suppressed_count = 0
 
@@ -162,18 +183,45 @@ class UtteranceEngine:
             if filtered:
                 prev = filtered[-1]
                 prev_clean_src = clean_text_for_comparison(prev["source_text"])
-                prev_clean_tr = clean_text_for_comparison(prev["translated_text"])
 
-                # Exact duplicate or substring containment check
-                is_exact_dup = (clean_src == prev_clean_src or clean_tr == prev_clean_tr) and (c.start <= prev["end"] + 0.60)
-                is_src_sub = (clean_src in prev_clean_src or prev_clean_src.endswith(clean_src)) and (c.start <= prev["end"] + 0.50)
-                is_tr_sub = (clean_tr in prev_clean_tr or prev_clean_tr.endswith(clean_tr)) and (c.start <= prev["end"] + 0.50)
+                # Check temporal overlap
+                overlap = min(float(c.end), float(prev["end"])) - max(float(c.start), float(prev["start"]))
+                shortest_dur = max(0.01, min(float(c.end) - float(c.start), float(prev["end"]) - float(prev["start"])))
+                overlap_ratio = max(0.0, overlap / shortest_dur)
 
-                if is_exact_dup or is_src_sub or is_tr_sub:
-                    prev["end"] = max(prev["end"], float(c.end))
-                    prev["source_cue_ids"].append(c.id)
-                    suppressed_count += 1
-                    continue
+                # Check speaker compatibility (allow matching if one is an unassigned OCR fragment)
+                same_speaker = (
+                    (c.speaker_id is not None and c.speaker_id == prev.get("speaker_id"))
+                    or (c.speaker_character_id is not None and c.speaker_character_id == prev.get("speaker_character_id"))
+                    or (c.speaker_id is None and prev.get("speaker_id") is None)
+                )
+                same_or_unassigned = (
+                    same_speaker
+                    or (c.speaker_id is None and prev.get("speaker_id") is not None)
+                    or (c.speaker_id is not None and prev.get("speaker_id") is None)
+                )
+
+                # Similarity check on source text
+                src_sim = SequenceMatcher(None, clean_src, prev_clean_src).ratio()
+                is_exact_src_match = clean_src == prev_clean_src
+                is_contained_src = (
+                    (clean_src in prev_clean_src or prev_clean_src in clean_src)
+                    and min(len(clean_src), len(prev_clean_src)) >= 4
+                )
+
+                # Suppress ONLY if strong multi-factor evidence exists
+                if same_or_unassigned and (overlap_ratio >= 0.40 or abs(float(c.start) - float(prev["start"])) <= 0.35):
+                    if is_exact_src_match or (same_speaker and src_sim >= 0.85 and (is_contained_src or overlap_ratio >= 0.70)):
+                        prev["end"] = max(prev["end"], float(c.end))
+                        prev["source_cue_ids"].append(c.id)
+                        prev["source_starts"].append(float(c.start))
+                        prev["source_ends"].append(float(c.end))
+                        if not prev.get("speaker_id") and c.speaker_id:
+                            prev["speaker_id"] = c.speaker_id
+                        if not prev.get("speaker_character_id") and c.speaker_character_id:
+                            prev["speaker_character_id"] = c.speaker_character_id
+                        suppressed_count += 1
+                        continue
 
             filtered.append({
                 "id": c.id,
@@ -183,9 +231,14 @@ class UtteranceEngine:
                 "source_text": src,
                 "translated_text": tr,
                 "speaker_id": c.speaker_id,
+                "speaker_character_id": c.speaker_character_id,
+                "addressee_id": c.addressee_id,
+                "addressee_character_id": c.addressee_character_id,
+                "source_starts": [float(c.start)],
+                "source_ends": [float(c.end)],
             })
 
-        # 3. Multi-step Semantic Utterance Grouping
+        # 3. Multi-step Semantic Utterance Grouping (Generic Rules Only)
         utterance_groups: list[dict[str, Any]] = []
         i = 0
         merged_group_count = 0
@@ -195,60 +248,68 @@ class UtteranceEngine:
 
             while i < len(filtered) - 1:
                 nxt = filtered[i + 1]
-                gap = nxt["start"] - cur["end"]
+                gap = float(nxt["start"]) - float(cur["end"])
 
+                cur_char = cur.get("speaker_character_id")
+                nxt_char = nxt.get("speaker_character_id")
                 cur_spk = cur.get("speaker_id")
                 nxt_spk = nxt.get("speaker_id")
-                cur_src = cur["source_text"].strip()
-                nxt_src = nxt["source_text"].strip()
+                cur_addr = cur.get("addressee_id") or cur.get("addressee_character_id")
+                nxt_addr = nxt.get("addressee_id") or nxt.get("addressee_character_id")
+
+                # RULE 1: Speaker Compatibility (Canonical character preferred)
+                if cur_char and nxt_char and cur_char != nxt_char:
+                    break
+                if cur_spk and nxt_spk and cur_spk != nxt_spk and (not cur_char or not nxt_char or cur_char != nxt_char):
+                    break
+
+                # RULE 2: Dialogue vs Monologue / Narration Boundary Protection
+                # Never merge direct dialogue (with addressee) with monologue/narration (addressee is None)
+                if (cur_addr is not None and nxt_addr is None) or (cur_addr is None and nxt_addr is not None):
+                    break
+                if cur_addr is not None and nxt_addr is not None and cur_addr != nxt_addr:
+                    break
+
+                # RULE 3: Time Proximity
+                near_time = gap <= self.max_utterance_gap or gap <= 0.20
+
+                # RULE 4: Guardrails on Duration and Text Length
+                raw_combined_tr = f"{cur['translated_text'].strip()} {nxt['translated_text'].strip()}"
+                within_limits = (len(raw_combined_tr) <= 75) and (max(cur["end"], nxt["end"]) - cur["start"] <= 5.2)
+
+                if not (near_time and within_limits):
+                    break
+
+                # RULE 5: Sentence Completeness and Continuation Signals
                 cur_tr = cur["translated_text"].strip()
                 nxt_tr = nxt["translated_text"].strip()
 
-                # Speaker compatibility (allow inheritance if speaker is unknown)
-                same_speaker = (
-                    (cur_spk == nxt_spk)
-                    or (nxt_spk is None or nxt_spk == "unknown")
-                    or (cur_spk is None or cur_spk == "unknown")
-                    or (cur_spk in {"speaker_1", "speaker_8"} and nxt_spk in {"speaker_1", "speaker_8"})
+                cur_ends_terminal = bool(re.search(r"[.!?]$", cur_tr))
+                cur_ends_incomplete = bool(re.search(r"[,…—–-]$", cur_tr)) or (not cur_ends_terminal)
+                nxt_starts_lower = bool(nxt_tr and nxt_tr[0].islower())
+                nxt_starts_conjunction = bool(re.match(r"^(mà|và|hoặc|thì|đã|được|để|trong|nhưng|hôm|ngày|thời)\b", nxt_tr, flags=re.IGNORECASE))
+
+                overlap_amount = max(0.0, float(cur["end"]) - float(nxt["start"]))
+                shortest = max(0.01, min(float(cur["end"]) - float(cur["start"]), float(nxt["end"]) - float(nxt["start"])))
+                is_heavy_overlap = (overlap_amount / shortest) >= 0.35
+
+                can_merge = (
+                    (cur_ends_incomplete or nxt_starts_lower or nxt_starts_conjunction or is_heavy_overlap)
+                    and not (cur_ends_terminal and not (is_heavy_overlap or nxt_starts_lower))
                 )
-                near_time = gap <= self.max_utterance_gap or gap <= 0.25
-
-                # Guardrails: max length & max duration (measured on polished text)
-                raw_combined = f"{cur_tr} {nxt_tr}"
-                polished_len = len(clean_vietnamese_typography(raw_combined))
-                within_limits = (polished_len <= 78) and (max(cur["end"], nxt["end"]) - cur["start"] <= 5.0)
-
-                can_merge = False
-                if same_speaker and near_time and within_limits:
-                    is_title_tag = cur_src in {"秦扶栀", "宋知雪", "我妈", "我哥", "我爸"} and (nxt["start"] - cur["start"] <= 0.80)
-
-                    incomplete_zh = any(cur_src.endswith(s) for s in ["笔记", "我妈", "时间", "存在", "现在", "而我", "孟惊春", "凉了", "十八年", "俺姐", "举杯", "微笑", "出现", "一句", "女儿", "春", "栀"])
-                    continues_zh = any(nxt_src.startswith(s) for s in ["看完了", "宋知雪", "都在", "拉低", "只想", "在一个", "才是", "但还", "你良心", "俺亲姐", "点头", "准时", "然后", "只有"])
-
-                    incomplete_vi = (
-                        cur_tr.endswith(",") or cur_tr.endswith("...") or cur_tr.endswith("tôi.") or cur_tr.endswith("em,")
-                        or cur_tr.endswith("thì...") or cur_tr.endswith("Xuân.") or cur_tr.endswith("ly.") or cur_tr.endswith("giờ,")
-                        or cur_tr.endswith("gái.") or cur_tr.endswith("Tuyển") or cur_tr.endswith("Phù Chi") or cur_tr.endswith("Chi.")
-                    )
-                    continues_vi = (
-                        nxt_tr[0].islower() or nxt_tr.startswith("con") or nxt_tr.startswith("đã") or nxt_tr.startswith("ông")
-                        or nxt_tr.startswith("Mới") or nxt_tr.startswith("lớn") or nxt_tr.startswith("Nhưng") or nxt_tr.startswith("Lương")
-                        or nxt_tr.startswith("Tống") or nxt_tr.startswith("Gật") or nxt_tr.startswith("đúng") or nxt_tr.startswith("rồi") or nxt_tr.startswith("Mà")
-                    )
-
-                    overlap_amount = max(0.0, cur["end"] - nxt["start"])
-                    is_heavy_overlap = overlap_amount >= 0.40 * min(cur["end"] - cur["start"], nxt["end"] - nxt["start"])
-
-                    if is_title_tag or incomplete_zh or continues_zh or incomplete_vi or continues_vi or is_heavy_overlap:
-                        can_merge = True
 
                 if can_merge:
-                    cur["source_text"] = f"{cur['source_text']} {nxt['source_text']}"
-                    cur["translated_text"] = f"{cur['translated_text']} {nxt['translated_text']}"
-                    cur["source_cue_ids"] = cur["source_cue_ids"] + nxt["source_cue_ids"]
+                    # Invariant: Concat in strict chronological source order
+                    cur["source_text"] = f"{cur['source_text'].strip()} {nxt['source_text'].strip()}"
+                    cur["translated_text"] = f"{cur['translated_text'].strip()} {nxt['translated_text'].strip()}"
+                    cur["source_cue_ids"].extend(nxt["source_cue_ids"])
+                    cur["source_starts"].extend(nxt["source_starts"])
+                    cur["source_ends"].extend(nxt["source_ends"])
                     cur["end"] = max(cur["end"], nxt["end"])
                     if not cur.get("speaker_id") or cur.get("speaker_id") == "unknown":
                         cur["speaker_id"] = nxt_spk
+                    if not cur.get("speaker_character_id"):
+                        cur["speaker_character_id"] = nxt_char
                     merged_group_count += 1
                     i += 1
                 else:
@@ -287,6 +348,10 @@ class UtteranceEngine:
 
             cps = round(len(polished.replace("\n", "").replace(r"\N", "")) / max(0.1, dur), 1)
 
+            # Assert timeline invariants
+            if r_start > r_end:
+                r_end = round(r_start + 0.20, 3)
+
             render_cues.append(
                 RenderSubtitleCue(
                     render_id=f"render_{idx:03d}",
@@ -297,9 +362,17 @@ class UtteranceEngine:
                     translated_text=u["translated_text"],
                     render_text=render_text,
                     speaker_id=u.get("speaker_id"),
+                    speaker_character_id=u.get("speaker_character_id"),
+                    source_starts=u.get("source_starts", [r_start]),
+                    source_ends=u.get("source_ends", [r_end]),
                     cps=cps,
                 )
             )
+
+        # 5. Verify timeline monotonic ordering invariant
+        for k in range(len(render_cues) - 1):
+            assert render_cues[k].start <= render_cues[k].end, f"Invalid duration at cue {render_cues[k].render_id}"
+            assert render_cues[k].end <= render_cues[k + 1].start + 1e-4, f"Overlap at cue {render_cues[k].render_id}"
 
         durations = [rc.end - rc.start for rc in render_cues]
         sorted_durs = sorted(durations)
