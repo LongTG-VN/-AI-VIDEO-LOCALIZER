@@ -36,5 +36,8 @@ Thumbs.db
 backend/benchmark_results.json
 backend/phase3_results.json
 backend/blind_qa_results.json
+backend/phase4_optimized_cues.json
+backend/phase4_results.json
+backend/smart_ocr_cues.json
 frontend/tsconfig.app.tsbuildinfo
 frontend/tsconfig.node.tsbuildinfo
