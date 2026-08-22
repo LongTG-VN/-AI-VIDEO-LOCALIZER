@@ -26,3 +26,14 @@ frontend/dist/
 .idea/
 .DS_Store
 Thumbs.db
+
+# Local secrets
+.env
+.env.*
+!.env.example
+
+# Local benchmark and build caches
+backend/benchmark_results.json
+backend/phase3_results.json
+frontend/tsconfig.app.tsbuildinfo
+frontend/tsconfig.node.tsbuildinfo
