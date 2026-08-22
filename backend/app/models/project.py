@@ -20,6 +20,13 @@ class SubtitleCue(BaseModel):
     confidence: float | None = Field(default=None, ge=0, le=1)
     asr_confidence: float | None = Field(default=None, ge=0, le=1)
     ocr_confidence: float | None = Field(default=None, ge=0, le=1)
+    # Visual hard-sub timing is intentionally preserved independently from the
+    # ASR-backed dialogue timing used by the rest of the application.  The
+    # cleaner must follow what is actually visible on screen, not how long the
+    # spoken utterance lasts.
+    ocr_start: float | None = Field(default=None, ge=0)
+    ocr_end: float | None = Field(default=None, gt=0)
+    ocr_text: str | None = None
     translation_confidence: float | None = Field(default=None, ge=0, le=1)
     relationship_confidence: float | None = Field(default=None, ge=0, le=1)
     needs_review: bool = False
@@ -95,6 +102,10 @@ class RenderOptions(BaseModel):
     font_size: int = Field(default=22, ge=8, le=96)
     margin_v: int = Field(default=32, ge=0, le=400)
     hardsub_removal_mode: Literal["none", "inpaint", "quality", "cover", "auto"] = "auto"
+    hardsub_crop_top_ratio: float = Field(default=0.65, ge=0.0, lt=1.0)
+    hardsub_crop_bottom_ratio: float = Field(default=0.95, gt=0.0, le=1.0)
+    hardsub_crop_left_ratio: float = Field(default=0.06, ge=0.0, lt=1.0)
+    hardsub_crop_right_ratio: float = Field(default=0.94, gt=0.0, le=1.0)
     hardsub_mask_dilate_radius: int = Field(default=1, ge=0, le=6)
     hardsub_mask_dilate_iterations: int = Field(default=1, ge=1, le=4)
     hardsub_inpaint_radius: int = Field(default=2, ge=1, le=8)
@@ -102,6 +113,9 @@ class RenderOptions(BaseModel):
     hardsub_max_mask_coverage: float = Field(default=0.12, gt=0.0, le=0.5)
     hardsub_scene_cut_threshold: float = Field(default=34.0, gt=0.0, le=255.0)
     hardsub_temporal_max_distance_frames: int = Field(default=45, ge=0, le=300)
+    hardsub_temporal_difference_threshold: int = Field(default=14, ge=1, le=255)
+    hardsub_temporal_local_score_threshold: float = Field(default=22.0, gt=0.0, le=255.0)
+    hardsub_ocr_min_confidence: float = Field(default=0.35, ge=0.0, le=1.0)
     hardsub_lossless_intermediate: bool = True
     subtitle_format: Literal["ass", "srt"] = "ass"
     font_color: str = "&H00FFFFFF"
