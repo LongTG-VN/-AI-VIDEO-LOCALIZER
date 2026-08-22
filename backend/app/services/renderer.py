@@ -85,13 +85,24 @@ def get_media_info(path: Path, ffprobe_bin: str = "ffprobe") -> dict[str, Any]:
 
 
 class Renderer:
-    """Production Video Renderer with Chinese Hard-Sub Inpainting, ASS Subtitles, and NVENC."""
+    """Production Video Renderer with Chinese Hard-Sub cleanup, ASS Subtitles, and NVENC."""
 
     def __init__(self, ffmpeg_bin: str = "ffmpeg", ffprobe_bin: str = "ffprobe"):
         self.ffmpeg_bin = ffmpeg_bin
         self.ffprobe_bin = ffprobe_bin
-        self.cleaner = HardSubCleaner()
         self.last_render_metrics: dict[str, Any] = {}
+
+    def _create_cleaner(self, options: RenderOptions) -> HardSubCleaner:
+        return HardSubCleaner(
+            mask_dilate_radius=options.hardsub_mask_dilate_radius,
+            mask_dilate_iterations=options.hardsub_mask_dilate_iterations,
+            local_contrast_threshold=options.hardsub_local_contrast_threshold,
+            inpaint_radius=options.hardsub_inpaint_radius,
+            max_mask_coverage=options.hardsub_max_mask_coverage,
+            scene_cut_threshold=options.hardsub_scene_cut_threshold,
+            temporal_max_distance_frames=options.hardsub_temporal_max_distance_frames,
+            ffmpeg_bin=self.ffmpeg_bin,
+        )
 
     def render(self, project: Project, output_path: Path, options: RenderOptions | None = None) -> Path:
         if options is None:
@@ -110,15 +121,19 @@ class Renderer:
         cleanup_metrics: dict[str, Any] = {}
 
         try:
-            # 1. Chinese Hard-Sub Cleanup (Inpainting or Cover)
+            # 1. Chinese Hard-Sub Cleanup. "auto" uses the temporal-quality hybrid.
             if options.hardsub_removal_mode not in {"none", "off"}:
                 logger.info("Starting Chinese hard-sub cleanup (mode: %s)...", options.hardsub_removal_mode)
-                intermediate_clean = work_dir / "cleaned_video.mp4"
-                cleanup_metrics = self.cleaner.clean_video(
+                cleaner = self._create_cleaner(options)
+                intermediate_clean = work_dir / (
+                    "cleaned_video.mkv" if options.hardsub_lossless_intermediate else "cleaned_video.mp4"
+                )
+                cleanup_metrics = cleaner.clean_video(
                     source_path=source,
                     output_path=intermediate_clean,
                     cues=project.cues,
                     mode=options.hardsub_removal_mode,
+                    lossless_intermediate=options.hardsub_lossless_intermediate,
                 )
                 cleaned_video_path = intermediate_clean
 
