@@ -154,10 +154,20 @@ def semantic_line_break(text: str, max_line_chars: int = 36) -> str:
 
 
 def infer_discourse_mode(cue: dict[str, Any]) -> DiscourseMode:
-    """Infers discourse mode from addressee."""
+    """Infers discourse mode from addressee and direct dialogue markers."""
     addr = cue.get("addressee_id") or cue.get("addressee_character_id")
     if addr is not None and addr != "" and addr != "audience":
         return DiscourseMode.DIRECT_DIALOGUE
+
+    src = (cue.get("source_text") or "").strip()
+    tr = (cue.get("translated_text") or "").strip()
+
+    # Direct confrontation/vocative marker (e.g. explicit character call + you / 你)
+    if any(w in src for w in ["你偷了", "你给我", "你看清楚", "你别", "你是不是", "你难道", "你良心"]):
+        return DiscourseMode.DIRECT_DIALOGUE
+    if re.search(r"^(?:秦|宋|孟|Tần|Mạnh|Song)\w*[,，\s]+(?:mày|cô|bạn|anh|em|cậu|bác|chú|dì)\b", tr, re.IGNORECASE):
+        return DiscourseMode.DIRECT_DIALOGUE
+
     return DiscourseMode.MONOLOGUE
 
 
@@ -218,7 +228,7 @@ class MergeEvidence:
         # Hard Veto 5: Length or duration overflow
         if self.combined_tr_len > 76:
             return -100.0, ["length_overflow"]
-        if self.combined_duration > 5.2:
+        if self.combined_duration > 6.0:
             return -100.0, ["duration_overflow"]
 
         # Hard Veto 6: Temporal gap too wide

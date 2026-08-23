@@ -121,7 +121,7 @@ def align_and_correct_span(
     if k <= len(asr_clean) and len(asr_clean) >= 2:
         best_diff = 999
         best_idx = -1
-        max_allowed_diffs = max(1, k // 4)
+        max_allowed_diffs = max(1, int(k * 0.40))
         for i in range(len(asr_clean) - k + 1):
             sub_asr = asr_clean[i : i + k]
             diffs = sum(1 for c1, c2 in zip(sub_asr, ocr_clean) if c1 != c2)
