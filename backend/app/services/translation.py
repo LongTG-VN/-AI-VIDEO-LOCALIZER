@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 import logging
 import re
+import time
 from typing import Any
 
 import httpx
@@ -10,11 +11,16 @@ import httpx
 from app.models.project import Project, SubtitleCue
 from app.services.critic import TranslationCritic
 from app.services.relationships import (
-    active_relationship,
     active_scene,
     character_name,
     find_character,
     resolve_pronouns,
+)
+from app.services.semantic_context import (
+    build_neighbor_window,
+    normalize_discourse_mode,
+    project_name_locks,
+    source_name_mentions,
 )
 
 logger = logging.getLogger(__name__)
@@ -51,6 +57,11 @@ def extract_json_object(raw_text: str) -> dict[str, Any] | None:
 
 
 def build_translation_context(project: Project, cue_index: int) -> dict[str, Any]:
+    """Build context-rich but cue-owned translation input.
+
+    Neighboring subtitles are supplied as read-only context. Content and named entities
+    explicitly present in another cue must not be migrated into the current cue.
+    """
     cue = project.cues[cue_index]
     scene = active_scene(project, cue.start)
     speaker_id = cue.speaker_character_id or cue.speaker_id
@@ -66,6 +77,7 @@ def build_translation_context(project: Project, cue_index: int) -> dict[str, Any
         cue.start,
     )
 
+    window = build_neighbor_window(project, cue_index, before=3, after=2)
     previous_source = project.cues[cue_index - 1].source_text if cue_index > 0 else None
     next_source = project.cues[cue_index + 1].source_text if cue_index + 1 < len(project.cues) else None
 
@@ -74,56 +86,78 @@ def build_translation_context(project: Project, cue_index: int) -> dict[str, Any
         "start": cue.start,
         "end": cue.end,
         "speaker": character_name(project, speaker_id),
+        "speaker_character_id": cue.speaker_character_id,
         "speaker_role": speaker_char.role if speaker_char else None,
+        "speaker_gender": speaker_char.gender if speaker_char else None,
         "addressee": character_name(project, addressee_id),
+        "addressee_character_id": cue.addressee_character_id,
+        "addressee_role": addressee_char.role if addressee_char else None,
+        "addressee_gender": addressee_char.gender if addressee_char else None,
         "relationship": rel_type,
+        "relationship_confidence": rel_conf,
         "preferred_vi_self": self_pronoun,
         "preferred_vi_other": target_pronoun,
+        "discourse_mode": normalize_discourse_mode(getattr(cue, "discourse_mode", None)),
+        "scene_summary": scene.summary if scene else None,
+        "scene_tone": scene.tone if scene else None,
         "source": cue.source_text,
         "previous_source": previous_source,
         "next_source": next_source,
+        "previous_context": window["previous"],
+        "next_context": window["next"],
+        "required_names": source_name_mentions(project, cue.source_text),
     }
 
 
 def build_system_prompt(target_language: str) -> str:
     target = "Vietnamese" if target_language == "vi" else "English"
-    return f"""You are a master audiovisual translator and localizer specializing in Chinese dramas translated into {target}.
+    return f"""You are an audiovisual subtitle translator from Chinese into {target}.
 
-CRITICAL RULES:
-1. Natural Subtitles: Produce fluent, idiomatic, emotionally resonant {target} subtitles. Avoid robotic word-for-word literal translations.
-2. Forms of Address & Pronouns (Vietnamese):
-   - Strict adherence to `preferred_vi_self` (how speaker refers to self) and `preferred_vi_other` (how speaker addresses the other person) based on character hierarchy and family relations.
-   - Sibling Dialogue (Brother -> Sister): ALWAYS address younger sister as 'em' (e.g. '你的存在拉低了秦家的执行效率' -> 'Sự tồn tại của em đang kéo giảm hiệu suất thực thi của nhà họ Tần.'). NEVER address sister as 'bạn', 'cô', or 'mày'.
-   - Parent - Child Dialogue (Mother/Father -> Daughter): ALWAYS use 'mẹ/bố / con' (e.g. 'con', never 'mày' or 'cô').
-   - Monologue / Narration (when addressee is None or audience): ALWAYS use 'tôi' for self-reference, NEVER use 'con' or 'em'.
-3. Character Names & Glossary Transliteration (NAME LOCKS & VOCATIVE HANDLING):
-   - Strictly follow provided `characters` and `glossary`. NEVER invent alternative or phonetic names (e.g. NEVER output 'Ken Văn', 'Kiên Vân'!).
-   - NEVER prepend the speaker's own name as metadata to spoken dialogue (e.g. if character Mạnh Kinh Xuân is speaking '看清楚', output 'Nhìn cho rõ đây', NEVER prepend 'Mạnh Kinh Xuân'!). Only character names explicitly spoken in the source sentence may appear.
-   - Vocative vs Possessor: When a character name in source is used to address the listener (e.g. '秦扶栀昨天的宏观经济笔记看完吗？'), render the name as direct address ('Tần Phù Chi, [con] đã đọc xong bài ghi chú kinh tế vĩ mô hôm qua chưa?'). NEVER turn a vocative character name into a possessive modifier ('của Tần Phù Chi')!
-   - '秦扶栀' / '秦福之' MUST ALWAYS be translated as 'Tần Phù Chi' (NEVER 'Tần Phúc Chi'!).
-   - '秦砚川' / '秦燕川' MUST ALWAYS be translated as 'Tần Nghiễn Xuyên'.
-   - '宋知雪' MUST ALWAYS be translated as 'Tống Tri Tuyết'.
-   - '孟惊春' / '孟金春' MUST ALWAYS be translated as 'Mạnh Kinh Xuân'.
-   - '千金' MUST be translated as 'thiên kim'.
-   - '报错' MUST be translated as 'trao nhầm' / 'bế nhầm'.
-   - '看清楚 秦扶栀' MUST be translated as 'Nhìn cho rõ vào, Tần Phù Chi' - preserve the spoken name faithfully.
-4. Action Verb & Semantic Fidelity:
-   - '啃完' (eat / gnaw / finish eating): '只想把这只偷偷藏起来的鸡腿啃完' MUST convey finishing eating the secretly hidden chicken leg (e.g. 'chỉ muốn gặm cho xong chiếc đùi gà lén giấu này' / 'chỉ muốn ăn hết chiếc đùi gà lén giấu này'). NEVER translate as only 'giấu chiếc đùi gà' without eating!
-   - '背一下' (recite / recite from memory): '背一下第三章的结论' MUST convey reciting from memory (e.g. 'Đọc thuộc lòng kết luận của chương ba đi' / 'Đọc thuộc kết luận chương ba xem nào'). NEVER add unsupported hurry modifiers like 'nhanh lên nào' or 'cố lên'!
-5. Gender & Kinship Fidelity & Relational Negation:
-   - Preserve female referents (她 -> cô ấy/mẹ/bà ấy) and male referents (他 -> anh ấy/bố/ông ấy). NEVER turn female referent into 'ông ta'.
-   - When the narrator is monologuing/narrating about their mother ('她的眼里...'), '她' refers to the mother ('mẹ' / 'bà ấy') - NEVER translate as 'cô ấy' when describing one's mother in family drama context!
-   - Relational Negation vs Literal Existence: '她的眼里没有女儿 只有一件需要时刻打磨的商品' expresses relational disregard (the mother does not regard the narrator as her daughter), NOT literal absence of daughters. MUST translate contextually as 'Trong mắt mẹ / Trong mắt bà ấy, không xem tôi là con gái / không coi tôi là con gái mà chỉ có một món hàng cần liên tục mài giũa/rèn giũa' (NEVER 'không có con gái'!).
-   - When source says '商品', translate faithfully as 'món hàng' / 'sản phẩm'.
-6. Discourse Mode & Continuity:
-   - Differentiate past narration/memories (e.g. recalling 'quán ăn sáng bốn giờ sáng đã phải dậy phụ nhào bột') from direct confrontation (e.g. 'Tần Phù Chi, cô/mày đã trộm của tôi mười tám năm').
-   - Never turn a continuation clause of narration into an imperative command.
-   - NO Dangling Fragments: Never end a translated cue with dangling tokens like 'cô,', 'em,', 'mà,', 'thì,', 'của,'.
-7. Clause Completeness: Translate all meaningful clauses (e.g. contrast pairs 'không xem là... chỉ có...'). Never drop clauses.
-8. Faithful & Hallucination-Free: Do not add unsupported content (e.g. do not add 'cố lên' to '看清楚').
-9. Stable Cue IDs: Every input cue MUST have exactly one translated output with the EXACT SAME `cue_id`.
+Translate each input cue faithfully and naturally while using scene/neighbor context only to
+resolve meaning, references, relationships, and register.
 
-Return JSON ONLY in this exact structure:
+HARD RULES:
+1. CUE OWNERSHIP
+   - Return exactly one result for every input `cue_id`, with the exact same ID.
+   - Translate ONLY the `source` owned by that cue.
+   - `previous_context` and `next_context` are context only. Never move a clause, name, or
+     vocative from a neighboring cue into the current cue.
+   - Never prepend speaker metadata to subtitle text.
+
+2. CONTEXT & MEANING
+   - Use `scene_summary`, `scene_tone`, neighboring source cues, speaker/addressee metadata,
+     and `discourse_mode` to resolve pronouns, ellipsis, referents, implied subjects, and
+     relational meaning.
+   - Preserve the main action, all meaningful clauses, negation, contrast, gender, kinship,
+     and who is doing what to whom.
+   - Do not add unsupported commands, emotions, explanations, or actions.
+
+3. VIETNAMESE RELATIONSHIP REGISTER
+   - When target is Vietnamese, follow `preferred_vi_self` and `preferred_vi_other` whenever
+     explicit self/target pronouns are needed.
+   - Dialogue pronouns come from the directional relationship; narration/monologue should not
+     blindly inherit the pronouns of a nearby conversation.
+
+4. NAME & TERMINOLOGY LOCKS
+   - `name_locks`, `characters`, `glossary`, and per-cue `required_names` are authoritative.
+   - If a `required_names` item is explicitly present in this cue's source, preserve its
+     canonical target form in THIS cue.
+   - Never invent a phonetic alternative.
+   - A name used as direct address (vocative) must remain a vocative; do not turn it into a
+     possessor or other grammatical role without source evidence.
+
+5. SUBTITLE GRAMMAR
+   - Produce a complete, idiomatic subtitle fragment appropriate to the source cue.
+   - Avoid dangling endings such as a bare pronoun/conjunction followed by a comma when the
+     source cue itself contains a complete unit.
+   - Do not duplicate pronouns or names merely to make context explicit.
+
+6. DISCOURSE
+   - Respect `direct_dialogue`, `monologue`, `narration`, `system`, and `unknown`.
+   - Do not rewrite narration as an imperative or direct dialogue.
+   - Do not merge discourse modes in translation; grouping happens later.
+
+Return JSON ONLY:
 {{
   "translations": [
     {{
@@ -154,6 +188,7 @@ class OpenAICompatibleTranslator:
         critique_notes: dict[str, str] | None = None,
         characters: list[dict[str, Any]] | None = None,
         glossary: list[dict[str, Any]] | None = None,
+        name_locks: list[dict[str, Any]] | None = None,
     ) -> dict[str, tuple[str, float | None]]:
         payload_messages: list[dict[str, str]] = [
             {"role": "system", "content": build_system_prompt(target_language)}
@@ -164,10 +199,16 @@ class OpenAICompatibleTranslator:
             payload_dict["characters"] = characters
         if glossary:
             payload_dict["glossary"] = glossary
+        if name_locks:
+            payload_dict["name_locks"] = name_locks
 
         if critique_notes:
             payload_dict["feedback_per_cue"] = critique_notes
-            user_msg = f"Please re-translate these specific cues taking into account the following critique feedback:\n{json.dumps(payload_dict, ensure_ascii=False)}"
+            user_msg = (
+                "Re-translate only the failed cue IDs. Keep cue ownership and apply the "
+                "feedback without copying content from neighboring cues:\n"
+                + json.dumps(payload_dict, ensure_ascii=False)
+            )
         else:
             user_msg = json.dumps(payload_dict, ensure_ascii=False)
 
@@ -179,7 +220,7 @@ class OpenAICompatibleTranslator:
 
         payload = {
             "model": self.model,
-            "temperature": 0.2,
+            "temperature": 0.15,
             "messages": payload_messages,
         }
 
@@ -193,11 +234,11 @@ class OpenAICompatibleTranslator:
                     timeout=35.0,
                 )
                 if response.status_code == 429:
-                    import time
                     wait = 4 * (attempt + 1)
-                    print(f"Translation rate limited (429), sleeping {wait}s (attempt {attempt+1}/8)...")
+                    logger.info("Translation rate limited; sleeping %ss", wait)
                     time.sleep(wait)
                     continue
+                response.raise_for_status()
                 raw_msg = response.json().get("choices", [{}])[0].get("message", {})
                 content = (raw_msg.get("content") or "").strip()
                 parsed = extract_json_object(content)
@@ -205,14 +246,11 @@ class OpenAICompatibleTranslator:
                     break
             except httpx.HTTPStatusError as exc:
                 if exc.response.status_code == 429:
-                    import time
-                    wait = 4 * (attempt + 1)
-                    time.sleep(wait)
+                    time.sleep(4 * (attempt + 1))
                     continue
                 raise TranslationError(f"Translation provider error: {exc}") from exc
             except (httpx.HTTPError, KeyError, json.JSONDecodeError) as exc:
                 if attempt < 7:
-                    import time
                     time.sleep(2)
                     continue
                 logger.warning("Failed to parse translation batch: %s", exc)
@@ -236,7 +274,11 @@ class OpenAICompatibleTranslator:
             for b_item, res_item in zip(batch, items):
                 if b_item["cue_id"] not in results and isinstance(res_item, dict):
                     text = str(res_item.get("text", "")).strip()
-                    conf = float(res_item.get("confidence", 0.8)) if res_item.get("confidence") is not None else None
+                    conf = (
+                        float(res_item.get("confidence", 0.8))
+                        if res_item.get("confidence") is not None
+                        else None
+                    )
                     results[b_item["cue_id"]] = (text, conf)
 
         for b_item in batch:
@@ -256,19 +298,36 @@ class OpenAICompatibleTranslator:
         if not project.cues:
             return []
 
-        # 1. Initial Translation Pass
         char_list = [
-            {"name_zh": c.name_zh or c.name, "name_vi": c.name_vi or c.name, "aliases": c.aliases}
+            {
+                "id": c.id,
+                "name_zh": c.name_zh or c.name,
+                "name_vi": c.name_vi or c.name,
+                "aliases": c.aliases,
+                "gender": c.gender,
+                "role": c.role,
+            }
             for c in project.characters
         ]
         glossary_list = [
-            {"source": g.source, "target": g.target}
+            {
+                "source": g.source,
+                "target": g.target,
+                "category": g.category,
+            }
             for g in project.glossary
         ]
+        name_locks = project_name_locks(project)
 
         untranslated_indices = [i for i, c in enumerate(project.cues) if not c.translated_text]
-        contexts_by_id = {c.id: build_translation_context(project, i) for i, c in enumerate(project.cues)}
-        untranslated_contexts = [contexts_by_id[project.cues[i].id] for i in untranslated_indices]
+        contexts_by_id = {
+            c.id: build_translation_context(project, i)
+            for i, c in enumerate(project.cues)
+        }
+        untranslated_contexts = [
+            contexts_by_id[project.cues[i].id]
+            for i in untranslated_indices
+        ]
 
         for start in range(0, len(untranslated_contexts), batch_size):
             batch = untranslated_contexts[start : start + batch_size]
@@ -277,16 +336,15 @@ class OpenAICompatibleTranslator:
                 project.target_language,
                 characters=char_list,
                 glossary=glossary_list,
+                name_locks=name_locks,
             )
             for cue in project.cues:
                 if cue.id in results:
                     cue.translated_text, conf = results[cue.id]
                     cue.translation_confidence = conf
                     cue.confidence = conf
-            import time
             time.sleep(2.0)
 
-        # 2. Critic & Targeted Retry Pass (Up to max_retries)
         metrics = {
             "translated_cues": len(project.cues),
             "critic_pass_first_try": 0,
@@ -300,12 +358,20 @@ class OpenAICompatibleTranslator:
             "name_mismatch_failures": 0,
             "dropped_clause_failures": 0,
             "hallucination_failures": 0,
+            "action_error_failures": 0,
+            "grammatical_error_failures": 0,
+            "dangling_fragment_failures": 0,
+            "vocative_error_failures": 0,
         }
 
         if enable_critic:
             critic = TranslationCritic(self.base_url, self.api_key, self.model)
             evaluations = critic.evaluate_cues(project, project.cues, batch_size=25)
-            eval_by_id = {e.get("cue_id"): e for e in evaluations if e.get("cue_id")}
+            eval_by_id = {
+                e.get("cue_id"): e
+                for e in evaluations
+                if e.get("cue_id")
+            }
 
             first_pass_failed_ids: set[str] = set()
             for cue in project.cues:
@@ -315,9 +381,10 @@ class OpenAICompatibleTranslator:
                 issues = ev.get("issues", [])
                 cue.critic_score = float(ev.get("naturalness_score", 0.9))
                 cue.critic_flags = issues
-                for iss in issues:
-                    if f"{iss}_failures" in metrics:
-                        metrics[f"{iss}_failures"] += 1
+                for issue in issues:
+                    metric_key = f"{issue}_failures"
+                    if metric_key in metrics:
+                        metrics[metric_key] += 1
                 if ev.get("needs_retry", False) or issues:
                     cue.needs_review = True
                     cue.review_notes = ev.get("critique") or ", ".join(issues)
@@ -326,15 +393,23 @@ class OpenAICompatibleTranslator:
                     cue.needs_review = False
                     metrics["critic_pass_first_try"] += 1
 
-            # Targeted Retries for failed cues
             current_failed_ids = set(first_pass_failed_ids)
             for retry_round in range(1, max_retries + 1):
                 if not current_failed_ids:
                     break
-                retry_cues = [contexts_by_id[cid] for cid in current_failed_ids if cid in contexts_by_id]
+
+                retry_cues = [
+                    contexts_by_id[cid]
+                    for cid in current_failed_ids
+                    if cid in contexts_by_id
+                ]
                 critique_notes = {
-                    cid: eval_by_id[cid].get("critique", "Fix pronoun and meaning consistency")
-                    for cid in current_failed_ids if cid in eval_by_id
+                    cid: eval_by_id[cid].get(
+                        "critique",
+                        "Preserve source meaning, cue-owned entities, relationships, and grammar.",
+                    )
+                    for cid in current_failed_ids
+                    if cid in eval_by_id
                 }
 
                 retry_results = self._call_translation_batch(
@@ -343,6 +418,7 @@ class OpenAICompatibleTranslator:
                     critique_notes=critique_notes,
                     characters=char_list,
                     glossary=glossary_list,
+                    name_locks=name_locks,
                 )
                 for cue in project.cues:
                     if cue.id in retry_results:
@@ -352,14 +428,21 @@ class OpenAICompatibleTranslator:
                             cue.translation_confidence = retried_conf
                             cue.confidence = retried_conf
 
-                cues_to_reeval = [c for c in project.cues if c.id in current_failed_ids]
+                cues_to_reeval = [
+                    c for c in project.cues if c.id in current_failed_ids
+                ]
                 new_evals = critic.evaluate_cues(project, cues_to_reeval, batch_size=25)
-                new_eval_by_id = {e.get("cue_id"): e for e in new_evals if e.get("cue_id")}
+                new_eval_by_id = {
+                    e.get("cue_id"): e
+                    for e in new_evals
+                    if e.get("cue_id")
+                }
 
                 next_failed_ids: set[str] = set()
                 for cue in cues_to_reeval:
                     ev = new_eval_by_id.get(cue.id)
                     if not ev:
+                        next_failed_ids.add(cue.id)
                         continue
                     issues = ev.get("issues", [])
                     cue.critic_score = float(ev.get("naturalness_score", 0.9))
