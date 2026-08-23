@@ -98,19 +98,21 @@ CRITICAL RULES:
    - Monologue / Narration (when addressee is None or audience): ALWAYS use 'tôi' for self-reference, NEVER use 'con' or 'em'.
 3. Character Names & Glossary Transliteration (NAME LOCKS):
    - Strictly follow provided `characters` and `glossary`. NEVER invent alternative or phonetic names (e.g. NEVER output 'Ken Văn', 'Kiên Vân'!).
+   - NEVER prepend the speaker's own name as metadata to spoken dialogue (e.g. if character Mạnh Kinh Xuân is speaking '看清楚', output 'Nhìn cho rõ đây', NEVER prepend 'Mạnh Kinh Xuân'!). Only character names explicitly spoken in the source sentence may appear.
    - '秦扶栀' / '秦福之' MUST ALWAYS be translated as 'Tần Phù Chi' (NEVER 'Tần Phúc Chi'!).
    - '秦砚川' / '秦燕川' MUST ALWAYS be translated as 'Tần Nghiễn Xuyên'.
    - '宋知雪' MUST ALWAYS be translated as 'Tống Tri Tuyết'.
    - '孟惊春' / '孟金春' MUST ALWAYS be translated as 'Mạnh Kinh Xuân'.
    - '千金' MUST be translated as 'thiên kim'.
    - '报错' MUST be translated as 'trao nhầm' / 'bế nhầm'.
-   - '看清楚 秦扶栀' MUST be translated as 'Nhìn cho rõ vào, Tần Phù Chi' - NEVER drop the character name!
+   - '看清楚 秦扶栀' MUST be translated as 'Nhìn cho rõ vào, Tần Phù Chi' - preserve the spoken name faithfully.
 4. Action Verb & Semantic Fidelity:
    - '啃完' (eat / gnaw / finish eating): '只想把这只偷偷藏起来的鸡腿啃完' MUST convey finishing eating the secretly hidden chicken leg (e.g. 'chỉ muốn gặm cho xong chiếc đùi gà lén giấu này' / 'chỉ muốn ăn hết chiếc đùi gà lén giấu này'). NEVER translate as only 'giấu chiếc đùi gà' without eating!
    - '背一下' (recite / recite from memory): '背一下第三章的结论' MUST convey reciting from memory (e.g. 'Đọc thuộc lòng kết luận của chương ba đi' / 'Đọc thuộc kết luận chương ba xem nào'). NEVER add unsupported hurry modifiers like 'nhanh lên nào' or 'cố lên'!
 5. Gender & Kinship Fidelity:
    - Preserve female referents (她 -> cô ấy/mẹ/bà ấy) and male referents (他 -> anh ấy/bố/ông ấy). NEVER turn female referent into 'ông ta'.
-   - When source says '没有女儿', translate contextually as 'không xem tôi là con gái' / 'không hề có con gái' (the mother does not regard the narrator as a daughter, NEVER mistranslate as 'không có con người'!).
+   - When the narrator is monologuing/narrating about their mother ('她的眼里...'), '她' refers to the mother ('mẹ' / 'bà ấy') - NEVER translate as 'cô ấy' when describing one's mother in family drama context!
+   - When source says '她的眼里没有女儿 只有一件需要时刻打磨的商品', translate contextually as 'Trong mắt bà ấy / Trong mắt mẹ, không xem tôi là con gái / không có đứa con gái này mà chỉ có một món hàng cần liên tục mài giũa/rèn giũa' (conveying the mother's cold perfectionist view of her daughter as a product).
    - When source says '商品', translate faithfully as 'món hàng' / 'sản phẩm'.
 6. Discourse Mode & Continuity:
    - Differentiate past narration/memories (e.g. recalling 'quán ăn sáng bốn giờ sáng đã phải dậy phụ nhào bột') from direct confrontation (e.g. 'Tần Phù Chi, cô/mày đã trộm của tôi mười tám năm').
@@ -186,7 +188,7 @@ class OpenAICompatibleTranslator:
                     f"{self.base_url}/chat/completions",
                     headers=headers,
                     json=payload,
-                    timeout=120,
+                    timeout=35.0,
                 )
                 if response.status_code == 429:
                     import time

@@ -222,3 +222,52 @@ def test_synthetic_characters_actions_generalization():
     is_pass, issues, _ = deterministic_validate_cue(ctx_synthetic)
     assert is_pass
     assert len(issues) == 0
+
+
+def test_mother_daughter_referent_and_commodity():
+    """Test J: Mother referent resolution in '她的眼里没有女儿 只有一件需要时刻打磨的商品'."""
+    ctx_wrong_referent = {
+        "chinese_source": "她的眼里没有女儿 只有一件需要时刻打磨的商品",
+        "vietnamese_translation": "Trong mắt cô ấy, không có con gái mà chỉ là một món hàng cần được rèn giũa liên tục.",
+        "speaker_role": "narrator",
+        "expected_vi_self": "tôi",
+    }
+    is_pass, issues, notes = deterministic_validate_cue(ctx_wrong_referent)
+    assert not is_pass
+    assert CriticIssueEnum.REFERENT_ERROR.value in issues
+
+    ctx_correct_referent = {
+        "chinese_source": "她的眼里没有女儿 只有一件需要时刻打磨的商品",
+        "vietnamese_translation": "Trong mắt mẹ, không xem tôi là con gái mà chỉ có một món hàng cần được rèn giũa liên tục.",
+        "speaker_role": "narrator",
+        "expected_vi_self": "tôi",
+    }
+    is_pass_c, issues_c, _ = deterministic_validate_cue(ctx_correct_referent)
+    assert is_pass_c
+    assert len(issues_c) == 0
+
+
+def test_speaker_name_metadata_not_prepended():
+    """Test K: Speaker metadata name must not be prepended to dialogue text."""
+    ctx_prepended = {
+        "chinese_source": "看清楚 秦扶栀",
+        "vietnamese_translation": "Mạnh Kinh Xuân Nhìn cho rõ vào, Tần Phù Chi.",
+        "speaker_name_vi": "Mạnh Kinh Xuân",
+        "speaker_name_zh": "孟惊春",
+        "characters": [{"name_zh": "秦扶栀", "name_vi": "Tần Phù Chi", "aliases": []}],
+    }
+    is_pass, issues, notes = deterministic_validate_cue(ctx_prepended)
+    assert not is_pass
+    assert CriticIssueEnum.NAME_MISMATCH.value in issues
+
+    ctx_clean = {
+        "chinese_source": "看清楚 秦扶栀",
+        "vietnamese_translation": "Nhìn cho rõ vào, Tần Phù Chi.",
+        "speaker_name_vi": "Mạnh Kinh Xuân",
+        "speaker_name_zh": "孟惊春",
+        "characters": [{"name_zh": "秦扶栀", "name_vi": "Tần Phù Chi", "aliases": []}],
+    }
+    is_pass_c, issues_c, _ = deterministic_validate_cue(ctx_clean)
+    assert is_pass_c
+    assert len(issues_c) == 0
+

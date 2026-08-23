@@ -57,6 +57,8 @@ def build_critic_context(project: Project, cue: SubtitleCue) -> dict[str, Any]:
         "start": cue.start,
         "end": cue.end,
         "speaker": character_name(project, speaker_id),
+        "speaker_name_vi": (speaker_char.name_vi or speaker_char.name) if speaker_char else None,
+        "speaker_name_zh": (speaker_char.name_zh or speaker_char.name) if speaker_char else None,
         "speaker_role": speaker_char.role if speaker_char else None,
         "speaker_gender": speaker_char.gender if speaker_char else None,
         "addressee": character_name(project, addressee_id),
@@ -156,6 +158,21 @@ def deterministic_validate_cue(context: dict[str, Any]) -> tuple[bool, list[str]
         if not has_product:
             issues.append(CriticIssueEnum.DROPPED_CLAUSE.value)
             notes.append("Source has '商品' (product/merchandise), but translation dropped product metaphor.")
+
+    # In daughter-mother context: 她的眼里没有女儿 refers to mother (mẹ / bà ấy), not 'cô ấy'
+    if "没有女儿" in zh and "商品" in zh:
+        if re.search(r"\bcô ấy\b", vi_lower):
+            issues.append(CriticIssueEnum.REFERENT_ERROR.value)
+            notes.append("In family context describing mother, '她的眼里' refers to mother ('mẹ / bà ấy'), not 'cô ấy'.")
+
+    # Guard: Speaker's own name metadata must NOT be prepended into spoken dialogue text
+    speaker_name_vi = (context.get("speaker_name_vi") or context.get("speaker") or "").strip()
+    if speaker_name_vi and len(speaker_name_vi) >= 3 and not re.match(r"^speaker_\d+$", speaker_name_vi):
+        speaker_name_zh = (context.get("speaker_name_zh") or "").strip()
+        if not (speaker_name_zh and speaker_name_zh in zh):
+            if re.search(rf"^{re.escape(speaker_name_vi.lower())}\b", vi_lower):
+                issues.append(CriticIssueEnum.NAME_MISMATCH.value)
+                notes.append(f"Speaker identity metadata '{speaker_name_vi}' was mistakenly prepended into spoken dialogue text.")
 
     # 4. Action Verb Fidelity Checks
     if ("啃完" in zh or "啃" in zh) and ("鸡腿" in zh or "肉" in zh or "骨头" in zh):
