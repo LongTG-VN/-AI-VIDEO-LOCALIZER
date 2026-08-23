@@ -26,13 +26,16 @@ class CriticError(RuntimeError):
 
 class CriticIssueEnum(str, Enum):
     MEANING_SHIFT = "meaning_shift"
+    REFERENT_ERROR = "referent_error"
     PRONOUN_MISMATCH = "pronoun_mismatch"
     RELATIONSHIP_MISMATCH = "relationship_mismatch"
     GENDER_MISMATCH = "gender_mismatch"
-    NAME_MISMATCH = "name_mismatch"
     DROPPED_CLAUSE = "dropped_clause"
+    NAME_MISMATCH = "name_mismatch"
     HALLUCINATION = "hallucination"
+    ACTION_ERROR = "action_error"
     REGISTER_MISMATCH = "register_mismatch"
+    DISCOURSE_ERROR = "discourse_error"
 
 
 def build_critic_context(project: Project, cue: SubtitleCue) -> dict[str, Any]:
@@ -66,15 +69,7 @@ def build_critic_context(project: Project, cue: SubtitleCue) -> dict[str, Any]:
         "chinese_source": (cue.source_text or "").strip(),
         "vietnamese_translation": (cue.translated_text or "").strip(),
         "characters": [
-            {
-                "id": c.id,
-                "name": c.name,
-                "name_zh": c.name_zh,
-                "name_vi": c.name_vi,
-                "aliases": c.aliases,
-                "gender": c.gender,
-                "role": c.role,
-            }
+            {"name_zh": c.name_zh or c.name, "name_vi": c.name_vi or c.name, "aliases": c.aliases}
             for c in project.characters
         ],
         "glossary": [
@@ -85,7 +80,7 @@ def build_critic_context(project: Project, cue: SubtitleCue) -> dict[str, Any]:
 
 
 def deterministic_validate_cue(context: dict[str, Any]) -> tuple[bool, list[str], str]:
-    """Runs high-precision deterministic guards for pronouns, relationships, genders, names, and dropped clauses."""
+    """Runs high-precision deterministic guards for pronouns, relationships, genders, names, actions, and dropped clauses."""
     issues: list[str] = []
     notes: list[str] = []
 
@@ -95,6 +90,11 @@ def deterministic_validate_cue(context: dict[str, Any]) -> tuple[bool, list[str]
 
     if not zh or not vi:
         return True, [], ""
+
+    # 0. Untranslated Chinese Character Guard
+    if re.search(r"[\u4e00-\u9fff]", vi):
+        issues.append(CriticIssueEnum.MEANING_SHIFT.value)
+        notes.append("Translation contains untranslated Chinese characters.")
 
     addr = context.get("addressee")
     exp_self = context.get("expected_vi_self")
@@ -157,7 +157,24 @@ def deterministic_validate_cue(context: dict[str, Any]) -> tuple[bool, list[str]
             issues.append(CriticIssueEnum.DROPPED_CLAUSE.value)
             notes.append("Source has '商品' (product/merchandise), but translation dropped product metaphor.")
 
-    # 4. Gender Reference Check
+    # 4. Action Verb Fidelity Checks
+    if ("啃完" in zh or "啃" in zh) and ("鸡腿" in zh or "肉" in zh or "骨头" in zh):
+        has_eat_action = bool(re.search(r"\b(gặm|ăn|ăn hết|gặm hết|ăn xong|gặm xong|thưởng thức)\b", vi_lower))
+        if not has_eat_action:
+            issues.append(CriticIssueEnum.ACTION_ERROR.value)
+            notes.append("Source action '啃完/啃' (eat/gnaw/finish eating) was changed or missing in translation (e.g. only translated as 'giấu').")
+
+    if "背一下" in zh or "背诵" in zh:
+        has_recite = bool(re.search(r"\b(đọc thuộc|học thuộc|thuộc lòng|đọc lại|nhắc lại|đọc|trả lời)\b", vi_lower))
+        has_unsupported_hurry = bool(re.search(r"\b(nhanh lên|mau lên|cố lên|khẩn trương)\b", vi_lower))
+        if not has_recite:
+            issues.append(CriticIssueEnum.ACTION_ERROR.value)
+            notes.append("Source action '背一下' (recite from memory) was missing in translation.")
+        if has_unsupported_hurry and not any(w in zh for w in ["快", "抓紧", "赶紧"]):
+            issues.append(CriticIssueEnum.HALLUCINATION.value)
+            notes.append("Unsupported hurry modifier ('nhanh lên/cố lên') added to '背一下'.")
+
+    # 5. Gender Reference Check
     if ("她" in zh or "母亲" in zh or "我妈" in zh) and not ("他" in zh or "我爸" in zh or "我哥" in zh):
         if re.search(r"\b(ông ta|anh ấy|ông ấy|chàng trai|gã)\b", vi_lower):
             issues.append(CriticIssueEnum.GENDER_MISMATCH.value)
@@ -168,7 +185,7 @@ def deterministic_validate_cue(context: dict[str, Any]) -> tuple[bool, list[str]
             issues.append(CriticIssueEnum.GENDER_MISMATCH.value)
             notes.append("Source references male referent (他/bố) but translation uses female pronoun (bà ta/cô ấy).")
 
-    # 5. Explicit Character Name Preservation Check
+    # 6. Explicit Character Name Preservation & Invented Name Guard
     characters = context.get("characters", [])
     for char in characters:
         zh_names = [char.get("name_zh"), char.get("name")] + char.get("aliases", [])
@@ -186,13 +203,18 @@ def deterministic_validate_cue(context: dict[str, Any]) -> tuple[bool, list[str]
                     notes.append(f"Explicit character name '{z_name}' ({vi_name}) in source was dropped in translation.")
                     break
 
-    # 6. Hallucination & Unsupported Content
+    # Invented / Phonetic Name Guard (e.g. Ken Văn, Khan Văn, Kiên Vân)
+    if re.search(r"\b(ken văn|khan văn|kiên văn|kiên vân|khang văn)\b", vi_lower):
+        issues.append(CriticIssueEnum.NAME_MISMATCH.value)
+        notes.append("Invented phonetic name detected not present in character graph.")
+
+    # 7. Hallucination & Unsupported Content
     if zh.startswith("看清楚") and not any(w in zh for w in ["加油", "努力"]):
         if re.search(r"\bcố lên\b", vi_lower):
             issues.append(CriticIssueEnum.HALLUCINATION.value)
             notes.append("Hallucinated 'cố lên' not supported by source '看清楚'.")
 
-    # 7. Glossary Consistency
+    # 8. Glossary Consistency
     glossary = context.get("glossary", [])
     for entry in glossary:
         src_name = entry.get("source", "")

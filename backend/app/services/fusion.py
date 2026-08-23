@@ -143,7 +143,6 @@ def align_and_correct_span(
             opcodes = matcher.get_opcodes()
             changes = [tag for tag, _, _, _, _ in opcodes if tag != "equal"]
             if len(changes) == 1:
-                # Safe single span insertion or replacement
                 tag, i1, i2, j1, j2 = [op for op in opcodes if op[0] != "equal"][0]
                 target_sub = asr_clean[i1:i2]
                 replacement_sub = ocr_clean[j1:j2]
@@ -154,6 +153,19 @@ def align_and_correct_span(
                     anchor = asr_clean[i1 - 1 : i1]
                     corrected = asr_text.replace(anchor, anchor + replacement_sub, 1)
                     return corrected, True, i1, i1
+    # 4. Trailing Suffix Alignment from High-Confidence OCR Evidence
+    # When ASR dropped trailing verb/chars (e.g. ASR: "...鸡腿", OCR: "...鸡腿啃完"):
+    if len(ocr_clean) >= 4 and len(asr_clean) >= 4 and conf >= 0.85:
+        for match_len in range(min(len(asr_clean), len(ocr_clean)), 3, -1):
+            if asr_clean.endswith(ocr_clean[:match_len]):
+                suffix_to_add = ocr_clean[match_len:]
+                if suffix_to_add and len(suffix_to_add) <= 4:
+                    anchor = ocr_clean[:match_len]
+                    idx = asr_text.rfind(anchor)
+                    if idx >= 0:
+                        insert_pos = idx + len(anchor)
+                        corrected = asr_text[:insert_pos] + suffix_to_add + asr_text[insert_pos:]
+                        return corrected, True, idx, insert_pos
 
     return asr_text, False, None, None
 

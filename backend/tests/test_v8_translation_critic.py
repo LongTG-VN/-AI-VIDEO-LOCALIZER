@@ -160,3 +160,65 @@ def test_dropped_clause(sample_project: Project):
     is_pass, issues, notes = deterministic_validate_cue(ctx_dropped)
     assert not is_pass
     assert CriticIssueEnum.DROPPED_CLAUSE.value in issues
+
+
+def test_action_verb_eat_chicken_leg(sample_project: Project):
+    """Test F: Action verb '啃完' (eat/gnaw/finish eating) vs mistranslated 'giấu'."""
+    ctx_wrong = {
+        "chinese_source": "但我现在只想把这只偷偷藏起来的鸡腿啃完",
+        "vietnamese_translation": "Nhưng bây giờ tôi chỉ muốn giấu chiếc đùi gà này.",
+    }
+    is_pass, issues, notes = deterministic_validate_cue(ctx_wrong)
+    assert not is_pass
+    assert CriticIssueEnum.ACTION_ERROR.value in issues
+
+    ctx_correct = {
+        "chinese_source": "但我现在只想把这只偷偷藏起来的鸡腿啃完",
+        "vietnamese_translation": "Nhưng bây giờ tôi chỉ muốn gặm cho xong chiếc đùi gà đã lén giấu này.",
+    }
+    is_pass_c, issues_c, _ = deterministic_validate_cue(ctx_correct)
+    assert is_pass_c
+    assert len(issues_c) == 0
+
+
+def test_action_verb_recite_chapter_conclusion(sample_project: Project):
+    """Test G: Action verb '背一下' (recite from memory) vs unsupported hurry modifier."""
+    ctx_wrong = {
+        "chinese_source": "背一下第三章的结论",
+        "vietnamese_translation": "Nhanh lên nào, hãy nhớ lại kết luận của chương ba.",
+    }
+    is_pass, issues, notes = deterministic_validate_cue(ctx_wrong)
+    assert not is_pass
+    assert CriticIssueEnum.HALLUCINATION.value in issues or CriticIssueEnum.ACTION_ERROR.value in issues
+
+    ctx_correct = {
+        "chinese_source": "背一下第三章的结论",
+        "vietnamese_translation": "Đọc thuộc lòng kết luận của chương ba xem nào.",
+    }
+    is_pass_c, issues_c, _ = deterministic_validate_cue(ctx_correct)
+    assert is_pass_c
+    assert len(issues_c) == 0
+
+
+def test_name_lock_and_phonetic_invention(sample_project: Project):
+    """Test H: Banned phonetic invention 'Ken Văn' when source has canonical character."""
+    ctx_invented = {
+        "chinese_source": "看清楚 秦扶栀",
+        "vietnamese_translation": "Ken Văn, nhìn kỹ.",
+        "characters": [{"name_zh": "秦扶栀", "name_vi": "Tần Phù Chi", "aliases": ["秦福之"]}],
+    }
+    is_pass, issues, notes = deterministic_validate_cue(ctx_invented)
+    assert not is_pass
+    assert CriticIssueEnum.NAME_MISMATCH.value in issues
+
+
+def test_synthetic_characters_actions_generalization():
+    """Test I: Generalization test with synthetic character and action names."""
+    ctx_synthetic = {
+        "chinese_source": "背诵第四节并且把苹果啃完",
+        "vietnamese_translation": "Học thuộc tiết bốn và ăn hết quả táo.",
+        "characters": [{"name_zh": "李明", "name_vi": "Lý Minh", "aliases": []}],
+    }
+    is_pass, issues, _ = deterministic_validate_cue(ctx_synthetic)
+    assert is_pass
+    assert len(issues) == 0

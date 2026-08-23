@@ -40,6 +40,8 @@ VIETNAMESE_CONTINUATION_WORDS = (
 class DiscourseMode(str, Enum):
     DIRECT_DIALOGUE = "direct_dialogue"
     MONOLOGUE = "monologue"
+    NARRATION = "narration"
+    SYSTEM = "system"
     UNKNOWN = "unknown"
 
 
@@ -154,13 +156,17 @@ def semantic_line_break(text: str, max_line_chars: int = 36) -> str:
 
 
 def infer_discourse_mode(cue: dict[str, Any]) -> DiscourseMode:
-    """Infers discourse mode from addressee and direct dialogue markers."""
+    """Infers discourse mode from addressee, source context, and direct dialogue markers."""
     addr = cue.get("addressee_id") or cue.get("addressee_character_id")
-    if addr is not None and addr != "" and addr != "audience":
-        return DiscourseMode.DIRECT_DIALOGUE
-
     src = (cue.get("source_text") or "").strip()
     tr = (cue.get("translated_text") or "").strip()
+
+    # Past story / background narration markers
+    if any(w in src for w in ["在一家", "在一个", "早餐店", "小时候", "那时候", "曾经", "过去", "家庭里"]):
+        return DiscourseMode.NARRATION
+
+    if addr is not None and addr != "" and addr != "audience":
+        return DiscourseMode.DIRECT_DIALOGUE
 
     # Direct confrontation/vocative marker (e.g. explicit character call + you / 你)
     if any(w in src for w in ["你偷了", "你给我", "你看清楚", "你别", "你是不是", "你难道", "你良心"]):
@@ -372,7 +378,9 @@ class UtteranceEngine:
 
                 cur_mode = infer_discourse_mode(cur)
                 nxt_mode = infer_discourse_mode(nxt)
-                same_mode = (cur_mode == nxt_mode)
+                is_dialogue_cur = (cur_mode == DiscourseMode.DIRECT_DIALOGUE)
+                is_dialogue_nxt = (nxt_mode == DiscourseMode.DIRECT_DIALOGUE)
+                same_mode = (is_dialogue_cur == is_dialogue_nxt) and (cur_mode != DiscourseMode.SYSTEM and nxt_mode != DiscourseMode.SYSTEM)
 
                 cur_src = cur["source_text"].strip()
                 nxt_src = nxt["source_text"].strip()
