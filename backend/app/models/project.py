@@ -33,6 +33,7 @@ class SubtitleCue(BaseModel):
     speaker_character_id: str | None = None
     addressee_id: str | None = None
     addressee_character_id: str | None = None
+    discourse_mode: Literal["direct_dialogue", "monologue", "narration", "system", "unknown"] = "unknown"
     source_text: str
     translated_text: str | None = None
     confidence: float | None = Field(default=None, ge=0, le=1)
@@ -213,4 +214,3 @@ class ProjectPatch(BaseModel):
     relationships: list[RelationshipRule] | None = None
     glossary: list[GlossaryEntry] | None = None
     cues: list[SubtitleCue] | None = None
-
