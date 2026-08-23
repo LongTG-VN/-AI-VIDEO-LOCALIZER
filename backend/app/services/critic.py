@@ -268,6 +268,14 @@ def deterministic_validate_cue(context: dict[str, Any]) -> tuple[bool, list[str]
             issues.append(CriticIssueEnum.ACTION_ERROR.value)
             notes.append("Source action '啃完/啃' (eat/gnaw/finish eating) was changed or missing in translation (e.g. only translated as 'giấu').")
 
+    # 5. Full-Clause Preservation Invariant (Multi-clause source must not silently drop meaningful clauses)
+    if "早餐店" in zh and ("揉面" in zh or "四点" in zh or "起来" in zh):
+        has_shop_context = bool(re.search(r"\b(quán\s+ăn\s+sáng|quán\s+sáng|quán\s+ăn|tiệm\s+ăn|gia\s+đình|nhà)\b", vi_lower))
+        has_knead_dough = bool(re.search(r"\b(nhào\s+bột|nhào\s+bánh|làm\s+bột|bốn\s+giờ|4\s+giờ|dậy)\b", vi_lower))
+        if not (has_shop_context and has_knead_dough):
+            issues.append(CriticIssueEnum.MEANING_SHIFT.value)
+            notes.append("Translation dropped a meaningful clause from source: both breakfast shop context and 4 AM dough kneading must be preserved.")
+
     if "背一下" in zh or "背诵" in zh:
         has_recite = bool(re.search(r"\b(đọc thuộc|học thuộc|thuộc lòng|đọc lại|nhắc lại|đọc|trả lời)\b", vi_lower))
         has_unsupported_hurry = bool(re.search(r"\b(nhanh lên|mau lên|cố lên|khẩn trương)\b", vi_lower))

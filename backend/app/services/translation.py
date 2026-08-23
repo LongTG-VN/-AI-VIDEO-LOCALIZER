@@ -154,7 +154,8 @@ HARD RULES:
    - Avoid dangling endings such as a bare pronoun/conjunction followed by a comma when the
      source cue itself contains a complete unit.
    - Do not duplicate pronouns or names (e.g. avoid 'cô ... cô?').
-   - Dramatic & Narrative Naturalness: '本该属于我的人生' -> 'cuộc đời vốn dĩ thuộc về tôi'; '一家早餐店里 四点就得起床帮着揉面' -> 'ở một quán ăn sáng, bốn giờ sáng đã phải dậy giúp nhào bột'; '你抢了我十八年' -> 'cô đã cướp mất mười tám năm của tôi!'.
+   - Full-Clause Preservation: If source contains multiple clauses (e.g. background situation + specific action), all clauses must be translated and preserved in the subtitle without silently dropping any clause.
+   - Dramatic & Narrative Naturalness: '本该属于我的人生' -> 'cuộc đời vốn dĩ thuộc về tôi'; '在早餐店的家庭里，凌晨四点就要起来帮忙揉面' -> 'ở một gia đình mở quán ăn sáng, bốn giờ sáng đã phải dậy giúp nhào bột'; '你抢了我十八年' -> 'cô đã cướp mất mười tám năm của tôi!'.
 
 6. DISCOURSE
    - Respect `direct_dialogue`, `monologue`, `narration`, `system`, and `unknown`.
