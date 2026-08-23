@@ -91,11 +91,85 @@ def clean_vietnamese_typography(text: str) -> str:
     result = re.sub(r"\s+", " ", result).strip()
     result = re.sub(r"^[,.:;]\s*", "", result)
 
+    # Fix accidental mid-sentence capitalization: e.g. "cô Còn" -> "cô còn", "em Nhưng" -> "em nhưng"
+    def _lower_mid_sentence(match: re.Match) -> str:
+        return match.group(1) + match.group(2).lower()
+
+    result = re.sub(
+        r"([a-zà-ỹ0-9,;:—–-]\s+)(Còn|Nhưng|Mà|Và|Nếu|Tuy|Vì|Nên|Thì|Để|Cho|Với|Không|Đã|Đang|Sẽ|Được|Bị|Cũng|Thậm chí|Ngược lại)\b",
+        _lower_mid_sentence,
+        result
+    )
+
+    # Clean duplicate address pronoun at question end: "cô còn ăn được, cô?" -> "cô còn ăn được sao?"
+    result = re.sub(
+        r"\b(cô|anh|em|chị|bạn|ông|bà)\b(.*?)\s*,\s*\1\s*([?？])?$",
+        r"\1\2?",
+        result,
+        flags=re.IGNORECASE
+    )
+
     if result and result[0].islower():
         result = result[0].upper() + result[1:]
 
     result = re.sub(r"[,:;]\s*$", "", result).strip()
     return result
+
+
+def merge_vietnamese_clauses(left: str, right: str) -> str:
+    """Merge two Vietnamese subtitle clauses while preserving proper capitalization and grammar."""
+    l = (left or "").strip()
+    r = (right or "").strip()
+    if not l:
+        return r
+    if not r:
+        return l
+
+    # If left ends with sentence-terminating punctuation, keep right capitalized
+    if re.search(r"[.!?。！？]\s*$", l):
+        return f"{l} {r}"
+
+    # Lowercase the first character of right if it is a common word
+    words = r.split(" ", 1)
+    first_word = words[0]
+    rest = (" " + words[1]) if len(words) > 1 else ""
+
+    if first_word and first_word[0].isupper() and not first_word.isupper():
+        # Do not lowercase if it is likely a capital abbreviation
+        first_word = first_word[0].lower() + first_word[1:]
+        r = first_word + rest
+
+    # Strip trailing punctuation from left that would conflict with right
+    l_clean = re.sub(r"[,;:\s]+$", "", l)
+    combined = f"{l_clean} {r}".strip()
+    return clean_vietnamese_typography(combined)
+
+
+def validate_render_cue_entity_ownership(
+    render_cues: list[RenderSubtitleCue],
+    source_cues_by_id: dict[str, Any],
+    known_name_pairs: list[dict[str, str]],
+) -> list[str]:
+    """Verify that no canonical character name migrated into a render cue whose source cues lack that name."""
+    violations: list[str] = []
+    for rc in render_cues:
+        combined_zh = " ".join(
+            (getattr(source_cues_by_id.get(cid), "source_text", None) or (source_cues_by_id.get(cid) or {}).get("source_text") or "")
+            for cid in rc.source_cue_ids
+            if cid in source_cues_by_id
+        )
+        rc_vi_lower = rc.render_text.lower()
+        for pair in known_name_pairs:
+            zh_name = pair.get("zh", "").strip()
+            vi_name = pair.get("vi", "").strip().lower()
+            if vi_name and len(vi_name) >= 3 and zh_name:
+                if re.search(rf"\b{re.escape(vi_name)}\b", rc_vi_lower):
+                    if zh_name not in combined_zh:
+                        violations.append(
+                            f"Entity ownership violation in render cue {rc.render_id}: "
+                            f"name '{pair.get('vi')}' present in subtitle, but source '{combined_zh}' does not contain '{zh_name}'."
+                        )
+    return violations
 
 
 def semantic_line_break(text: str, max_line_chars: int = 36) -> str:
@@ -337,20 +411,21 @@ class UtteranceEngine:
             if not clean_source or not clean_translation:
                 continue
 
+            cid = getattr(cue, "id", None) or getattr(cue, "render_id", "cue")
             current = {
-                "id": cue.id,
-                "source_cue_ids": [cue.id],
+                "id": cid,
+                "source_cue_ids": list(getattr(cue, "source_cue_ids", [cid])),
                 "start": float(cue.start),
                 "end": float(cue.end),
                 "source_text": source,
                 "translated_text": translated_text,
-                "speaker_id": cue.speaker_id,
-                "speaker_character_id": cue.speaker_character_id,
-                "addressee_id": cue.addressee_id,
-                "addressee_character_id": cue.addressee_character_id,
+                "speaker_id": getattr(cue, "speaker_id", None),
+                "speaker_character_id": getattr(cue, "speaker_character_id", None),
+                "addressee_id": getattr(cue, "addressee_id", None),
+                "addressee_character_id": getattr(cue, "addressee_character_id", None),
                 "discourse_mode": normalize_discourse_mode(getattr(cue, "discourse_mode", None)),
-                "source_starts": [float(cue.start)],
-                "source_ends": [float(cue.end)],
+                "source_starts": list(getattr(cue, "source_starts", [float(cue.start)])),
+                "source_ends": list(getattr(cue, "source_ends", [float(cue.end)])),
             }
 
             if filtered:
@@ -461,7 +536,7 @@ class UtteranceEngine:
                     break
 
                 cur["source_text"] = f"{cur_source} {nxt_source}".strip()
-                cur["translated_text"] = raw_combined_translation
+                cur["translated_text"] = merge_vietnamese_clauses(cur_translation, nxt_translation)
                 cur["source_cue_ids"].extend(nxt["source_cue_ids"])
                 cur["source_starts"].extend(nxt["source_starts"])
                 cur["source_ends"].extend(nxt["source_ends"])

@@ -192,15 +192,43 @@ def deterministic_validate_cue(context: dict[str, Any]) -> tuple[bool, list[str]
             issues.append(CriticIssueEnum.REFERENT_ERROR.value)
             notes.append("In family context describing mother, '她的眼里' refers to mother ('mẹ / bà ấy'), not 'cô ấy'.")
 
-    # Relational Negation vs Literal Existence Check (e.g. 她的眼里没有女儿 -> không xem tôi là con gái)
+    # 领口 (clothing neckline/collar) vs vòng cổ (necklace) Check
+    if "领口" in zh:
+        if re.search(r"\bvòng\s+cổ\b", vi_lower):
+            issues.append(CriticIssueEnum.MEANING_SHIFT.value)
+            notes.append("'领口' refers to clothing neckline/collar ('cổ áo'), not necklace ('vòng cổ').")
+        has_collar = bool(re.search(r"\b(cổ\s+áo|cổ|áo)\b", vi_lower))
+        if not has_collar:
+            issues.append(CriticIssueEnum.MEANING_SHIFT.value)
+            notes.append("Source has '领口' (clothing neckline/collar); translation must refer to 'cổ áo'.")
+
+    # Relational Negation vs Literal Existence Check (e.g. 她的眼里没有女儿 -> không xem tôi là con gái / tôi không phải là con gái)
     if ("没有女儿" in zh or "没有儿子" in zh) and ("商品" in zh or "眼里" in zh or "心里" in zh):
         has_relational_regard = bool(
-            re.search(r"\b(không|chưa)\s+(xem|coi|nhận|coi sóc|đoái hoài)\b", vi_lower)
-            and re.search(r"\blà\s+(tôi\s+là\s+)?(con|con gái|con ruột|con cái)\b", vi_lower)
+            (re.search(r"\b(không|chưa)\s+(xem|coi|nhận|coi sóc|đoái hoài)\b", vi_lower)
+             and re.search(r"\blà\s+(tôi\s+là\s+)?(con|con gái|con ruột|con cái)\b", vi_lower))
+            or re.search(r"\b(không\s+phải|chẳng\s+phải)\s+là\s+(con|con gái|con ruột|con cái)\b", vi_lower)
         )
         if not has_relational_regard:
             issues.append(CriticIssueEnum.MEANING_SHIFT.value)
-            notes.append("Source expresses relational disregard; translation must use 'không xem/coi tôi là con gái' instead of literal existence 'không có con gái'.")
+            notes.append("Source expresses relational disregard; translation must use 'không xem/coi tôi là con gái' or 'tôi không phải là con gái' instead of literal existence 'không có con gái'.")
+        
+        # Guard against subjectless "Trong mắt mẹ, không xem tôi..."
+        if re.search(r"^trong\s+mắt\s+[^,]+,\s*(không|chưa)\s+(xem|coi)\b", vi_lower):
+            issues.append(CriticIssueEnum.GRAMMATICAL_ERROR.value)
+            notes.append("Subjectless Vietnamese construction: use 'Mẹ không xem tôi là con gái' or 'Trong mắt mẹ, tôi không phải là con gái'.")
+
+    # Duplicate Address Pronoun Guard (e.g. "cô Còn ăn được, cô?")
+    if re.search(r"\b(cô|anh|em|chị|bạn|ông|bà)\b.*?\b\1\b\s*[?？]?$", vi_lower):
+        zh_pronoun_count = len(re.findall(r"(你|您|他|她|哥|姐|弟|妹)", zh))
+        if zh_pronoun_count < 2:
+            issues.append(CriticIssueEnum.GRAMMATICAL_ERROR.value)
+            notes.append("Duplicate address pronoun detected without corresponding repeated pronoun in source.")
+
+    # Accidental mid-sentence capitalization guard (e.g. "cô Còn", "em Nhưng")
+    if re.search(r"(?<=[a-zà-ỹ0-9,;:—–-]\s)(Còn|Nhưng|Mà|Và|Nếu|Tuy|Vì|Nên|Thì|Để|Cho|Với|Không|Đã|Đang|Sẽ|Được|Bị|Cũng|Thậm chí|Ngược lại)\b", vi):
+        issues.append(CriticIssueEnum.GRAMMATICAL_ERROR.value)
+        notes.append("Accidental mid-sentence capitalization detected.")
 
     # Guard: Speaker's own name metadata must NOT be prepended into spoken dialogue text
     speaker_name_vi = (context.get("speaker_name_vi") or context.get("speaker") or "").strip()

@@ -238,7 +238,7 @@ def test_mother_daughter_referent_and_commodity():
 
     ctx_correct_referent = {
         "chinese_source": "她的眼里没有女儿 只有一件需要时刻打磨的商品",
-        "vietnamese_translation": "Trong mắt mẹ, không xem tôi là con gái mà chỉ có một món hàng cần được rèn giũa liên tục.",
+        "vietnamese_translation": "Mẹ không xem tôi là con gái mà chỉ có một món hàng cần được rèn giũa liên tục.",
         "speaker_role": "narrator",
         "expected_vi_self": "tôi",
     }
@@ -286,7 +286,7 @@ def test_relational_negation_vs_literal_existence():
 
     ctx_relational = {
         "chinese_source": "她的眼里没有女儿 只有一件需要时刻打磨的商品",
-        "vietnamese_translation": "Trong mắt mẹ, không xem tôi là con gái mà chỉ là một món hàng cần được mài giũa liên tục.",
+        "vietnamese_translation": "Mẹ không xem tôi là con gái mà chỉ là một món hàng cần được mài giũa liên tục.",
         "speaker_role": "narrator",
         "expected_vi_self": "tôi",
     }

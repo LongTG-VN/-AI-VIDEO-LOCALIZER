@@ -128,7 +128,8 @@ HARD RULES:
    - Use `scene_summary`, `scene_tone`, neighboring source cues, speaker/addressee metadata,
      and `discourse_mode` to resolve pronouns, ellipsis, referents, implied subjects, and
      relational meaning.
-   - Relational Negation vs Literal Existence: In dramatic monologue/dialogue, '眼里没有女儿/儿子' expresses relational disregard ('không xem tôi là con gái' / 'không coi tôi là con gái'), NOT literal non-existence ('không có con gái'). Translate faithfully as relational regard ('không xem tôi là con gái mà chỉ có một món hàng cần liên tục mài giũa').
+   - Clothing terminology: '领口' refers to clothing collar/neckline ('cổ áo' / 'phần cổ áo'), NEVER necklace ('vòng cổ').
+   - Relational Negation vs Literal Existence: In dramatic monologue/dialogue, '眼里没有女儿/儿子' expresses relational disregard. Translate faithfully with complete grammatical subject: e.g. 'Mẹ không xem tôi là con gái mà chỉ coi tôi như một món hàng cần liên tục mài giũa' or 'Trong mắt mẹ, tôi không phải là con gái mà chỉ là một món hàng...'. NEVER produce subjectless 'Trong mắt mẹ, không xem tôi...'. NEVER 'không có con gái'.
    - Preserve the main action, all meaningful clauses, negation, contrast, gender, kinship,
      and who is doing what to whom.
    - Do not add unsupported commands, emotions, explanations, or actions.
@@ -146,12 +147,14 @@ HARD RULES:
    - Never invent a phonetic alternative.
    - A name used as direct address (vocative) must remain a vocative; do not turn it into a
      possessor or other grammatical role without source evidence.
+   - If source does NOT contain a character's name, do NOT migrate or borrow that name from neighbors.
 
-5. SUBTITLE GRAMMAR
+5. SUBTITLE GRAMMAR & NATURALNESS
    - Produce a complete, idiomatic subtitle fragment appropriate to the source cue.
    - Avoid dangling endings such as a bare pronoun/conjunction followed by a comma when the
      source cue itself contains a complete unit.
-   - Do not duplicate pronouns or names merely to make context explicit.
+   - Do not duplicate pronouns or names (e.g. avoid 'cô ... cô?').
+   - Dramatic & Narrative Naturalness: '本该属于我的人生' -> 'cuộc đời vốn dĩ thuộc về tôi'; '一家早餐店里 四点就得起床帮着揉面' -> 'ở một quán ăn sáng, bốn giờ sáng đã phải dậy giúp nhào bột'; '你抢了我十八年' -> 'cô đã cướp mất mười tám năm của tôi!'.
 
 6. DISCOURSE
    - Respect `direct_dialogue`, `monologue`, `narration`, `system`, and `unknown`.
