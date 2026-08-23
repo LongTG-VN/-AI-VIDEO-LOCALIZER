@@ -169,3 +169,143 @@ def test_engine_caps_automatic_merge_to_two_source_cues():
     assert len(render_cues) == 2
     assert render_cues[0].source_cue_ids == ["a", "b"]
     assert render_cues[1].source_cue_ids == ["c"]
+
+
+def test_three_short_independent_assessments_stay_separate():
+    cues = [
+        _cue("a", 11.87, "领口歪了，", end=12.63, translated="Vòng cổ bị lệch,"),
+        _cue("b", 12.67, "坐姿不对，", end=13.35, translated="Tư thế ngồi sai,"),
+        _cue("c", 13.69, "笑的太假。", end=14.37, translated="Cười quá giả."),
+    ]
+    render_cues, _ = UtteranceEngine().process_cues(cues)
+    assert len(render_cues) == 3
+    assert [rc.source_cue_ids for rc in render_cues] == [["a"], ["b"], ["c"]]
+
+
+def test_unfinished_clause_plus_direct_continuation_may_merge():
+    cues = [
+        _cue("a", 0.0, "如果我们现在出发，", end=1.2, translated="Nếu chúng ta xuất phát ngay,"),
+        _cue("b", 1.25, "就能赶上最后一班车。", end=2.5, translated="thì sẽ kịp chuyến xe cuối."),
+    ]
+    render_cues, metrics = UtteranceEngine().process_cues(cues)
+    assert len(render_cues) == 1
+    assert render_cues[0].source_cue_ids == ["a", "b"]
+    assert metrics["merged_groups"] == 1
+
+
+def test_narration_complete_clause_plus_direct_confrontation_must_not_merge():
+    cues = [
+        _cue(
+            "narr",
+            70.31,
+            "在早餐店的家庭里，凌晨四点就要起来帮忙揉面。",
+            end=73.80,
+            translated="Trong gia đình quán sáng, lúc 4 giờ sáng phải dậy để giúp nhào bánh.",
+            mode="narration",
+        ),
+        _cue(
+            "conf",
+            73.80,
+            "秦扶栀，你偷了我十八年！",
+            end=76.64,
+            translated="Tần Phù Chi, cô đã trộm lấy 18 năm của tôi!",
+            addressee="char_heroine",
+            mode="direct_dialogue",
+        ),
+    ]
+    render_cues, _ = UtteranceEngine().process_cues(cues)
+    assert len(render_cues) == 2
+    assert render_cues[0].source_cue_ids == ["narr"]
+    assert render_cues[1].source_cue_ids == ["conf"]
+
+
+def test_same_timing_overlap_but_different_discourse_mode_must_not_merge():
+    cues = [
+        _cue("a", 10.0, "这是当年的回忆。", end=11.5, translated="Đây là ký ức năm xưa.", mode="narration"),
+        _cue("b", 10.5, "你怎么在这里？", end=12.0, translated="Sao anh lại ở đây?", addressee="char_b", mode="direct_dialogue"),
+    ]
+    render_cues, _ = UtteranceEngine().process_cues(cues)
+    assert len(render_cues) == 2
+    assert render_cues[0].discourse_mode == "narration"
+    assert render_cues[1].discourse_mode == "direct_dialogue"
+
+
+def test_neighbor_contains_name_but_current_does_not_no_name_migration():
+    char = Character(id="char_qfz", name="Tần Phù Chi", name_zh="秦扶栀", name_vi="Tần Phù Chi")
+    project = Project(
+        name="test",
+        source_video_path="demo.mp4",
+        characters=[char],
+        cues=[
+            _cue("c1", 0.0, "秦扶栀你听我说"),
+            _cue("c2", 1.5, "我们必须快点离开"),
+        ],
+    )
+    mentions_c1 = source_name_mentions(project, project.cues[0].source_text)
+    mentions_c2 = source_name_mentions(project, project.cues[1].source_text)
+    assert len(mentions_c1) == 1
+    assert mentions_c1[0]["target"] == "Tần Phù Chi"
+    assert len(mentions_c2) == 0
+
+
+def test_current_cue_explicit_character_name_requires_canonical_target():
+    char = Character(id="char_mkx", name="Mạnh Kinh Xuân", name_zh="孟惊春", name_vi="Mạnh Kinh Xuân")
+    project = Project(
+        name="test",
+        source_video_path="demo.mp4",
+        characters=[char],
+        cues=[_cue("c1", 0.0, "孟惊春才是真正的女儿")],
+    )
+    mentions = source_name_mentions(project, project.cues[0].source_text)
+    assert len(mentions) == 1
+    assert mentions[0]["target"] == "Mạnh Kinh Xuân"
+
+
+def test_monologue_self_pronoun_does_not_inherit_dialogue_addressee():
+    from app.services.critic import CriticIssueEnum, deterministic_validate_cue
+    ctx = {
+        "chinese_source": "我一定要查清楚真相",
+        "vietnamese_translation": "Con nhất định phải điều tra rõ chân tướng",
+        "speaker_role": "heroine",
+        "expected_vi_self": "tôi",
+        "relationship": "monologue",
+    }
+    is_pass, issues, notes = deterministic_validate_cue(ctx)
+    assert not is_pass
+    assert CriticIssueEnum.PRONOUN_MISMATCH.value in issues
+
+
+def test_translation_provider_wrong_or_missing_ids_strict_id_matching():
+    from app.services.translation import OpenAICompatibleTranslator
+    translator = OpenAICompatibleTranslator("http://localhost:11434/v1", "test", "test-model")
+    batch = [
+        {"cue_id": "correct_id_1", "source": "你好"},
+        {"cue_id": "correct_id_2", "source": "再见"},
+    ]
+    # Simulate provider returning arbitrary or shifted IDs
+    items = [
+        {"cue_id": "wrong_id_x", "text": "Xin chào", "confidence": 0.9},
+        {"cue_id": "wrong_id_y", "text": "Tạm biệt", "confidence": 0.9},
+    ]
+    expected_ids = {item["cue_id"] for item in batch}
+    results = {}
+    for item in items:
+        if isinstance(item, dict) and item.get("cue_id") in expected_ids:
+            results[item["cue_id"]] = (item["text"], item.get("confidence"))
+    for b in batch:
+        if b["cue_id"] not in results:
+            results[b["cue_id"]] = (b.get("source", ""), 0.0)
+
+    assert results["correct_id_1"] == ("你好", 0.0)
+    assert results["correct_id_2"] == ("再见", 0.0)
+
+
+def test_chinese_source_fallback_not_accepted_as_successful_vietnamese():
+    from app.services.critic import CriticIssueEnum, deterministic_validate_cue
+    ctx = {
+        "chinese_source": "领口歪了",
+        "vietnamese_translation": "领口歪了",
+    }
+    is_pass, issues, notes = deterministic_validate_cue(ctx)
+    assert not is_pass
+    assert CriticIssueEnum.MEANING_SHIFT.value in issues

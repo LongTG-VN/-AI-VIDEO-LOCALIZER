@@ -128,6 +128,7 @@ HARD RULES:
    - Use `scene_summary`, `scene_tone`, neighboring source cues, speaker/addressee metadata,
      and `discourse_mode` to resolve pronouns, ellipsis, referents, implied subjects, and
      relational meaning.
+   - Relational Negation vs Literal Existence: In dramatic monologue/dialogue, '眼里没有女儿/儿子' expresses relational disregard ('không xem tôi là con gái' / 'không coi tôi là con gái'), NOT literal non-existence ('không có con gái'). Translate faithfully as relational regard ('không xem tôi là con gái mà chỉ có một món hàng cần liên tục mài giũa').
    - Preserve the main action, all meaningful clauses, negation, contrast, gender, kinship,
      and who is doing what to whom.
    - Do not add unsupported commands, emotions, explanations, or actions.
@@ -270,20 +271,10 @@ class OpenAICompatibleTranslator:
                 conf = float(item["confidence"]) if item.get("confidence") is not None else None
                 results[item["cue_id"]] = (text, conf)
 
-        if len(results) < len(batch) and len(items) == len(batch):
-            for b_item, res_item in zip(batch, items):
-                if b_item["cue_id"] not in results and isinstance(res_item, dict):
-                    text = str(res_item.get("text", "")).strip()
-                    conf = (
-                        float(res_item.get("confidence", 0.8))
-                        if res_item.get("confidence") is not None
-                        else None
-                    )
-                    results[b_item["cue_id"]] = (text, conf)
-
+        # Strict ID matching only: do NOT silently accept cross-cue positional mapping
         for b_item in batch:
             if b_item["cue_id"] not in results:
-                results[b_item["cue_id"]] = (b_item.get("source", ""), 0.5)
+                results[b_item["cue_id"]] = (b_item.get("source", ""), 0.0)
 
         return results
 

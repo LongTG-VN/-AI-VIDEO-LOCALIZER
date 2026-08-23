@@ -127,10 +127,15 @@ def deterministic_validate_cue(context: dict[str, Any]) -> tuple[bool, list[str]
     speaker_role = (context.get("speaker_role") or "").lower()
 
     # 1. Monologue / Narration Pronoun Guard
-    if not addr or addr == "audience" or "monologue" in rel or "narration" in rel:
+    is_monologue_or_narration = bool(
+        ("monologue" in rel or "narration" in rel)
+        or (not addr and not exp_target and "brother" not in rel and "sister" not in rel and "father" not in rel and "mother" not in rel)
+        or addr == "audience"
+    )
+    if is_monologue_or_narration and not exp_target:
         if re.search(r"\b(mẹ|ba|bố|anh|chị|chú|bác)\s+ơi\b", vi_lower):
             pass
-        elif re.search(r"^con\s+(là|đang|đã|sẽ|muốn|nghĩ|thấy)\b", vi_lower) or re.search(r"^em\s+(là|đang|đã|sẽ|muốn|nghĩ|thấy)\b", vi_lower):
+        elif re.search(r"\b(con|em)\s+(là|đang|đã|sẽ|muốn|nghĩ|thấy|nhất định|phải|chỉ|không)\b", vi_lower):
             issues.append(CriticIssueEnum.PRONOUN_MISMATCH.value)
             notes.append("Monologue / narration should use 'tôi' instead of 'con' or 'em' as self pronoun.")
 
@@ -191,11 +196,11 @@ def deterministic_validate_cue(context: dict[str, Any]) -> tuple[bool, list[str]
     if ("没有女儿" in zh or "没有儿子" in zh) and ("商品" in zh or "眼里" in zh or "心里" in zh):
         has_relational_regard = bool(
             re.search(r"\b(không|chưa)\s+(xem|coi|nhận|coi sóc|đoái hoài)\b", vi_lower)
-            and re.search(r"\blà\s+(con|con gái|con ruột|con cái)\b", vi_lower)
+            and re.search(r"\blà\s+(tôi\s+là\s+)?(con|con gái|con ruột|con cái)\b", vi_lower)
         )
-        if re.search(r"\bkhông\s+có\s+con\s+gái\b", vi_lower) and not has_relational_regard:
+        if not has_relational_regard:
             issues.append(CriticIssueEnum.MEANING_SHIFT.value)
-            notes.append("Literal existence 'không có con gái' used instead of relational regard 'không xem/coi tôi là con gái'.")
+            notes.append("Source expresses relational disregard; translation must use 'không xem/coi tôi là con gái' instead of literal existence 'không có con gái'.")
 
     # Guard: Speaker's own name metadata must NOT be prepended into spoken dialogue text
     speaker_name_vi = (context.get("speaker_name_vi") or context.get("speaker") or "").strip()
