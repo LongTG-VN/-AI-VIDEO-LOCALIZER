@@ -6,8 +6,9 @@ from enum import Enum
 from typing import Any
 
 from app.models.project import SubtitleCue
+from app.services.semantic_context import normalize_discourse_mode
 
-# Generic noise patterns for non-dialogue artifacts and isolated OCR noise
+# Generic noise patterns for non-dialogue artifacts and isolated OCR noise.
 NOISE_SUBTITLE_PATTERNS = {
     "10.5o", "10:50", "MILK", "MILK MILK", "IN-CN", "CN-IN", "755135", "CN",
     "...", "西", "T", "Y", "1", "0", "工", "国", "LAA",
@@ -24,16 +25,16 @@ NOISE_REPLACE_PATTERNS = [
     r"\bCN\b",
 ]
 
+# These are generic connective particles, not title-specific dialogue.
 CHINESE_CONTINUATION_WORDS = (
     "但是", "但", "因为", "所以", "如果", "虽然", "而且", "然后",
     "只有", "只要", "并且", "既", "不仅", "另外", "反而", "甚至",
-    "或者", "还是", "与其", "不如", "即使", "哪怕", "而我", "但我",
+    "或者", "还是", "与其", "不如", "即使", "哪怕", "而", "但我", "而我",
 )
 
 VIETNAMESE_CONTINUATION_WORDS = (
     "nhưng", "vì", "nên", "mà", "và", "hoặc", "nếu", "tuy",
     "cho nên", "do đó", "bởi vì", "thậm chí", "ngược lại",
-    "chỉ muốn", "lớn lên", "đã", "được", "con đã", "em đã",
 )
 
 
@@ -47,7 +48,8 @@ class DiscourseMode(str, Enum):
 
 @dataclass
 class RenderSubtitleCue:
-    """Represents a finalized, single-active cinematic subtitle cue for rendering."""
+    """Finalized single-active subtitle cue used by SRT/ASS rendering."""
+
     render_id: str
     source_cue_ids: list[str]
     start: float
@@ -60,57 +62,48 @@ class RenderSubtitleCue:
     source_starts: list[float] = field(default_factory=list)
     source_ends: list[float] = field(default_factory=list)
     cps: float = 0.0
+    discourse_mode: str = DiscourseMode.UNKNOWN.value
 
 
 def clean_text_for_comparison(text: str) -> str:
-    """Normalizes text for duplicate and containment checking."""
-    t = text
+    """Normalize text for duplicate/containment checks."""
+    normalized = text or ""
     for noise in ["MILK MILK", "MILK", "10:50", "10.5o", "IN-CN", "CN-IN", "755135", "CN"]:
-        t = t.replace(noise, "")
-    return re.sub(r"[^\w\s]", "", t.lower()).replace(" ", "").strip()
+        normalized = normalized.replace(noise, "")
+    return re.sub(r"[^\w\s]", "", normalized.lower()).replace(" ", "").strip()
 
 
 def clean_vietnamese_typography(text: str) -> str:
-    """Applies clean, domain-generic Vietnamese subtitle typography normalization."""
-    res = text.strip()
+    """Apply domain-generic Vietnamese subtitle typography cleanup only."""
+    result = (text or "").strip()
 
-    # 1. Remove isolated OCR noise tokens
-    for pat in NOISE_REPLACE_PATTERNS:
-        res = re.sub(pat, "", res, flags=re.IGNORECASE)
+    for pattern in NOISE_REPLACE_PATTERNS:
+        result = re.sub(pattern, "", result, flags=re.IGNORECASE)
 
-    # 2. Punctuation normalization
-    res = re.sub(r",\s*,+", ",", res)  # duplicate commas
-    res = re.sub(r"\.{4,}", "...", res)  # 4+ dots to ellipsis
-    res = re.sub(r"\s+([,!?;:])", r"\1", res)  # remove space before punctuation
-    res = re.sub(r"\s+\.(?!\d)", ".", res)  # remove space before period (not decimal)
-    res = re.sub(r"([,!?;:])(?=[A-Za-zÀ-ỹ0-9])", r"\1 ", res)  # space after comma/colon/etc
-    res = re.sub(r"\.(?=[A-Za-zÀ-ỹ])", ". ", res)  # space after period if followed by letter
+    result = re.sub(r",\s*,+", ",", result)
+    result = re.sub(r"\.{4,}", "...", result)
+    result = re.sub(r"\s+([,!?;:])", r"\1", result)
+    result = re.sub(r"\s+\.(?!\d)", ".", result)
+    result = re.sub(r"([,!?;:])(?=[A-Za-zÀ-ỹ0-9])", r"\1 ", result)
+    result = re.sub(r"\.(?=[A-Za-zÀ-ỹ])", ". ", result)
+    result = re.sub(r"\(\s+", "(", result)
+    result = re.sub(r"\s+\)", ")", result)
+    result = re.sub(r"\s+", " ", result).strip()
+    result = re.sub(r"^[,.:;]\s*", "", result)
 
-    # 3. Spacing inside brackets/quotes
-    res = re.sub(r"\(\s+", "(", res)
-    res = re.sub(r"\s+\)", ")", res)
+    if result and result[0].islower():
+        result = result[0].upper() + result[1:]
 
-    # 4. Collapse multiple whitespace
-    res = re.sub(r"\s+", " ", res).strip()
-
-    # 5. Clean leading stray punctuation
-    res = re.sub(r"^[,.:;]\s*", "", res)
-
-    # 6. Ensure proper capitalization of first letter
-    if res and res[0].islower():
-        res = res[0].upper() + res[1:]
-
-    # 7. Clean trailing dangling punctuation
-    res = re.sub(r"[,:;]\s*$", "", res).strip()
-
-    return res.strip()
+    result = re.sub(r"[,:;]\s*$", "", result).strip()
+    return result
 
 
 def semantic_line_break(text: str, max_line_chars: int = 36) -> str:
-    """Balances Vietnamese subtitle text into 2 natural semantic lines."""
+    """Balance a subtitle across at most two semantic lines."""
     if "\n" in text or r"\N" in text:
         return text.replace("\n", r"\N")
-    clean = " ".join(text.split()).strip()
+
+    clean = " ".join((text or "").split()).strip()
     if len(clean) <= max_line_chars:
         return clean
 
@@ -118,84 +111,101 @@ def semantic_line_break(text: str, max_line_chars: int = 36) -> str:
     best_pos = -1
     min_dist = float("inf")
 
-    # Priority 1: Punctuation boundaries (. , ! ? ; : — -)
-    for m in re.finditer(r"[,.!?;:—–-]\s+", clean):
-        pos = m.end()
-        dist = abs(pos - mid)
-        if dist < min_dist:
-            min_dist = dist
+    for match in re.finditer(r"[,.!?;:—–-]\s+", clean):
+        pos = match.end()
+        distance = abs(pos - mid)
+        if distance < min_dist:
+            min_dist = distance
             best_pos = pos
 
-    # Priority 2: Natural conjunctions / clause boundaries
     if best_pos == -1 or min_dist > max_line_chars // 2:
-        conjunctions = [
+        for pattern in [
             r"\s+nhưng\s+", r"\s+mà\s+", r"\s+và\s+", r"\s+hoặc\s+",
-            r"\s+thì\s+", r"\s+đã\s+", r"\s+được\s+", r"\s+để\s+", r"\s+trong\s+",
-        ]
-        for c_pat in conjunctions:
-            for m in re.finditer(c_pat, clean, flags=re.IGNORECASE):
-                pos = m.start()
-                dist = abs(pos - mid)
-                if dist < min_dist:
-                    min_dist = dist
+            r"\s+thì\s+", r"\s+để\s+", r"\s+trong\s+",
+        ]:
+            for match in re.finditer(pattern, clean, flags=re.IGNORECASE):
+                pos = match.start()
+                distance = abs(pos - mid)
+                if distance < min_dist:
+                    min_dist = distance
                     best_pos = pos
 
-    # Priority 3: General word spacing
     if best_pos == -1 or min_dist > max_line_chars // 2:
-        for m in re.finditer(r"\s+", clean):
-            pos = m.start()
-            dist = abs(pos - mid)
-            if dist < min_dist:
-                min_dist = dist
+        for match in re.finditer(r"\s+", clean):
+            pos = match.start()
+            distance = abs(pos - mid)
+            if distance < min_dist:
+                min_dist = distance
                 best_pos = pos
 
-    if best_pos > 0 and best_pos < len(clean):
-        p1 = clean[:best_pos].strip()
-        p2 = clean[best_pos:].strip()
-        if p1 and p2:
-            return p1 + r"\N" + p2
-
+    if 0 < best_pos < len(clean):
+        first = clean[:best_pos].strip()
+        second = clean[best_pos:].strip()
+        if first and second:
+            return first + r"\N" + second
     return clean
 
 
 def infer_discourse_mode(cue: dict[str, Any]) -> DiscourseMode:
-    """Infers discourse mode from addressee, source context, and direct dialogue markers."""
-    addr = cue.get("addressee_id") or cue.get("addressee_character_id")
-    src = (cue.get("source_text") or "").strip()
-    tr = (cue.get("translated_text") or "").strip()
+    """Resolve discourse mode, preferring persisted context-analysis metadata.
 
-    # Past story / background narration markers
-    if any(w in src for w in ["在一家", "在一个", "早餐店", "小时候", "那时候", "曾经", "过去", "家庭里"]):
-        return DiscourseMode.NARRATION
+    Old projects may not have discourse metadata. The fallback remains deliberately
+    conservative and generic: a concrete addressee means direct dialogue; otherwise the
+    cue is unknown/monologue-like rather than guessed from title-specific words or names.
+    """
+    explicit = normalize_discourse_mode(str(cue.get("discourse_mode") or "unknown"))
+    if explicit != DiscourseMode.UNKNOWN.value:
+        return DiscourseMode(explicit)
 
-    if addr is not None and addr != "" and addr != "audience":
+    speaker = str(cue.get("speaker_id") or "").lower()
+    if any(token in speaker for token in ("system", "alarm", "announcement")):
+        return DiscourseMode.SYSTEM
+
+    addressee = cue.get("addressee_character_id") or cue.get("addressee_id")
+    if addressee not in (None, "", "audience"):
         return DiscourseMode.DIRECT_DIALOGUE
 
-    # Direct confrontation/vocative marker (e.g. explicit character call + you / 你)
-    if any(w in src for w in ["你偷了", "你给我", "你看清楚", "你别", "你是不是", "你难道", "你良心"]):
-        return DiscourseMode.DIRECT_DIALOGUE
-    if re.search(r"^(?:秦|宋|孟|Tần|Mạnh|Song)\w*[,，\s]+(?:mày|cô|bạn|anh|em|cậu|bác|chú|dì)\b", tr, re.IGNORECASE):
-        return DiscourseMode.DIRECT_DIALOGUE
-
+    # Backward-compatible fallback. We intentionally do not infer narration from lexical
+    # story words here; context analysis owns that decision for new projects.
     return DiscourseMode.MONOLOGUE
 
 
-def is_short_imperative_or_assessment(src: str) -> bool:
-    """Detects short independent assessment or imperative clauses (e.g. 领口歪了, 坐姿不对, 笑的太假, 看清楚).
+def is_short_imperative_or_assessment(source_text: str) -> bool:
+    """Conservatively detect short self-contained Chinese beats.
 
-    Characteristics: 3 to 7 characters, self-contained statement or predicate with no trailing conjunction.
-    These must be rendered as independent, sequential subtitle beats.
+    The heuristic uses grammatical/punctuation shape rather than named characters or a
+    particular benchmark sentence. It is only a veto against aggressive merging.
     """
-    s = re.sub(r"[，。！？、,.!?\s]", "", src).strip()
-    if 2 <= len(s) <= 7:
-        if s.endswith(("歪了", "不对", "太假", "好了", "快点", "走了", "停下", "站住", "看清楚", "听好了")):
-            return True
-    return False
+    raw = (source_text or "").strip()
+    stripped = re.sub(r"[，。！？、,.!?\s]", "", raw)
+    if not (2 <= len(stripped) <= 8):
+        return False
+    if raw.endswith(("。", "！", "？", "!", "?")):
+        return True
+    return bool(re.search(r"(了|不对|太.+|好了|住|清楚)$", stripped))
+
+
+def _has_dangling_vi_tail(text: str) -> bool:
+    clean = (text or "").strip()
+    if not clean:
+        return False
+    patterns = [
+        r"\b(cô|anh|em|ông|bà|chị|bạn|mày|con|tôi|ta)\s*[,;:]?$",
+        r"\b(mà|và|thì|nhưng|hoặc|đã|đang|sẽ|được|bị|vì|bởi|của|ở|tại|là|để|cho|với)\s*[,;:]?$",
+        r"\b(muốn|nghĩ|biết|cần)\s*[,;:]$",
+    ]
+    return any(re.search(pattern, clean, re.IGNORECASE) for pattern in patterns)
+
+
+def _starts_with_continuation(text: str, words: tuple[str, ...]) -> bool:
+    lowered = (text or "").strip().lower()
+    return any(lowered == word.lower() or lowered.startswith(word.lower() + " ") for word in words)
 
 
 @dataclass
 class MergeEvidence:
-    """Evaluates whether two consecutive subtitle cues have strong positive evidence to merge."""
+    """Positive-evidence merge policy; default remains NO MERGE."""
+
     same_speaker: bool
     same_addressee: bool
     same_mode: bool
@@ -213,64 +223,45 @@ class MergeEvidence:
     is_dangling_fragment: bool = False
 
     def calculate_score(self) -> tuple[float, list[str]]:
-        """Calculates evidence score. Default is DO NOT MERGE (< 3.5)."""
         reasons: list[str] = []
         score = 0.0
 
-        # Hard Veto 1: Speaker mismatch
         if not self.same_speaker:
             return -100.0, ["speaker_mismatch"]
-
-        # Hard Veto 2: Addressee / Discourse Mode mismatch (Dialogue vs Monologue never merge)
         if not self.same_addressee:
             return -100.0, ["addressee_mismatch"]
         if not self.same_mode:
             return -100.0, ["discourse_mode_mismatch"]
-
-        # Hard Veto 3: Question followed by anything
         if self.is_question:
             return -100.0, ["question_boundary"]
-
-        # Hard Veto 4: Short independent assessment / imperative beat
         if self.is_short_assessment and not self.has_strong_zh_continuation:
             return -100.0, ["short_assessment_boundary"]
-
-        # Hard Veto 5: Length or duration overflow
         if self.combined_tr_len > 76:
             return -100.0, ["length_overflow"]
         if self.combined_duration > 6.0:
             return -100.0, ["duration_overflow"]
-
-        # Hard Veto 6: Temporal gap too wide
         if self.temporal_gap > 0.40:
             return -100.0, ["gap_too_wide"]
 
-        # Positive Evidence Accumulation
         if self.has_strong_zh_continuation:
             score += 3.5
             reasons.append("strong_zh_continuation")
-
         if self.is_dangling_fragment:
             score += 3.0
             reasons.append("resolve_dangling_fragment")
-
         if self.has_trailing_comma_or_dash:
             score += 2.0
             reasons.append("trailing_comma_or_dash")
-
-        if self.nxt_starts_lower or self.has_strong_vi_continuation:
+        if self.has_strong_vi_continuation or self.nxt_starts_lower:
             score += 1.5
             reasons.append("continuation_syntax")
-
         if self.is_short_subject_lead:
             score += 1.5
             reasons.append("short_subject_lead")
-
         if self.temporal_gap <= 0.15:
             score += 0.5
             reasons.append("tight_temporal_gap")
 
-        # Negative Evidence
         if self.is_terminal_zh and not self.has_strong_zh_continuation:
             score -= 5.0
             reasons.append("terminal_zh_sentence")
@@ -279,7 +270,7 @@ class MergeEvidence:
 
 
 class UtteranceEngine:
-    """Groups raw speech/OCR fragments into coherent, readable movie subtitles."""
+    """Create readable render cues without allowing timing to override semantics."""
 
     def __init__(
         self,
@@ -288,128 +279,163 @@ class UtteranceEngine:
         safe_gap: float = 0.03,
         max_line_chars: int = 36,
         merge_score_threshold: float = 3.5,
+        max_source_cues_per_group: int = 2,
     ) -> None:
         self.max_utterance_gap = max_utterance_gap
         self.min_display_duration = min_display_duration
         self.safe_gap = safe_gap
         self.max_line_chars = max_line_chars
         self.merge_score_threshold = merge_score_threshold
+        self.max_source_cues_per_group = max(1, max_source_cues_per_group)
+
+    @staticmethod
+    def _same_speaker(cur: dict[str, Any], nxt: dict[str, Any]) -> bool:
+        cur_char = cur.get("speaker_character_id")
+        nxt_char = nxt.get("speaker_character_id")
+        if cur_char and nxt_char:
+            return cur_char == nxt_char
+
+        cur_speaker = cur.get("speaker_id")
+        nxt_speaker = nxt.get("speaker_id")
+        if cur_speaker and nxt_speaker:
+            return cur_speaker == nxt_speaker
+
+        return not any((cur_char, nxt_char, cur_speaker, nxt_speaker))
+
+    @staticmethod
+    def _addressee_key(cue: dict[str, Any]) -> str | None:
+        return cue.get("addressee_character_id") or cue.get("addressee_id")
 
     def process_cues(
         self,
         raw_cues: list[SubtitleCue],
         translated: bool = True,
     ) -> tuple[list[RenderSubtitleCue], dict[str, Any]]:
-        cues = sorted(raw_cues, key=lambda x: (float(x.start), float(x.end)))
+        cues = sorted(raw_cues, key=lambda cue: (float(cue.start), float(cue.end)))
 
         filtered: list[dict[str, Any]] = []
         suppressed_count = 0
 
-        for c in cues:
-            src = (c.source_text or "").strip()
-            tr = (c.translated_text or "").strip() if translated and c.translated_text else src
-            if not src or not tr or src in NOISE_SUBTITLE_PATTERNS or tr in NOISE_SUBTITLE_PATTERNS or len(src) <= 1:
+        for cue in cues:
+            source = (cue.source_text or "").strip()
+            translated_text = (
+                (cue.translated_text or "").strip()
+                if translated and cue.translated_text
+                else source
+            )
+            if (
+                not source
+                or not translated_text
+                or source in NOISE_SUBTITLE_PATTERNS
+                or translated_text in NOISE_SUBTITLE_PATTERNS
+                or len(source) <= 1
+            ):
                 continue
 
-            clean_src = clean_text_for_comparison(src)
-            clean_tr = clean_text_for_comparison(tr)
-            if not clean_src or not clean_tr:
+            clean_source = clean_text_for_comparison(source)
+            clean_translation = clean_text_for_comparison(translated_text)
+            if not clean_source or not clean_translation:
                 continue
+
+            current = {
+                "id": cue.id,
+                "source_cue_ids": [cue.id],
+                "start": float(cue.start),
+                "end": float(cue.end),
+                "source_text": source,
+                "translated_text": translated_text,
+                "speaker_id": cue.speaker_id,
+                "speaker_character_id": cue.speaker_character_id,
+                "addressee_id": cue.addressee_id,
+                "addressee_character_id": cue.addressee_character_id,
+                "discourse_mode": normalize_discourse_mode(getattr(cue, "discourse_mode", None)),
+                "source_starts": [float(cue.start)],
+                "source_ends": [float(cue.end)],
+            }
 
             if filtered:
                 prev = filtered[-1]
-                prev_clean_src = clean_text_for_comparison(prev["source_text"])
+                prev_clean_source = clean_text_for_comparison(prev["source_text"])
+                is_exact_match = clean_source == prev_clean_source
+                same_speaker = self._same_speaker(prev, current)
+                same_mode = infer_discourse_mode(prev) == infer_discourse_mode(current)
 
-                overlap = min(float(c.end), float(prev["end"])) - max(float(c.start), float(prev["start"]))
-                shortest_dur = max(0.01, min(float(c.end) - float(c.start), float(prev["end"]) - float(prev["end"])))
-                overlap_ratio = max(0.0, overlap / shortest_dur)
+                overlap = min(current["end"], prev["end"]) - max(current["start"], prev["start"])
+                cue_duration = max(0.01, current["end"] - current["start"])
+                prev_duration = max(0.01, prev["end"] - prev["start"])
+                shortest_duration = min(cue_duration, prev_duration)
+                overlap_ratio = max(0.0, overlap / shortest_duration)
 
-                same_speaker = (
-                    (c.speaker_id is not None and c.speaker_id == prev.get("speaker_id"))
-                    or (c.speaker_character_id is not None and c.speaker_character_id == prev.get("speaker_character_id"))
-                    or (c.speaker_id is None and prev.get("speaker_id") is None)
-                )
-
-                is_exact_src_match = clean_src == prev_clean_src
-
-                if same_speaker and is_exact_src_match and (overlap_ratio >= 0.50 or abs(float(c.start) - float(prev["start"])) <= 0.35):
-                    prev["end"] = max(prev["end"], float(c.end))
-                    prev["source_cue_ids"].append(c.id)
-                    prev["source_starts"].append(float(c.start))
-                    prev["source_ends"].append(float(c.end))
+                if (
+                    same_speaker
+                    and same_mode
+                    and is_exact_match
+                    and (overlap_ratio >= 0.50 or abs(current["start"] - prev["start"]) <= 0.35)
+                ):
+                    prev["end"] = max(prev["end"], current["end"])
+                    prev["source_cue_ids"].append(cue.id)
+                    prev["source_starts"].append(current["start"])
+                    prev["source_ends"].append(current["end"])
                     suppressed_count += 1
                     continue
 
-            filtered.append({
-                "id": c.id,
-                "source_cue_ids": [c.id],
-                "start": float(c.start),
-                "end": float(c.end),
-                "source_text": src,
-                "translated_text": tr,
-                "speaker_id": c.speaker_id,
-                "speaker_character_id": c.speaker_character_id,
-                "addressee_id": c.addressee_id,
-                "addressee_character_id": c.addressee_character_id,
-                "source_starts": [float(c.start)],
-                "source_ends": [float(c.end)],
-            })
+            filtered.append(current)
 
         utterance_groups: list[dict[str, Any]] = []
-        i = 0
         merged_group_count = 0
-        wrong_speaker_merges = 0
+        i = 0
 
         while i < len(filtered):
             cur = filtered[i].copy()
 
             while i < len(filtered) - 1:
+                if len(cur["source_cue_ids"]) >= self.max_source_cues_per_group:
+                    break
+
                 nxt = filtered[i + 1]
                 gap = float(nxt["start"]) - float(cur["end"])
+                if gap > self.max_utterance_gap:
+                    break
 
-                cur_char = cur.get("speaker_character_id")
-                nxt_char = nxt.get("speaker_character_id")
-                cur_spk = cur.get("speaker_id")
-                nxt_spk = nxt.get("speaker_id")
-                cur_addr = cur.get("addressee_id") or cur.get("addressee_character_id")
-                nxt_addr = nxt.get("addressee_id") or nxt.get("addressee_character_id")
-
-                same_speaker = False
-                if cur_char and nxt_char:
-                    same_speaker = cur_char == nxt_char
-                elif cur_spk and nxt_spk:
-                    same_speaker = cur_spk == nxt_spk
-                elif not cur_char and not nxt_char and not cur_spk and not nxt_spk:
-                    same_speaker = True
-
-                same_addressee = (cur_addr == nxt_addr)
-
+                same_speaker = self._same_speaker(cur, nxt)
+                same_addressee = self._addressee_key(cur) == self._addressee_key(nxt)
                 cur_mode = infer_discourse_mode(cur)
                 nxt_mode = infer_discourse_mode(nxt)
-                is_dialogue_cur = (cur_mode == DiscourseMode.DIRECT_DIALOGUE)
-                is_dialogue_nxt = (nxt_mode == DiscourseMode.DIRECT_DIALOGUE)
-                same_mode = (is_dialogue_cur == is_dialogue_nxt) and (cur_mode != DiscourseMode.SYSTEM and nxt_mode != DiscourseMode.SYSTEM)
+                same_mode = cur_mode == nxt_mode
 
-                cur_src = cur["source_text"].strip()
-                nxt_src = nxt["source_text"].strip()
-                cur_tr = cur["translated_text"].strip()
-                nxt_tr = nxt["translated_text"].strip()
+                cur_source = cur["source_text"].strip()
+                nxt_source = nxt["source_text"].strip()
+                cur_translation = cur["translated_text"].strip()
+                nxt_translation = nxt["translated_text"].strip()
 
-                is_question = bool(re.search(r"[?？]$", cur_src) or re.search(r"[?？]$", cur_tr))
-                is_short_assessment = is_short_imperative_or_assessment(cur_src)
-
-                has_strong_zh_continuation = any(nxt_src.startswith(w) for w in CHINESE_CONTINUATION_WORDS) or any(cur_src.endswith(w) for w in ("但是", "但", "而且", "然后", "因为", "所以"))
-                has_strong_vi_continuation = any(nxt_tr.lower().startswith(w) for w in VIETNAMESE_CONTINUATION_WORDS)
-                has_trailing_comma_or_dash = bool(re.search(r"(?:[,，…—–-]|[.]{2,})$", cur_src) or re.search(r"(?:[,…—–-]|[.]{2,})$", cur_tr))
-                is_short_subject_lead = len(re.sub(r"[^\w]", "", cur_src)) <= 3 and has_trailing_comma_or_dash
-                nxt_starts_lower = bool(nxt_tr and nxt_tr[0].islower())
-                is_terminal_zh = bool(re.search(r"[。！？!?]$", cur_src))
-                is_dangling_fragment = bool(
-                    re.search(r"(?:[,，…—–-]|[.]{2,})$", cur_tr)
-                    or re.search(r"\b(cô|anh|em|ông|bà|chị|bạn|mày|con|tôi|ta|mà|và|thì|nhưng|hoặc|đã|đang|sẽ|được|bị|vì|bởi|của|ở|tại|là|để)\s*,?$", cur_tr.strip(), re.IGNORECASE)
+                is_question = bool(
+                    re.search(r"[?？]\s*$", cur_source)
+                    or re.search(r"[?？]\s*$", cur_translation)
                 )
+                is_short_assessment = is_short_imperative_or_assessment(cur_source)
+                has_strong_zh_continuation = (
+                    _starts_with_continuation(nxt_source, CHINESE_CONTINUATION_WORDS)
+                    or any(cur_source.endswith(word) for word in CHINESE_CONTINUATION_WORDS)
+                )
+                has_strong_vi_continuation = _starts_with_continuation(
+                    nxt_translation,
+                    VIETNAMESE_CONTINUATION_WORDS,
+                )
+                has_trailing_comma_or_dash = bool(
+                    re.search(r"(?:[,，…—–-]|[.]{2,})\s*$", cur_source)
+                    or re.search(r"(?:[,，…—–-]|[.]{2,})\s*$", cur_translation)
+                )
+                is_short_subject_lead = (
+                    len(re.sub(r"[^\w]", "", cur_source)) <= 3
+                    and has_trailing_comma_or_dash
+                )
+                nxt_starts_lower = bool(
+                    nxt_translation and nxt_translation[0].isalpha() and nxt_translation[0].islower()
+                )
+                is_terminal_zh = bool(re.search(r"[。！？!?]\s*$", cur_source))
+                is_dangling_fragment = _has_dangling_vi_tail(cur_translation)
 
-                raw_combined_tr = f"{cur_tr} {nxt_tr}"
+                raw_combined_translation = f"{cur_translation} {nxt_translation}".strip()
                 combined_duration = max(cur["end"], nxt["end"]) - cur["start"]
 
                 evidence = MergeEvidence(
@@ -425,28 +451,23 @@ class UtteranceEngine:
                     is_short_subject_lead=is_short_subject_lead,
                     nxt_starts_lower=nxt_starts_lower,
                     is_terminal_zh=is_terminal_zh,
-                    combined_tr_len=len(raw_combined_tr),
+                    combined_tr_len=len(raw_combined_translation),
                     combined_duration=combined_duration,
                     is_dangling_fragment=is_dangling_fragment,
                 )
+                score, _ = evidence.calculate_score()
 
-                score, reasons = evidence.calculate_score()
-
-                if score >= self.merge_score_threshold:
-                    cur["source_text"] = f"{cur['source_text'].strip()} {nxt['source_text'].strip()}"
-                    cur["translated_text"] = f"{cur['translated_text'].strip()} {nxt['translated_text'].strip()}"
-                    cur["source_cue_ids"].extend(nxt["source_cue_ids"])
-                    cur["source_starts"].extend(nxt["source_starts"])
-                    cur["source_ends"].extend(nxt["source_ends"])
-                    cur["end"] = max(cur["end"], nxt["end"])
-                    if not cur.get("speaker_id") or cur.get("speaker_id") == "unknown":
-                        cur["speaker_id"] = nxt_spk
-                    if not cur.get("speaker_character_id"):
-                        cur["speaker_character_id"] = nxt_char
-                    merged_group_count += 1
-                    i += 1
-                else:
+                if score < self.merge_score_threshold:
                     break
+
+                cur["source_text"] = f"{cur_source} {nxt_source}".strip()
+                cur["translated_text"] = raw_combined_translation
+                cur["source_cue_ids"].extend(nxt["source_cue_ids"])
+                cur["source_starts"].extend(nxt["source_starts"])
+                cur["source_ends"].extend(nxt["source_ends"])
+                cur["end"] = max(cur["end"], nxt["end"])
+                merged_group_count += 1
+                i += 1
 
             utterance_groups.append(cur)
             i += 1
@@ -455,53 +476,62 @@ class UtteranceEngine:
         overlap_pairs = 0
         high_cps_count = 0
 
-        for idx, g in enumerate(utterance_groups):
-            raw_tr = g["translated_text"]
-            clean_tr = clean_vietnamese_typography(raw_tr)
-            render_text = semantic_line_break(clean_tr, max_line_chars=self.max_line_chars)
+        for index, group in enumerate(utterance_groups):
+            clean_translation = clean_vietnamese_typography(group["translated_text"])
+            render_text = semantic_line_break(clean_translation, max_line_chars=self.max_line_chars)
 
-            start = float(g["start"])
-            end = float(g["end"])
-
+            start = float(group["start"])
+            end = float(group["end"])
             if end - start < self.min_display_duration:
                 end = start + self.min_display_duration
 
             if render_cues:
-                prev_end = render_cues[-1].end
-                if start < prev_end:
+                previous = render_cues[-1]
+                if start < previous.end:
                     overlap_pairs += 1
-                    if start - render_cues[-1].start >= self.min_display_duration:
-                        render_cues[-1].end = max(render_cues[-1].start + self.min_display_duration, start - self.safe_gap)
+                    if start - previous.start >= self.min_display_duration:
+                        previous.end = max(
+                            previous.start + self.min_display_duration,
+                            start - self.safe_gap,
+                        )
                     else:
-                        start = prev_end + self.safe_gap
+                        start = previous.end + self.safe_gap
                         end = max(start + self.min_display_duration, end)
 
-            dur = max(0.01, end - start)
-            clean_chars = len(re.sub(r"[\s\\N]", "", render_text))
-            cps = round(clean_chars / dur, 1)
+            duration = max(0.01, end - start)
+            visible_chars = len(re.sub(r"[\s\\N]", "", render_text))
+            cps = round(visible_chars / duration, 1)
             if cps > 20.0:
                 high_cps_count += 1
 
+            mode = infer_discourse_mode(group).value
             render_cues.append(
                 RenderSubtitleCue(
-                    render_id=f"sub_{idx + 1:03d}",
-                    source_cue_ids=g["source_cue_ids"],
+                    render_id=f"sub_{index + 1:03d}",
+                    source_cue_ids=group["source_cue_ids"],
                     start=round(start, 2),
                     end=round(end, 2),
-                    source_text=g["source_text"],
-                    translated_text=clean_tr,
+                    source_text=group["source_text"],
+                    translated_text=clean_translation,
                     render_text=render_text,
-                    speaker_id=g.get("speaker_id"),
-                    speaker_character_id=g.get("speaker_character_id"),
-                    source_starts=g["source_starts"],
-                    source_ends=g["source_ends"],
+                    speaker_id=group.get("speaker_id"),
+                    speaker_character_id=group.get("speaker_character_id"),
+                    source_starts=group["source_starts"],
+                    source_ends=group["source_ends"],
                     cps=cps,
+                    discourse_mode=mode,
                 )
             )
 
-        for j in range(len(render_cues) - 1):
-            if render_cues[j].end > render_cues[j + 1].start - self.safe_gap:
-                render_cues[j].end = round(max(render_cues[j].start + 0.5, render_cues[j + 1].start - self.safe_gap), 2)
+        # Final single-active invariant. This is timing cleanup only and never merges text.
+        for index in range(len(render_cues) - 1):
+            current = render_cues[index]
+            nxt = render_cues[index + 1]
+            if current.end > nxt.start - self.safe_gap:
+                current.end = round(
+                    max(current.start + 0.5, nxt.start - self.safe_gap),
+                    2,
+                )
 
         metrics = {
             "source_cues": len(raw_cues),
@@ -509,9 +539,8 @@ class UtteranceEngine:
             "render_cues": len(render_cues),
             "merged_groups": merged_group_count,
             "suppressed_duplicates": suppressed_count,
-            "wrong_speaker_merges": wrong_speaker_merges,
+            "wrong_speaker_merges": 0,
             "overlap_pairs": overlap_pairs,
             "high_cps_cues": high_cps_count,
         }
-
         return render_cues, metrics
