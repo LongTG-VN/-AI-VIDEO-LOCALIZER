@@ -415,8 +415,8 @@ class TranslationCritic:
                     import time
                     time.sleep(3.0 * (attempt + 1))
                     continue
-                response.raise_for_status()
-                content = response.json()["choices"][0]["message"]["content"].strip()
+                raw_msg = response.json().get("choices", [{}])[0].get("message", {})
+                content = (raw_msg.get("content") or "").strip()
                 content = re.sub(r"<think>.*?</think>", "", content, flags=re.DOTALL).strip()
                 if content.startswith("```"):
                     lines = content.splitlines()

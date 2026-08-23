@@ -194,8 +194,8 @@ class OpenAICompatibleTranslator:
                     print(f"Translation rate limited (429), sleeping {wait}s (attempt {attempt+1}/8)...")
                     time.sleep(wait)
                     continue
-                response.raise_for_status()
-                content = response.json()["choices"][0]["message"]["content"].strip()
+                raw_msg = response.json().get("choices", [{}])[0].get("message", {})
+                content = (raw_msg.get("content") or "").strip()
                 parsed = extract_json_object(content)
                 if parsed is not None:
                     break
