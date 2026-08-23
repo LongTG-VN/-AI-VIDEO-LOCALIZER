@@ -228,13 +228,27 @@ def analyze_context(project_id: str) -> Project:
 
 
 @router.post("/projects/{project_id}/translate", response_model=Project)
-def translate_project(project_id: str) -> Project:
+def translate_project(project_id: str, force: bool = False) -> Project:
+    """Translate project cues; `force=true` reuses existing source/context and refreshes VI text.
+
+    This intentionally does not rerun ASR/OCR/fusion, so a quality-only translation iteration
+    can benefit from new context/name-lock logic without paying the media-analysis cost again.
+    """
     try:
         project = store.get(project_id)
     except FileNotFoundError as exc:
         raise HTTPException(status_code=404, detail="Project not found") from exc
     if not project.cues:
         raise HTTPException(status_code=400, detail="Project has no subtitle cues")
+
+    if force:
+        for cue in project.cues:
+            cue.translated_text = None
+            cue.translation_confidence = None
+            cue.critic_score = None
+            cue.critic_flags = []
+            cue.needs_review = False
+            cue.review_notes = None
 
     translator = OpenAICompatibleTranslator(
         settings.llm_base_url, settings.llm_api_key, settings.llm_model
