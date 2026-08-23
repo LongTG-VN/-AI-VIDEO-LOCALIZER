@@ -271,3 +271,62 @@ def test_speaker_name_metadata_not_prepended():
     assert is_pass_c
     assert len(issues_c) == 0
 
+
+def test_relational_negation_vs_literal_existence():
+    """Test L: Relational negation '没有女儿' must express 'không xem/coi tôi là con gái', not literal absence 'không có con gái'."""
+    ctx_literal = {
+        "chinese_source": "她的眼里没有女儿 只有一件需要时刻打磨的商品",
+        "vietnamese_translation": "Trong mắt mẹ, không có con gái mà chỉ là một món hàng cần được mài giũa liên tục.",
+        "speaker_role": "narrator",
+        "expected_vi_self": "tôi",
+    }
+    is_pass, issues, notes = deterministic_validate_cue(ctx_literal)
+    assert not is_pass
+    assert CriticIssueEnum.MEANING_SHIFT.value in issues
+
+    ctx_relational = {
+        "chinese_source": "她的眼里没有女儿 只有一件需要时刻打磨的商品",
+        "vietnamese_translation": "Trong mắt mẹ, không xem tôi là con gái mà chỉ là một món hàng cần được mài giũa liên tục.",
+        "speaker_role": "narrator",
+        "expected_vi_self": "tôi",
+    }
+    is_pass_c, issues_c, _ = deterministic_validate_cue(ctx_relational)
+    assert is_pass_c
+    assert len(issues_c) == 0
+
+
+def test_vocative_not_converted_to_possessor():
+    """Test M: Vocative character name must not be turned into possessor ('của <Name>')."""
+    ctx_possessor = {
+        "chinese_source": "秦扶栀昨天的宏观经济笔记看完吗？",
+        "vietnamese_translation": "Con đã đọc xong bài ghi chú kinh tế vĩ mô của Tần Phù Chi hôm qua chưa?",
+        "speaker": "char_father",
+        "addressee": "char_heroine",
+        "characters": [{"name_zh": "秦扶栀", "name_vi": "Tần Phù Chi", "aliases": []}],
+    }
+    is_pass, issues, notes = deterministic_validate_cue(ctx_possessor)
+    assert not is_pass
+    assert CriticIssueEnum.GRAMMATICAL_ERROR.value in issues
+
+    ctx_vocative = {
+        "chinese_source": "秦扶栀昨天的宏观经济笔记看完吗？",
+        "vietnamese_translation": "Tần Phù Chi, con đã đọc xong bài ghi chú kinh tế vĩ mô hôm qua chưa?",
+        "speaker": "char_father",
+        "addressee": "char_heroine",
+        "characters": [{"name_zh": "秦扶栀", "name_vi": "Tần Phù Chi", "aliases": []}],
+    }
+    is_pass_c, issues_c, _ = deterministic_validate_cue(ctx_vocative)
+    assert is_pass_c
+    assert len(issues_c) == 0
+
+
+def test_dangling_fragment_detection_and_resolution():
+    """Test N: Detects dangling trailing tokens and commas in Vietnamese subtitles."""
+    from app.services.critic import has_dangling_fragment
+    assert has_dangling_fragment("Tần Phù Chi, cô,")
+    assert has_dangling_fragment("Nhìn rõ, Tần Phù Chi, cô")
+    assert has_dangling_fragment("Nhưng bây giờ tôi chỉ muốn,")
+    assert not has_dangling_fragment("Nhìn cho rõ đây!")
+    assert not has_dangling_fragment("Tần Phù Chi, cô còn ăn được nữa à?")
+
+

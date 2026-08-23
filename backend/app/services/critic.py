@@ -36,6 +36,28 @@ class CriticIssueEnum(str, Enum):
     ACTION_ERROR = "action_error"
     REGISTER_MISMATCH = "register_mismatch"
     DISCOURSE_ERROR = "discourse_error"
+    GRAMMATICAL_ERROR = "grammatical_error"
+    DANGLING_FRAGMENT = "dangling_fragment"
+    VOCATIVE_ERROR = "vocative_error"
+
+
+def has_dangling_fragment(text: str) -> bool:
+    """Checks if a Vietnamese subtitle line ends with an unnatural dangling grammatical fragment."""
+    clean = text.strip()
+    if not clean:
+        return False
+    # Allow legitimate parenthetical clauses like "Như bạn thấy,", "Như anh thấy,"
+    if re.search(r"\bnhư\s+(bạn|anh|em|cô|ông|bà|chị|chúng ta|mọi người)?\s*thấy\s*[,:;]?$", clean, re.IGNORECASE):
+        return False
+    # Check for dangling pronouns, conjunctions, prepositions, auxiliary particles, or incomplete modals
+    for pat in [
+        r"\b(cô|anh|em|ông|bà|chị|bạn|mày|con|tôi|ta)\s*[,:;]?$",
+        r"\b(mà|thì|nhưng|hoặc|đã|đang|sẽ|được|bị|vì|bởi|của|ở|tại|là|để|cho|với)\s*[,:;]?$",
+        r"\b(muốn|nghĩ|biết|cần)\s*[,:;]+$",
+    ]:
+        if re.search(pat, clean, re.IGNORECASE):
+            return True
+    return False
 
 
 def build_critic_context(project: Project, cue: SubtitleCue) -> dict[str, Any]:
@@ -165,6 +187,16 @@ def deterministic_validate_cue(context: dict[str, Any]) -> tuple[bool, list[str]
             issues.append(CriticIssueEnum.REFERENT_ERROR.value)
             notes.append("In family context describing mother, '她的眼里' refers to mother ('mẹ / bà ấy'), not 'cô ấy'.")
 
+    # Relational Negation vs Literal Existence Check (e.g. 她的眼里没有女儿 -> không xem tôi là con gái)
+    if ("没有女儿" in zh or "没有儿子" in zh) and ("商品" in zh or "眼里" in zh or "心里" in zh):
+        has_relational_regard = bool(
+            re.search(r"\b(không|chưa)\s+(xem|coi|nhận|coi sóc|đoái hoài)\b", vi_lower)
+            and re.search(r"\blà\s+(con|con gái|con ruột|con cái)\b", vi_lower)
+        )
+        if re.search(r"\bkhông\s+có\s+con\s+gái\b", vi_lower) and not has_relational_regard:
+            issues.append(CriticIssueEnum.MEANING_SHIFT.value)
+            notes.append("Literal existence 'không có con gái' used instead of relational regard 'không xem/coi tôi là con gái'.")
+
     # Guard: Speaker's own name metadata must NOT be prepended into spoken dialogue text
     speaker_name_vi = (context.get("speaker_name_vi") or context.get("speaker") or "").strip()
     if speaker_name_vi and len(speaker_name_vi) >= 3 and not re.match(r"^speaker_\d+$", speaker_name_vi):
@@ -173,6 +205,28 @@ def deterministic_validate_cue(context: dict[str, Any]) -> tuple[bool, list[str]
             if re.search(rf"^{re.escape(speaker_name_vi.lower())}\b", vi_lower):
                 issues.append(CriticIssueEnum.NAME_MISMATCH.value)
                 notes.append(f"Speaker identity metadata '{speaker_name_vi}' was mistakenly prepended into spoken dialogue text.")
+
+    # Vocative vs Possessive Check (e.g. 秦扶栀昨天的... -> Tần Phù Chi, ... NOT của Tần Phù Chi)
+    characters = context.get("characters", [])
+    for char in characters:
+        vi_name = (char.get("name_vi") or "").strip()
+        zh_name = (char.get("name_zh") or char.get("name") or "").strip()
+        if vi_name and len(vi_name) >= 3 and zh_name and zh_name in zh:
+            addr_str = str(addr or "")
+            is_vocative = bool(
+                zh.startswith(zh_name) or
+                (addr and (vi_name.lower() in addr_str.lower() or zh_name in addr_str))
+            )
+            if is_vocative:
+                possessive_pattern = rf"\bcủa\s+{re.escape(vi_name.lower())}\b"
+                if re.search(possessive_pattern, vi_lower):
+                    issues.append(CriticIssueEnum.GRAMMATICAL_ERROR.value)
+                    notes.append(f"Vocative character name '{vi_name}' was mistakenly translated as possessive ('của {vi_name}').")
+
+    # Dangling Fragment Guard (e.g. sentences ending in dangling 'cô,', 'em,', 'mà,')
+    if has_dangling_fragment(vi):
+        issues.append(CriticIssueEnum.DANGLING_FRAGMENT.value)
+        notes.append(f"Translation ends with an unnatural dangling grammatical fragment: '{vi}'.")
 
     # 4. Action Verb Fidelity Checks
     if ("啃完" in zh or "啃" in zh) and ("鸡腿" in zh or "肉" in zh or "骨头" in zh):

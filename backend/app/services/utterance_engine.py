@@ -100,6 +100,9 @@ def clean_vietnamese_typography(text: str) -> str:
     if res and res[0].islower():
         res = res[0].upper() + res[1:]
 
+    # 7. Clean trailing dangling punctuation
+    res = re.sub(r"[,:;]\s*$", "", res).strip()
+
     return res.strip()
 
 
@@ -178,14 +181,14 @@ def infer_discourse_mode(cue: dict[str, Any]) -> DiscourseMode:
 
 
 def is_short_imperative_or_assessment(src: str) -> bool:
-    """Detects short independent assessment or imperative clauses (e.g. 领口歪了, 坐姿不对, 笑的太假).
+    """Detects short independent assessment or imperative clauses (e.g. 领口歪了, 坐姿不对, 笑的太假, 看清楚).
 
     Characteristics: 3 to 7 characters, self-contained statement or predicate with no trailing conjunction.
     These must be rendered as independent, sequential subtitle beats.
     """
     s = re.sub(r"[，。！？、,.!?\s]", "", src).strip()
     if 2 <= len(s) <= 7:
-        if s.endswith(("歪了", "不对", "太假", "好了", "快点", "走了", "停下", "站住")):
+        if s.endswith(("歪了", "不对", "太假", "好了", "快点", "走了", "停下", "站住", "看清楚", "听好了")):
             return True
     return False
 
@@ -207,6 +210,7 @@ class MergeEvidence:
     is_terminal_zh: bool
     combined_tr_len: int
     combined_duration: float
+    is_dangling_fragment: bool = False
 
     def calculate_score(self) -> tuple[float, list[str]]:
         """Calculates evidence score. Default is DO NOT MERGE (< 3.5)."""
@@ -245,6 +249,10 @@ class MergeEvidence:
         if self.has_strong_zh_continuation:
             score += 3.5
             reasons.append("strong_zh_continuation")
+
+        if self.is_dangling_fragment:
+            score += 3.0
+            reasons.append("resolve_dangling_fragment")
 
         if self.has_trailing_comma_or_dash:
             score += 2.0
@@ -396,6 +404,10 @@ class UtteranceEngine:
                 is_short_subject_lead = len(re.sub(r"[^\w]", "", cur_src)) <= 3 and has_trailing_comma_or_dash
                 nxt_starts_lower = bool(nxt_tr and nxt_tr[0].islower())
                 is_terminal_zh = bool(re.search(r"[。！？!?]$", cur_src))
+                is_dangling_fragment = bool(
+                    re.search(r"(?:[,，…—–-]|[.]{2,})$", cur_tr)
+                    or re.search(r"\b(cô|anh|em|ông|bà|chị|bạn|mày|con|tôi|ta|mà|và|thì|nhưng|hoặc|đã|đang|sẽ|được|bị|vì|bởi|của|ở|tại|là|để)\s*,?$", cur_tr.strip(), re.IGNORECASE)
+                )
 
                 raw_combined_tr = f"{cur_tr} {nxt_tr}"
                 combined_duration = max(cur["end"], nxt["end"]) - cur["start"]
@@ -415,6 +427,7 @@ class UtteranceEngine:
                     is_terminal_zh=is_terminal_zh,
                     combined_tr_len=len(raw_combined_tr),
                     combined_duration=combined_duration,
+                    is_dangling_fragment=is_dangling_fragment,
                 )
 
                 score, reasons = evidence.calculate_score()
