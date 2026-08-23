@@ -7,6 +7,7 @@ from uuid import uuid4
 from fastapi import APIRouter, File, Form, HTTPException, UploadFile
 from fastapi.responses import FileResponse, PlainTextResponse
 
+from app.core.config import get_settings
 from app.models.project import DubbingMetrics, DubbingOptions, Project, ProjectPatch, RenderOptions
 from app.services.asr.factory import create_asr_engine
 from app.services.context_analyzer import ContextAnalyzer, ContextAnalysisError
