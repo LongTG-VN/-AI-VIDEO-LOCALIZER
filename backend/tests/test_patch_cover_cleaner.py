@@ -109,6 +109,40 @@ def test_vietnamese_subtitle_preset_shortform_reference():
     assert "Xin chào thế giới" in ass_content
 
 
+def test_vietnamese_subtitle_preset_shortform_bold_yellow():
+    """Verify that preset 'shortform_bold_yellow' renders Layer 0 BackingPlate and Layer 1 Bold Yellow Outline text."""
+    cues = [
+        SubtitleCue(
+            id="c1",
+            start=1.0,
+            end=3.0,
+            source_text="你好世界",
+            translated_text="Xin chào thế giới",
+        )
+    ]
+
+    opts = RenderOptions(
+        visual_edit=VisualEditConfig(
+            mode=VisualEditMode.PATCH_COVER,
+            preset="shortform_bold_yellow",
+        )
+    )
+
+    ass_content = to_ass(cues, opts, width=1280, height=720)
+
+    # Verify Style definitions
+    assert "Style: BackingPlate" in ass_content
+    assert "Style: Default" in ass_content
+    # Golden yellow outline in ASS format
+    assert "&H0000D7FF" in ass_content
+    # Multi-layer events
+    assert "Dialogue: 0," in ass_content
+    assert "BackingPlate" in ass_content
+    assert "Dialogue: 1," in ass_content
+    assert "Default" in ass_content
+    assert "Xin chào thế giới" in ass_content
+
+
 def test_patch_cover_preserves_translation_and_cues_invariance():
     """Verify that patch cover mode is strictly post-localization and does not alter cues."""
     cues = [

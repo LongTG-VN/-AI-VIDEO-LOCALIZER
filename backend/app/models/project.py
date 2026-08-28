@@ -161,12 +161,23 @@ class OverlayConfig(BaseModel):
     anchor: OverlayAnchor = OverlayAnchor.ABSOLUTE
 
 
+class SubtitleBackingConfig(BaseModel):
+    enabled: bool = True
+    color: str = "&H00000000"  # black
+    opacity: float = Field(default=0.60, ge=0.0, le=1.0)  # 0.45 - 0.70
+    padding_x: int = Field(default=18, ge=0, le=64)
+    padding_y: int = Field(default=8, ge=0, le=32)
+    corner_radius: int = Field(default=10, ge=0, le=32)
+    blur_radius: int = Field(default=6, ge=0, le=32)
+
+
 class VisualEditConfig(BaseModel):
     mode: VisualEditMode = VisualEditMode.CLEAN
     blur: BlurConfig = Field(default_factory=BlurConfig)
     patch_cover: PatchCoverConfig = Field(default_factory=PatchCoverConfig)
+    subtitle_backing: SubtitleBackingConfig = Field(default_factory=SubtitleBackingConfig)
     overlays: list[OverlayConfig] = Field(default_factory=list)
-    preset: Literal["default", "shortform_reference"] = "default"
+    preset: Literal["default", "shortform_reference", "shortform_bold_yellow"] = "default"
 
 
 class StickerOverlay(BaseModel):

@@ -118,12 +118,23 @@ export type OverlayConfig = {
   anchor?: OverlayAnchor
 }
 
+export type SubtitleBackingConfig = {
+  enabled: boolean
+  color?: string
+  opacity: number
+  padding_x: number
+  padding_y: number
+  corner_radius: number
+  blur_radius: number
+}
+
 export type VisualEditConfig = {
   mode: VisualEditMode
   blur: BlurConfig
   patch_cover?: PatchCoverConfig
+  subtitle_backing?: SubtitleBackingConfig
   overlays: OverlayConfig[]
-  preset?: 'default' | 'shortform_reference'
+  preset?: 'default' | 'shortform_reference' | 'shortform_bold_yellow'
 }
 
 export type Project = {

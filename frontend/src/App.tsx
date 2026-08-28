@@ -295,7 +295,7 @@ export default function App() {
                 )}
 
                 <div className="form-row">
-                  <label className="field-label">Typography Preset:</label>
+                  <label className="field-label">Subtitle Typography & Preset:</label>
                   <div className="style-selector">
                     <button
                       type="button"
@@ -306,31 +306,77 @@ export default function App() {
                           mode: project.visual_edit?.mode ?? 'clean',
                           blur: project.visual_edit?.blur ?? { enabled: false, sigma: 18, padding_px: 8, feather_px: 6 },
                           patch_cover: project.visual_edit?.patch_cover ?? { enabled: false, patch_opacity: 0.92, padding_px: 6, feather_px: 8, blur_sigma: 6 },
+                          subtitle_backing: { enabled: false, opacity: 0.60, padding_x: 18, padding_y: 8, corner_radius: 10, blur_radius: 6 },
                           overlays: project.visual_edit?.overlays ?? [],
                           preset: 'default',
                         }
                       })}
                     >
-                      Default Movie
+                      Classic Movie (White + Black Shadow)
                     </button>
                     <button
                       type="button"
-                      className={project.visual_edit?.preset === 'shortform_reference' ? 'active' : ''}
+                      className={project.visual_edit?.preset === 'shortform_bold_yellow' ? 'active recommended' : 'recommended'}
                       onClick={() => setProject({
                         ...project,
                         visual_edit: {
-                          mode: project.visual_edit?.mode ?? 'patch_cover',
+                          mode: 'patch_cover',
                           blur: project.visual_edit?.blur ?? { enabled: false, sigma: 18, padding_px: 8, feather_px: 6 },
                           patch_cover: project.visual_edit?.patch_cover ?? { enabled: true, patch_opacity: 0.92, padding_px: 6, feather_px: 8, blur_sigma: 6 },
+                          subtitle_backing: { enabled: true, opacity: 0.60, padding_x: 18, padding_y: 8, corner_radius: 10, blur_radius: 6 },
                           overlays: project.visual_edit?.overlays ?? [],
-                          preset: 'shortform_reference',
+                          preset: 'shortform_bold_yellow',
                         }
                       })}
                     >
-                      Reference Short-form (Bold Outline)
+                      ★ Shortform Bold Yellow (Dark Plate)
                     </button>
                   </div>
                 </div>
+
+                {project.visual_edit?.subtitle_backing?.enabled && (
+                  <div className="sliders-grid">
+                    <div className="slider-item">
+                      <label>Backing Opacity ({Math.round((project.visual_edit?.subtitle_backing?.opacity ?? 0.60) * 100)}%)</label>
+                      <input
+                        type="range"
+                        min="0.30"
+                        max="0.95"
+                        step="0.05"
+                        value={project.visual_edit?.subtitle_backing?.opacity ?? 0.60}
+                        onChange={(e) => {
+                          const val = Number(e.target.value)
+                          setProject({
+                            ...project,
+                            visual_edit: {
+                              ...project.visual_edit!,
+                              subtitle_backing: { ...project.visual_edit!.subtitle_backing!, opacity: val }
+                            }
+                          })
+                        }}
+                      />
+                    </div>
+                    <div className="slider-item">
+                      <label>Backing Padding ({project.visual_edit?.subtitle_backing?.padding_x ?? 18}px)</label>
+                      <input
+                        type="range"
+                        min="4"
+                        max="36"
+                        value={project.visual_edit?.subtitle_backing?.padding_x ?? 18}
+                        onChange={(e) => {
+                          const val = Number(e.target.value)
+                          setProject({
+                            ...project,
+                            visual_edit: {
+                              ...project.visual_edit!,
+                              subtitle_backing: { ...project.visual_edit!.subtitle_backing!, padding_x: val }
+                            }
+                          })
+                        }}
+                      />
+                    </div>
+                  </div>
+                )}
 
                 {project.visual_edit?.mode === 'blur_overlay' && (
                   <div className="overlays-section">
