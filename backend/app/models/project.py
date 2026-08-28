@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from datetime import datetime, timezone
+from enum import Enum
 from typing import Literal
 from uuid import uuid4
 
@@ -106,6 +107,52 @@ class Scene(BaseModel):
     characters: list[str] = Field(default_factory=list)
 
 
+class VisualEditMode(str, Enum):
+    CLEAN = "clean"
+    BLUR = "blur"
+    BLUR_OVERLAY = "blur_overlay"
+
+
+class OverlayAnchor(str, Enum):
+    ABSOLUTE = "absolute"
+    SUBTITLE_REGION = "subtitle_region"
+    TOP_LEFT = "top_left"
+    TOP_RIGHT = "top_right"
+    BOTTOM_LEFT = "bottom_left"
+    BOTTOM_RIGHT = "bottom_right"
+    CENTER = "center"
+
+
+class BlurConfig(BaseModel):
+    enabled: bool = True
+    sigma: float = Field(default=18.0, ge=1.0, le=60.0)
+    padding_px: int = Field(default=8, ge=0, le=64)
+    feather_px: int = Field(default=6, ge=0, le=32)
+    min_ocr_confidence: float = Field(default=0.35, ge=0.0, le=1.0)
+    temporal_gap_fill_frames: int = Field(default=5, ge=0, le=30)
+
+
+class OverlayConfig(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid4()))
+    path: str
+    start: float = Field(default=0.0, ge=0.0)
+    end: float = Field(default=10.0, gt=0.0)
+    x: float = Field(default=0.5, ge=0.0, le=1.0)  # normalized x coordinate [0.0, 1.0]
+    y: float = Field(default=0.5, ge=0.0, le=1.0)  # normalized y coordinate [0.0, 1.0]
+    width: float = Field(default=0.25, gt=0.0, le=1.0)  # normalized width relative to video width
+    opacity: float = Field(default=1.0, ge=0.0, le=1.0)
+    fade_in_ms: int = Field(default=200, ge=0, le=5000)
+    fade_out_ms: int = Field(default=200, ge=0, le=5000)
+    z_index: int = Field(default=10, ge=0)
+    anchor: OverlayAnchor = OverlayAnchor.ABSOLUTE
+
+
+class VisualEditConfig(BaseModel):
+    mode: VisualEditMode = VisualEditMode.CLEAN
+    blur: BlurConfig = Field(default_factory=BlurConfig)
+    overlays: list[OverlayConfig] = Field(default_factory=list)
+
+
 class StickerOverlay(BaseModel):
     path: str
     start: float = Field(ge=0)
@@ -119,6 +166,7 @@ class RenderOptions(BaseModel):
     intro_path: str | None = None
     outro_path: str | None = None
     stickers: list[StickerOverlay] = Field(default_factory=list)
+    visual_edit: VisualEditConfig | None = None
     font_name: str = "Arial"
     font_size: int = Field(default=22, ge=8, le=96)
     margin_v: int = Field(default=32, ge=0, le=400)
@@ -158,6 +206,7 @@ class Project(BaseModel):
     duration: float | None = None
     width: int | None = None
     height: int | None = None
+    visual_edit: VisualEditConfig | None = None
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     scenes: list[Scene] = Field(default_factory=list)

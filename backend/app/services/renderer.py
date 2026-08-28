@@ -8,9 +8,10 @@ import time
 from pathlib import Path
 from typing import Any
 
-from app.models.project import Project, RenderOptions
+from app.models.project import Project, RenderOptions, VisualEditMode
 from app.services.hardsub_cleaner import HardSubCleaner
 from app.services.subtitles import write_ass, write_srt
+from app.services.visual_edit_composer import VisualEditComposer
 
 logger = logging.getLogger(__name__)
 
@@ -130,8 +131,14 @@ class Renderer:
         cleanup_metrics: dict[str, Any] = {}
 
         try:
-            # 1. Chinese Hard-Sub Cleanup. "auto" uses the guarded temporal-quality hybrid.
-            if options.hardsub_removal_mode not in {"none", "off"}:
+            visual_edit = options.visual_edit or project.visual_edit
+            is_visual_edit_blur = visual_edit is not None and visual_edit.mode in {
+                VisualEditMode.BLUR,
+                VisualEditMode.BLUR_OVERLAY,
+            }
+
+            # 1. Chinese Hard-Sub Cleanup / Dynamic Blur Mask Preparation
+            if not is_visual_edit_blur and options.hardsub_removal_mode not in {"none", "off"}:
                 logger.info("Starting Chinese hard-sub cleanup (mode: %s)...", options.hardsub_removal_mode)
                 cleaner = self._create_cleaner(options)
                 intermediate_clean = work_dir / (
@@ -161,32 +168,73 @@ class Renderer:
                     height=v_height,
                     translated=True,
                 )
-                escaped_sub = escape_filter_path(sub_path)
-                sub_filter = f"ass='{escaped_sub}'"
             else:
                 sub_path = write_srt(work_dir / "subtitles.srt", project.cues, translated=True)
-                escaped_sub = escape_filter_path(sub_path)
-                style = f"FontName={options.font_name},FontSize={options.font_size},Outline={options.outline_width},Shadow={options.shadow_depth},MarginV={options.margin_v}"
-                sub_filter = f"subtitles='{escaped_sub}':force_style='{style}'"
 
-            # 3. Build FFmpeg Filter Complex (Subtitles + Stickers)
+            # 3. Build FFmpeg Filter Complex
             burned = work_dir / "burned.mp4"
-            cmd = [self.ffmpeg_bin, "-y", "-i", str(cleaned_video_path), "-i", str(source)]
+            cmd = [self.ffmpeg_bin, "-y"]
 
-            for sticker in options.stickers:
-                cmd.extend(["-i", sticker.path])
+            if is_visual_edit_blur:
+                composer = VisualEditComposer(self.ffmpeg_bin, self.ffprobe_bin)
+                mask_path = work_dir / "dynamic_blur_mask.mp4"
+                v_fps = 30.0
+                try:
+                    meta = get_media_info(source, self.ffprobe_bin)
+                    if meta.get("fps"):
+                        num, den = meta["fps"].split("/") if "/" in meta["fps"] else (meta["fps"], "1")
+                        v_fps = float(num) / float(den) if float(den) > 0 else 30.0
+                except Exception:
+                    pass
 
-            filter_parts = [f"[0:v]{sub_filter}[base]"]
-            current_label = "base"
-
-            for index, sticker in enumerate(options.stickers, start=2):
-                sticker_label = f"st{index}"
-                next_label = f"v{index}"
-                filter_parts.append(f"[{index}:v]scale={sticker.scale_width}:-1[{sticker_label}]")
-                filter_parts.append(
-                    f"[{current_label}][{sticker_label}]overlay={sticker.x}:{sticker.y}:enable='between(t,{sticker.start},{sticker.end})'[{next_label}]"
+                _, mask_metrics = composer.generate_dynamic_blur_mask_video(
+                    output_mask_path=mask_path,
+                    cues=project.cues,
+                    width=v_width,
+                    height=v_height,
+                    fps=v_fps,
+                    duration=project.duration or 60.0,
+                    blur_config=visual_edit.blur,
                 )
-                current_label = next_label
+                cleanup_metrics.update(mask_metrics)
+
+                cmd.extend(["-i", str(source), "-i", str(mask_path)])
+
+                filter_parts, extra_inputs, current_label = composer.build_composition_filter_graph(
+                    video_width=v_width,
+                    video_height=v_height,
+                    subtitle_file=sub_path,
+                    visual_edit=visual_edit,
+                    has_blur_mask=True,
+                    options=options,
+                )
+                cmd.extend(extra_inputs)
+            else:
+                cmd.extend(["-i", str(cleaned_video_path), "-i", str(source)])
+                for sticker in options.stickers:
+                    cmd.extend(["-i", sticker.path])
+
+                escaped_sub = escape_filter_path(sub_path)
+                if options.subtitle_format == "ass":
+                    sub_filter = f"ass='{escaped_sub}'"
+                else:
+                    style = f"FontName={options.font_name},FontSize={options.font_size},Outline={options.outline_width},Shadow={options.shadow_depth},MarginV={options.margin_v}"
+                    sub_filter = f"subtitles='{escaped_sub}':force_style='{style}'"
+
+                # Overlays first, then subtitles on top
+                current_label = "0:v"
+                filter_parts = []
+                for index, sticker in enumerate(options.stickers, start=2):
+                    sticker_label = f"st{index}"
+                    next_label = f"v{index}"
+                    filter_parts.append(f"[{index}:v]scale={sticker.scale_width}:-1[{sticker_label}]")
+                    filter_parts.append(
+                        f"[{current_label}][{sticker_label}]overlay={sticker.x}:{sticker.y}:enable='between(t,{sticker.start},{sticker.end})'[{next_label}]"
+                    )
+                    current_label = next_label
+
+                filter_parts.append(f"[{current_label}]{sub_filter}[final_out]")
+                current_label = "final_out"
 
             # 4. Hardware Encoder Selection (NVENC vs libx264)
             encoder_used = "libx264"
@@ -196,13 +244,14 @@ class Renderer:
                 encoder_used = "h264_nvenc"
                 video_codec_args = ["-c:v", "h264_nvenc", "-preset", "p4", "-cq", "20", "-b:v", "0"]
 
+            audio_map_idx = "0:a?" if is_visual_edit_blur else "1:a?"
             cmd.extend([
                 "-filter_complex",
                 ";".join(filter_parts),
                 "-map",
                 f"[{current_label}]",
                 "-map",
-                "1:a?",  # Map original audio from source video
+                audio_map_idx,
                 *video_codec_args,
                 "-c:a",
                 "aac",

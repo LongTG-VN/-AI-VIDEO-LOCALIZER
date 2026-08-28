@@ -77,6 +77,40 @@ export type Scene = {
   characters: string[]
 }
 
+export type VisualEditMode = 'clean' | 'blur' | 'blur_overlay'
+
+export type OverlayAnchor = 'absolute' | 'subtitle_region' | 'top_left' | 'top_right' | 'bottom_left' | 'bottom_right' | 'center'
+
+export type BlurConfig = {
+  enabled: boolean
+  sigma: number
+  padding_px: number
+  feather_px: number
+  min_ocr_confidence?: number
+  temporal_gap_fill_frames?: number
+}
+
+export type OverlayConfig = {
+  id: string
+  path: string
+  start: number
+  end: number
+  x: number
+  y: number
+  width: number
+  opacity: number
+  fade_in_ms?: number
+  fade_out_ms?: number
+  z_index?: number
+  anchor?: OverlayAnchor
+}
+
+export type VisualEditConfig = {
+  mode: VisualEditMode
+  blur: BlurConfig
+  overlays: OverlayConfig[]
+}
+
 export type Project = {
   id: string
   name: string
@@ -91,5 +125,6 @@ export type Project = {
   relationships: Relationship[]
   glossary?: GlossaryEntry[]
   cues: SubtitleCue[]
+  visual_edit?: VisualEditConfig | null
 }
 

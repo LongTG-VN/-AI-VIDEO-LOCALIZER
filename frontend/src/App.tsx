@@ -136,6 +136,258 @@ export default function App() {
               <div><strong>{stats.review}</strong><span>Needs review</span></div>
             </section>
 
+            <section className="visual-edit-card">
+              <div className="card-title">
+                <span>Visual Edit Composer</span>
+                <small>Style · Dynamic Blur · Graphic Overlays</small>
+              </div>
+              <div className="visual-edit-body">
+                <div className="form-row">
+                  <label className="field-label">Visual Style:</label>
+                  <div className="style-selector">
+                    <button
+                      type="button"
+                      className={(project.visual_edit?.mode ?? 'clean') === 'clean' ? 'active' : ''}
+                      onClick={() => setProject({
+                        ...project,
+                        visual_edit: {
+                          mode: 'clean',
+                          blur: project.visual_edit?.blur ?? { enabled: false, sigma: 18, padding_px: 8, feather_px: 6 },
+                          overlays: project.visual_edit?.overlays ?? [],
+                        }
+                      })}
+                    >
+                      Clean (Inpaint)
+                    </button>
+                    <button
+                      type="button"
+                      className={project.visual_edit?.mode === 'blur' ? 'active' : ''}
+                      onClick={() => setProject({
+                        ...project,
+                        visual_edit: {
+                          mode: 'blur',
+                          blur: project.visual_edit?.blur ?? { enabled: true, sigma: 18, padding_px: 8, feather_px: 6 },
+                          overlays: project.visual_edit?.overlays ?? [],
+                        }
+                      })}
+                    >
+                      Blur
+                    </button>
+                    <button
+                      type="button"
+                      className={project.visual_edit?.mode === 'blur_overlay' ? 'active' : ''}
+                      onClick={() => setProject({
+                        ...project,
+                        visual_edit: {
+                          mode: 'blur_overlay',
+                          blur: project.visual_edit?.blur ?? { enabled: true, sigma: 18, padding_px: 8, feather_px: 6 },
+                          overlays: project.visual_edit?.overlays ?? [],
+                        }
+                      })}
+                    >
+                      Blur + Overlay
+                    </button>
+                  </div>
+                </div>
+
+                {(project.visual_edit?.mode === 'blur' || project.visual_edit?.mode === 'blur_overlay') && (
+                  <div className="sliders-grid">
+                    <div className="slider-item">
+                      <label>Blur Strength (σ: {project.visual_edit?.blur.sigma ?? 18})</label>
+                      <input
+                        type="range"
+                        min="4"
+                        max="40"
+                        value={project.visual_edit?.blur.sigma ?? 18}
+                        onChange={(e) => {
+                          const val = Number(e.target.value)
+                          setProject({
+                            ...project,
+                            visual_edit: {
+                              ...project.visual_edit!,
+                              blur: { ...project.visual_edit!.blur, sigma: val }
+                            }
+                          })
+                        }}
+                      />
+                    </div>
+                    <div className="slider-item">
+                      <label>Blur Padding ({project.visual_edit?.blur.padding_px ?? 8}px)</label>
+                      <input
+                        type="range"
+                        min="0"
+                        max="24"
+                        value={project.visual_edit?.blur.padding_px ?? 8}
+                        onChange={(e) => {
+                          const val = Number(e.target.value)
+                          setProject({
+                            ...project,
+                            visual_edit: {
+                              ...project.visual_edit!,
+                              blur: { ...project.visual_edit!.blur, padding_px: val }
+                            }
+                          })
+                        }}
+                      />
+                    </div>
+                  </div>
+                )}
+
+                {project.visual_edit?.mode === 'blur_overlay' && (
+                  <div className="overlays-section">
+                    <div className="overlays-header">
+                      <span>Image & Sticker Overlays</span>
+                      <button
+                        type="button"
+                        className="ghost small"
+                        onClick={() => {
+                          const newOv = {
+                            id: `ov_${Date.now()}`,
+                            path: 'data/uploads/sample_sticker.png',
+                            start: 0,
+                            end: project.duration ? Math.min(10, project.duration) : 10,
+                            x: 0.5,
+                            y: 0.2,
+                            width: 0.25,
+                            opacity: 1.0,
+                            fade_in_ms: 200,
+                            fade_out_ms: 200,
+                            z_index: 10,
+                            anchor: 'absolute' as const,
+                          }
+                          setProject({
+                            ...project,
+                            visual_edit: {
+                              ...project.visual_edit!,
+                              overlays: [...(project.visual_edit!.overlays || []), newOv]
+                            }
+                          })
+                        }}
+                      >
+                        + Add Overlay
+                      </button>
+                    </div>
+
+                    {(project.visual_edit.overlays || []).length === 0 ? (
+                      <div className="no-overlays">No graphic overlays added yet. Click &quot;+ Add Overlay&quot; to place images.</div>
+                    ) : (
+                      <div className="overlays-list">
+                        {project.visual_edit.overlays.map((ov, idx) => (
+                          <div className="overlay-row" key={ov.id}>
+                            <input
+                              type="text"
+                              className="ov-path"
+                              placeholder="Image path..."
+                              value={ov.path}
+                              onChange={(e) => {
+                                const val = e.target.value
+                                setProject({
+                                  ...project,
+                                  visual_edit: {
+                                    ...project.visual_edit!,
+                                    overlays: project.visual_edit!.overlays.map((item, i) => i === idx ? { ...item, path: val } : item)
+                                  }
+                                })
+                              }}
+                            />
+                            <div className="ov-field">
+                              <span>Time (s)</span>
+                              <input
+                                type="number"
+                                step="0.5"
+                                value={ov.start}
+                                onChange={(e) => {
+                                  const val = Number(e.target.value)
+                                  setProject({
+                                    ...project,
+                                    visual_edit: {
+                                      ...project.visual_edit!,
+                                      overlays: project.visual_edit!.overlays.map((item, i) => i === idx ? { ...item, start: val } : item)
+                                    }
+                                  })
+                                }}
+                              />
+                              <span>-</span>
+                              <input
+                                type="number"
+                                step="0.5"
+                                value={ov.end}
+                                onChange={(e) => {
+                                  const val = Number(e.target.value)
+                                  setProject({
+                                    ...project,
+                                    visual_edit: {
+                                      ...project.visual_edit!,
+                                      overlays: project.visual_edit!.overlays.map((item, i) => i === idx ? { ...item, end: val } : item)
+                                    }
+                                  })
+                                }}
+                              />
+                            </div>
+                            <div className="ov-field">
+                              <span>Scale</span>
+                              <input
+                                type="number"
+                                step="0.05"
+                                min="0.05"
+                                max="1.0"
+                                value={ov.width}
+                                onChange={(e) => {
+                                  const val = Number(e.target.value)
+                                  setProject({
+                                    ...project,
+                                    visual_edit: {
+                                      ...project.visual_edit!,
+                                      overlays: project.visual_edit!.overlays.map((item, i) => i === idx ? { ...item, width: val } : item)
+                                    }
+                                  })
+                                }}
+                              />
+                            </div>
+                            <div className="ov-field">
+                              <span>Opacity</span>
+                              <input
+                                type="number"
+                                step="0.1"
+                                min="0"
+                                max="1"
+                                value={ov.opacity}
+                                onChange={(e) => {
+                                  const val = Number(e.target.value)
+                                  setProject({
+                                    ...project,
+                                    visual_edit: {
+                                      ...project.visual_edit!,
+                                      overlays: project.visual_edit!.overlays.map((item, i) => i === idx ? { ...item, opacity: val } : item)
+                                    }
+                                  })
+                                }}
+                              />
+                            </div>
+                            <button
+                              type="button"
+                              className="ghost remove-btn"
+                              onClick={() => {
+                                setProject({
+                                  ...project,
+                                  visual_edit: {
+                                    ...project.visual_edit!,
+                                    overlays: project.visual_edit!.overlays.filter((_, i) => i !== idx)
+                                  }
+                                })
+                              }}
+                            >
+                              ✕
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            </section>
+
             <section className="editor-card">
               <div className="card-title"><span>Subtitle editor</span><small>Original / translated / confidence</small></div>
               {project.cues.length === 0 ? (
