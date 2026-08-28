@@ -109,8 +109,8 @@ def test_vietnamese_subtitle_preset_shortform_reference():
     assert "Xin chào thế giới" in ass_content
 
 
-def test_vietnamese_subtitle_preset_shortform_bold_yellow():
-    """Verify that preset 'shortform_bold_yellow' renders Layer 0 BackingPlate and Layer 1 Bold Yellow Outline text."""
+def test_vietnamese_subtitle_preset_shortform_white_black_soft_bg():
+    """Verify that preset 'shortform_white_black_soft_bg' renders Layer 0 Soft Blurred Backing and Layer 1 White Text with Thin Black Outline."""
     cues = [
         SubtitleCue(
             id="c1",
@@ -124,7 +124,7 @@ def test_vietnamese_subtitle_preset_shortform_bold_yellow():
     opts = RenderOptions(
         visual_edit=VisualEditConfig(
             mode=VisualEditMode.PATCH_COVER,
-            preset="shortform_bold_yellow",
+            preset="shortform_white_black_soft_bg",
         )
     )
 
@@ -133,8 +133,12 @@ def test_vietnamese_subtitle_preset_shortform_bold_yellow():
     # Verify Style definitions
     assert "Style: BackingPlate" in ass_content
     assert "Style: Default" in ass_content
-    # Golden yellow outline in ASS format
-    assert "&H0000D7FF" in ass_content
+    # White fill & thin black outline
+    assert "&H00FFFFFF" in ass_content
+    assert "&H00000000" in ass_content
+    assert "1.8,0.6,2,20,20,36,1" in ass_content
+    # Layer 0 has soft blur
+    assert "\\blur8" in ass_content or "\\blur" in ass_content
     # Multi-layer events
     assert "Dialogue: 0," in ass_content
     assert "BackingPlate" in ass_content

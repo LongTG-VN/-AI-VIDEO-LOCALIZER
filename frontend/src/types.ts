@@ -134,7 +134,7 @@ export type VisualEditConfig = {
   patch_cover?: PatchCoverConfig
   subtitle_backing?: SubtitleBackingConfig
   overlays: OverlayConfig[]
-  preset?: 'default' | 'shortform_reference' | 'shortform_bold_yellow'
+  preset?: 'default' | 'shortform_reference' | 'shortform_bold_yellow' | 'shortform_white_black_soft_bg' | 'shortform_soft_bg'
 }
 
 export type Project = {

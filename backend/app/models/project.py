@@ -177,7 +177,13 @@ class VisualEditConfig(BaseModel):
     patch_cover: PatchCoverConfig = Field(default_factory=PatchCoverConfig)
     subtitle_backing: SubtitleBackingConfig = Field(default_factory=SubtitleBackingConfig)
     overlays: list[OverlayConfig] = Field(default_factory=list)
-    preset: Literal["default", "shortform_reference", "shortform_bold_yellow"] = "default"
+    preset: Literal[
+        "default",
+        "shortform_reference",
+        "shortform_bold_yellow",
+        "shortform_white_black_soft_bg",
+        "shortform_soft_bg",
+    ] = "default"
 
 
 class StickerOverlay(BaseModel):

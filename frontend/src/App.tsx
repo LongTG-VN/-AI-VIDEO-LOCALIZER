@@ -312,11 +312,28 @@ export default function App() {
                         }
                       })}
                     >
-                      Classic Movie (White + Black Shadow)
+                      Classic Movie
                     </button>
                     <button
                       type="button"
-                      className={project.visual_edit?.preset === 'shortform_bold_yellow' ? 'active recommended' : 'recommended'}
+                      className={((project.visual_edit?.preset ?? '') === 'shortform_white_black_soft_bg' || (project.visual_edit?.preset ?? '') === 'shortform_soft_bg') ? 'active recommended' : 'recommended'}
+                      onClick={() => setProject({
+                        ...project,
+                        visual_edit: {
+                          mode: 'patch_cover',
+                          blur: project.visual_edit?.blur ?? { enabled: false, sigma: 18, padding_px: 8, feather_px: 6 },
+                          patch_cover: project.visual_edit?.patch_cover ?? { enabled: true, patch_opacity: 0.92, padding_px: 6, feather_px: 8, blur_sigma: 6 },
+                          subtitle_backing: { enabled: true, opacity: 0.60, padding_x: 18, padding_y: 8, corner_radius: 10, blur_radius: 8 },
+                          overlays: project.visual_edit?.overlays ?? [],
+                          preset: 'shortform_white_black_soft_bg',
+                        }
+                      })}
+                    >
+                      ★ Shortform Soft BG (White + Thin Black)
+                    </button>
+                    <button
+                      type="button"
+                      className={project.visual_edit?.preset === 'shortform_bold_yellow' ? 'active' : ''}
                       onClick={() => setProject({
                         ...project,
                         visual_edit: {
@@ -329,7 +346,7 @@ export default function App() {
                         }
                       })}
                     >
-                      ★ Shortform Bold Yellow (Dark Plate)
+                      Shortform Bold Yellow
                     </button>
                   </div>
                 </div>

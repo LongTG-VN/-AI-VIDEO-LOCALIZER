@@ -106,16 +106,23 @@ def to_ass(
 
     is_shortform_ref = preset == "shortform_reference"
     is_shortform_yellow = preset == "shortform_bold_yellow"
+    is_shortform_white_black = preset in {"shortform_white_black_soft_bg", "shortform_soft_bg"}
+
+    is_any_shortform = is_shortform_ref or is_shortform_yellow or is_shortform_white_black
 
     font_name = options.font_name or "Arial"
-    font_size = 23 if (is_shortform_ref or is_shortform_yellow) else (options.font_size or 26)
-    margin_v = 36 if (is_shortform_ref or is_shortform_yellow) else (options.margin_v or 38)
-    shadow_d = 1.2 if is_shortform_yellow else (1.0 if is_shortform_ref else (options.shadow_depth or 0.8))
+    font_size = 23 if is_any_shortform else (options.font_size or 26)
+    margin_v = 36 if is_any_shortform else (options.margin_v or 38)
+    shadow_d = 0.6 if is_shortform_white_black else (1.2 if is_shortform_yellow else (1.0 if is_shortform_ref else (options.shadow_depth or 0.8)))
     font_color = options.font_color or "&H00FFFFFF"
     bold_val = -1
 
     # Outline color & width
-    if is_shortform_yellow:
+    if is_shortform_white_black:
+        # Thin Black outline
+        outline_color = "&H00000000"
+        outline_w = 1.8
+    elif is_shortform_yellow:
         # Golden Yellow outline in ASS BGR format (B=00, G=D7, R=FF)
         outline_color = "&H0000D7FF"
         outline_w = 2.4
@@ -130,13 +137,13 @@ def to_ass(
     backing_cfg = getattr(options.visual_edit, "subtitle_backing", None) if options.visual_edit else None
     has_backing = (
         backing_cfg is not None and backing_cfg.enabled
-    ) or is_shortform_yellow
+    ) or is_shortform_yellow or is_shortform_white_black
 
     styles_list = []
 
     if has_backing:
         opacity = backing_cfg.opacity if backing_cfg else 0.60
-        pad_x = backing_cfg.padding_x if backing_cfg else 16
+        pad_x = backing_cfg.padding_x if backing_cfg else 18
         # Calculate hex alpha: 0.0=solid (&H00), 1.0=transparent (&HFF)
         alpha_int = int(max(0, min(255, round((1.0 - opacity) * 255))))
         backing_color = f"&H{alpha_int:02X}000000"
@@ -176,9 +183,10 @@ Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
         end_str = format_ass_timestamp(cue.end)
 
         if has_backing:
-            # Layer 0: Dark backing plate bounding box
-            events.append(f"Dialogue: 0,{start_str},{end_str},BackingPlate,,0,0,0,,{{\\alpha&HFF&}}{ass_text}")
-            # Layer 1: Text on top of backing plate
+            # Layer 0: Soft blurred / feathered dark translucent backing plate
+            blur_r = backing_cfg.blur_radius if backing_cfg else 8
+            events.append(f"Dialogue: 0,{start_str},{end_str},BackingPlate,,0,0,0,,{{\\blur{blur_r}\\alpha&HFF&}}{ass_text}")
+            # Layer 1: Crisp text on top of backing plate
             events.append(f"Dialogue: 1,{start_str},{end_str},Default,,0,0,0,,{ass_text}")
         else:
             events.append(f"Dialogue: 0,{start_str},{end_str},Default,,0,0,0,,{ass_text}")
