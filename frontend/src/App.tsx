@@ -153,11 +153,29 @@ export default function App() {
                         visual_edit: {
                           mode: 'clean',
                           blur: project.visual_edit?.blur ?? { enabled: false, sigma: 18, padding_px: 8, feather_px: 6 },
+                          patch_cover: project.visual_edit?.patch_cover ?? { enabled: false, patch_opacity: 0.92, padding_px: 6, feather_px: 8, blur_sigma: 6 },
                           overlays: project.visual_edit?.overlays ?? [],
+                          preset: project.visual_edit?.preset ?? 'default',
                         }
                       })}
                     >
                       Clean (Inpaint)
+                    </button>
+                    <button
+                      type="button"
+                      className={project.visual_edit?.mode === 'patch_cover' ? 'active recommended' : 'recommended'}
+                      onClick={() => setProject({
+                        ...project,
+                        visual_edit: {
+                          mode: 'patch_cover',
+                          blur: project.visual_edit?.blur ?? { enabled: false, sigma: 18, padding_px: 8, feather_px: 6 },
+                          patch_cover: project.visual_edit?.patch_cover ?? { enabled: true, patch_opacity: 0.92, padding_px: 6, feather_px: 8, blur_sigma: 6 },
+                          overlays: project.visual_edit?.overlays ?? [],
+                          preset: 'shortform_reference',
+                        }
+                      })}
+                    >
+                      ★ Patch Cover (Recommended)
                     </button>
                     <button
                       type="button"
@@ -167,7 +185,9 @@ export default function App() {
                         visual_edit: {
                           mode: 'blur',
                           blur: project.visual_edit?.blur ?? { enabled: true, sigma: 18, padding_px: 8, feather_px: 6 },
+                          patch_cover: project.visual_edit?.patch_cover ?? { enabled: false, patch_opacity: 0.92, padding_px: 6, feather_px: 8, blur_sigma: 6 },
                           overlays: project.visual_edit?.overlays ?? [],
+                          preset: project.visual_edit?.preset ?? 'default',
                         }
                       })}
                     >
@@ -181,7 +201,9 @@ export default function App() {
                         visual_edit: {
                           mode: 'blur_overlay',
                           blur: project.visual_edit?.blur ?? { enabled: true, sigma: 18, padding_px: 8, feather_px: 6 },
+                          patch_cover: project.visual_edit?.patch_cover ?? { enabled: false, patch_opacity: 0.92, padding_px: 6, feather_px: 8, blur_sigma: 6 },
                           overlays: project.visual_edit?.overlays ?? [],
+                          preset: project.visual_edit?.preset ?? 'default',
                         }
                       })}
                     >
@@ -190,41 +212,80 @@ export default function App() {
                   </div>
                 </div>
 
-                {(project.visual_edit?.mode === 'blur' || project.visual_edit?.mode === 'blur_overlay') && (
+                {project.visual_edit?.mode === 'patch_cover' && (
                   <div className="sliders-grid">
                     <div className="slider-item">
-                      <label>Blur Strength (σ: {project.visual_edit?.blur.sigma ?? 18})</label>
+                      <label>Cover Strength ({Math.round((project.visual_edit?.patch_cover?.patch_opacity ?? 0.92) * 100)}%)</label>
                       <input
                         type="range"
-                        min="4"
-                        max="40"
-                        value={project.visual_edit?.blur.sigma ?? 18}
+                        min="0.70"
+                        max="1.00"
+                        step="0.01"
+                        value={project.visual_edit?.patch_cover?.patch_opacity ?? 0.92}
                         onChange={(e) => {
                           const val = Number(e.target.value)
                           setProject({
                             ...project,
                             visual_edit: {
                               ...project.visual_edit!,
-                              blur: { ...project.visual_edit!.blur, sigma: val }
+                              patch_cover: { ...project.visual_edit!.patch_cover!, patch_opacity: val }
                             }
                           })
                         }}
                       />
                     </div>
                     <div className="slider-item">
-                      <label>Blur Padding ({project.visual_edit?.blur.padding_px ?? 8}px)</label>
+                      <label>Feather ({project.visual_edit?.patch_cover?.feather_px ?? 8}px)</label>
                       <input
                         type="range"
-                        min="0"
-                        max="24"
-                        value={project.visual_edit?.blur.padding_px ?? 8}
+                        min="2"
+                        max="20"
+                        value={project.visual_edit?.patch_cover?.feather_px ?? 8}
                         onChange={(e) => {
                           const val = Number(e.target.value)
                           setProject({
                             ...project,
                             visual_edit: {
                               ...project.visual_edit!,
-                              blur: { ...project.visual_edit!.blur, padding_px: val }
+                              patch_cover: { ...project.visual_edit!.patch_cover!, feather_px: val }
+                            }
+                          })
+                        }}
+                      />
+                    </div>
+                    <div className="slider-item">
+                      <label>Padding ({project.visual_edit?.patch_cover?.padding_px ?? 6}px)</label>
+                      <input
+                        type="range"
+                        min="0"
+                        max="16"
+                        value={project.visual_edit?.patch_cover?.padding_px ?? 6}
+                        onChange={(e) => {
+                          const val = Number(e.target.value)
+                          setProject({
+                            ...project,
+                            visual_edit: {
+                              ...project.visual_edit!,
+                              patch_cover: { ...project.visual_edit!.patch_cover!, padding_px: val }
+                            }
+                          })
+                        }}
+                      />
+                    </div>
+                    <div className="slider-item">
+                      <label>Blur Softness (σ: {project.visual_edit?.patch_cover?.blur_sigma ?? 6})</label>
+                      <input
+                        type="range"
+                        min="2"
+                        max="18"
+                        value={project.visual_edit?.patch_cover?.blur_sigma ?? 6}
+                        onChange={(e) => {
+                          const val = Number(e.target.value)
+                          setProject({
+                            ...project,
+                            visual_edit: {
+                              ...project.visual_edit!,
+                              patch_cover: { ...project.visual_edit!.patch_cover!, blur_sigma: val }
                             }
                           })
                         }}
@@ -232,6 +293,44 @@ export default function App() {
                     </div>
                   </div>
                 )}
+
+                <div className="form-row">
+                  <label className="field-label">Typography Preset:</label>
+                  <div className="style-selector">
+                    <button
+                      type="button"
+                      className={(project.visual_edit?.preset ?? 'default') === 'default' ? 'active' : ''}
+                      onClick={() => setProject({
+                        ...project,
+                        visual_edit: {
+                          mode: project.visual_edit?.mode ?? 'clean',
+                          blur: project.visual_edit?.blur ?? { enabled: false, sigma: 18, padding_px: 8, feather_px: 6 },
+                          patch_cover: project.visual_edit?.patch_cover ?? { enabled: false, patch_opacity: 0.92, padding_px: 6, feather_px: 8, blur_sigma: 6 },
+                          overlays: project.visual_edit?.overlays ?? [],
+                          preset: 'default',
+                        }
+                      })}
+                    >
+                      Default Movie
+                    </button>
+                    <button
+                      type="button"
+                      className={project.visual_edit?.preset === 'shortform_reference' ? 'active' : ''}
+                      onClick={() => setProject({
+                        ...project,
+                        visual_edit: {
+                          mode: project.visual_edit?.mode ?? 'patch_cover',
+                          blur: project.visual_edit?.blur ?? { enabled: false, sigma: 18, padding_px: 8, feather_px: 6 },
+                          patch_cover: project.visual_edit?.patch_cover ?? { enabled: true, patch_opacity: 0.92, padding_px: 6, feather_px: 8, blur_sigma: 6 },
+                          overlays: project.visual_edit?.overlays ?? [],
+                          preset: 'shortform_reference',
+                        }
+                      })}
+                    >
+                      Reference Short-form (Bold Outline)
+                    </button>
+                  </div>
+                </div>
 
                 {project.visual_edit?.mode === 'blur_overlay' && (
                   <div className="overlays-section">

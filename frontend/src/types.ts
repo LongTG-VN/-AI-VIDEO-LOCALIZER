@@ -77,7 +77,7 @@ export type Scene = {
   characters: string[]
 }
 
-export type VisualEditMode = 'clean' | 'blur' | 'blur_overlay'
+export type VisualEditMode = 'clean' | 'patch_cover' | 'blur' | 'blur_overlay'
 
 export type OverlayAnchor = 'absolute' | 'subtitle_region' | 'top_left' | 'top_right' | 'bottom_left' | 'bottom_right' | 'center'
 
@@ -88,6 +88,19 @@ export type BlurConfig = {
   feather_px: number
   min_ocr_confidence?: number
   temporal_gap_fill_frames?: number
+}
+
+export type PatchCoverConfig = {
+  enabled: boolean
+  patch_opacity: number
+  padding_px: number
+  feather_px: number
+  blur_sigma: number
+  min_ocr_confidence?: number
+  temporal_gap_fill_frames?: number
+  mask_persistence_frames?: number
+  use_temporal_donor?: boolean
+  use_spatial_donor?: boolean
 }
 
 export type OverlayConfig = {
@@ -108,7 +121,9 @@ export type OverlayConfig = {
 export type VisualEditConfig = {
   mode: VisualEditMode
   blur: BlurConfig
+  patch_cover?: PatchCoverConfig
   overlays: OverlayConfig[]
+  preset?: 'default' | 'shortform_reference'
 }
 
 export type Project = {

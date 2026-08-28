@@ -110,6 +110,7 @@ class Scene(BaseModel):
 class VisualEditMode(str, Enum):
     CLEAN = "clean"
     BLUR = "blur"
+    PATCH_COVER = "patch_cover"
     BLUR_OVERLAY = "blur_overlay"
 
 
@@ -132,6 +133,19 @@ class BlurConfig(BaseModel):
     temporal_gap_fill_frames: int = Field(default=5, ge=0, le=30)
 
 
+class PatchCoverConfig(BaseModel):
+    enabled: bool = True
+    patch_opacity: float = Field(default=0.92, ge=0.5, le=1.0)
+    padding_px: int = Field(default=6, ge=0, le=32)
+    feather_px: int = Field(default=8, ge=0, le=32)
+    blur_sigma: float = Field(default=6.0, ge=1.0, le=30.0)
+    min_ocr_confidence: float = Field(default=0.30, ge=0.0, le=1.0)
+    temporal_gap_fill_frames: int = Field(default=6, ge=0, le=30)
+    mask_persistence_frames: int = Field(default=3, ge=0, le=15)
+    use_temporal_donor: bool = True
+    use_spatial_donor: bool = True
+
+
 class OverlayConfig(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid4()))
     path: str
@@ -150,7 +164,9 @@ class OverlayConfig(BaseModel):
 class VisualEditConfig(BaseModel):
     mode: VisualEditMode = VisualEditMode.CLEAN
     blur: BlurConfig = Field(default_factory=BlurConfig)
+    patch_cover: PatchCoverConfig = Field(default_factory=PatchCoverConfig)
     overlays: list[OverlayConfig] = Field(default_factory=list)
+    preset: Literal["default", "shortform_reference"] = "default"
 
 
 class StickerOverlay(BaseModel):

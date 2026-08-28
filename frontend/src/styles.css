@@ -53,6 +53,8 @@ main { padding: 30px clamp(22px, 4vw, 58px) 70px; overflow: auto; }
 .style-selector { display: inline-flex; gap: 8px; flex-wrap: wrap; }
 .style-selector button { padding: 8px 14px; background: #14171e; border: 1px solid #2a2e38; color: #9aa2b1; border-radius: 8px; cursor: pointer; font-size: 13px; font-weight: 600; transition: .15s ease; }
 .style-selector button.active { background: #231c38; border-color: #7b69c4; color: #dcd7ff; box-shadow: 0 0 12px rgba(123, 105, 196, .2); }
+.style-selector button.recommended { border-color: #554488; color: #c4b5fd; }
+.style-selector button.recommended.active { background: #2a2048; border-color: #9370db; color: #f3e8ff; box-shadow: 0 0 14px rgba(147, 112, 219, .3); }
 .sliders-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; padding: 12px 14px; background: #11141a; border-radius: 9px; border: 1px solid #1c212a; }
 .slider-item { display: grid; gap: 6px; }
 .slider-item label { font-size: 12px; color: #8e96a5; }

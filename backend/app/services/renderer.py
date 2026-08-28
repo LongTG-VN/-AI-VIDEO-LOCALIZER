@@ -10,6 +10,7 @@ from typing import Any
 
 from app.models.project import Project, RenderOptions, VisualEditMode
 from app.services.hardsub_cleaner import HardSubCleaner
+from app.services.patch_cover_cleaner import PatchCoverCleaner
 from app.services.subtitles import write_ass, write_srt
 from app.services.visual_edit_composer import VisualEditComposer
 
@@ -136,9 +137,23 @@ class Renderer:
                 VisualEditMode.BLUR,
                 VisualEditMode.BLUR_OVERLAY,
             }
+            is_patch_cover = visual_edit is not None and visual_edit.mode == VisualEditMode.PATCH_COVER
 
-            # 1. Chinese Hard-Sub Cleanup / Dynamic Blur Mask Preparation
-            if not is_visual_edit_blur and options.hardsub_removal_mode not in {"none", "off"}:
+            # 1. Chinese Hard-Sub Cleanup / Dynamic Blur Mask / Patch Cover Preparation
+            if is_patch_cover:
+                logger.info("Starting feathered PatchCover cleanup (mode: patch_cover)...")
+                patch_cleaner = PatchCoverCleaner(config=visual_edit.patch_cover, ffmpeg_bin=self.ffmpeg_bin)
+                intermediate_clean = work_dir / (
+                    "patched_video.mkv" if options.hardsub_lossless_intermediate else "patched_video.mp4"
+                )
+                cleanup_metrics = patch_cleaner.clean_video(
+                    source_path=source,
+                    output_path=intermediate_clean,
+                    cues=project.cues,
+                    lossless_intermediate=options.hardsub_lossless_intermediate,
+                )
+                cleaned_video_path = intermediate_clean
+            elif not is_visual_edit_blur and options.hardsub_removal_mode not in {"none", "off"}:
                 logger.info("Starting Chinese hard-sub cleanup (mode: %s)...", options.hardsub_removal_mode)
                 cleaner = self._create_cleaner(options)
                 intermediate_clean = work_dir / (
