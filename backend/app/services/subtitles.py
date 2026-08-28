@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import re
 from pathlib import Path
+import numpy as np
 
 from app.models.project import RenderOptions, SubtitleCue
 from app.services.utterance_engine import (
@@ -182,20 +183,77 @@ Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
         max_line_chars=options.max_line_chars,
     )
     render_cues, _ = engine.process_cues(cues, translated=translated)
+    cues_by_id = {
+        (getattr(c, "id", None) or getattr(c, "render_id", None)): c
+        for c in cues
+        if (getattr(c, "id", None) or getattr(c, "render_id", None))
+    }
+
+    # Precompute OCR-anchored vertical center positions for shortform mode
+    cue_y_centers: list[int] = []
+    default_y_center = int(round(height * 0.862 - 4.0))  # fallback ~410px on 480p
 
     for cue in render_cues:
+        y_pts: list[float] = []
+        for cid in getattr(cue, "source_cue_ids", []):
+            orig = cues_by_id.get(cid)
+            if not orig:
+                continue
+            for r in getattr(orig, "ocr_regions", []) or []:
+                for pt in getattr(r, "points", []) or []:
+                    if len(pt) >= 2 and pt[1] >= 0.65:  # Focus on bottom subtitle region
+                        y_pts.append(pt[1])
+            for ev in getattr(orig, "ocr_evidence", []) or []:
+                for r in getattr(ev, "regions", []) or []:
+                    for pt in getattr(r, "points", []) or []:
+                        if len(pt) >= 2 and pt[1] >= 0.65:
+                            y_pts.append(pt[1])
+
+        if y_pts:
+            min_y = min(y_pts)
+            max_y = max(y_pts)
+            mid_y = (min_y + max_y) / 2.0 * height - 4.0  # -4px visual overlap tuning
+            clamped_y = int(round(max(height * 0.72, min(height * 0.90, mid_y))))
+            cue_y_centers.append(clamped_y)
+        else:
+            cue_y_centers.append(default_y_center)
+
+    # Anti-jitter: smooth y-centers within dialogue sequences
+    if cue_y_centers:
+        median_y = int(round(float(np.median(cue_y_centers)))) if "np" in globals() else default_y_center
+        smoothed_y_centers = []
+        for y_val in cue_y_centers:
+            # If deviation is within 14px of median, anchor to median to avoid 1-frame height jumping
+            if abs(y_val - median_y) <= 14:
+                smoothed_y_centers.append(median_y)
+            else:
+                smoothed_y_centers.append(y_val)
+        cue_y_centers = smoothed_y_centers
+
+    center_x = width // 2
+
+    for idx, cue in enumerate(render_cues):
         ass_text = cue.render_text.replace("{", r"\{").replace("}", r"\}")
         start_str = format_ass_timestamp(cue.start)
         end_str = format_ass_timestamp(cue.end)
+        y_pos = cue_y_centers[idx] if idx < len(cue_y_centers) else default_y_center
 
-        if has_backing:
-            # Layer 0: Soft blurred / feathered dark translucent backing plate
-            blur_r = backing_cfg.blur_radius if backing_cfg else 8
-            events.append(f"Dialogue: 0,{start_str},{end_str},BackingPlate,,0,0,0,,{{\\blur{blur_r}\\alpha&HFF&}}{ass_text}")
-            # Layer 1: Crisp text on top of backing plate
-            events.append(f"Dialogue: 1,{start_str},{end_str},Default,,0,0,0,,{ass_text}")
+        if is_any_shortform:
+            if has_backing:
+                blur_r = backing_cfg.blur_radius if backing_cfg else 8
+                # Layer 0: Soft blurred backing plate centered directly over Chinese subtitle region
+                events.append(f"Dialogue: 0,{start_str},{end_str},BackingPlate,,0,0,0,,{{\\an5\\pos({center_x},{y_pos})\\blur{blur_r}\\alpha&HFF&}}{ass_text}")
+                # Layer 1: Crisp text centered directly over Chinese subtitle region
+                events.append(f"Dialogue: 1,{start_str},{end_str},Default,,0,0,0,,{{\\an5\\pos({center_x},{y_pos})}}{ass_text}")
+            else:
+                events.append(f"Dialogue: 0,{start_str},{end_str},Default,,0,0,0,,{{\\an5\\pos({center_x},{y_pos})}}{ass_text}")
         else:
-            events.append(f"Dialogue: 0,{start_str},{end_str},Default,,0,0,0,,{ass_text}")
+            if has_backing:
+                blur_r = backing_cfg.blur_radius if backing_cfg else 8
+                events.append(f"Dialogue: 0,{start_str},{end_str},BackingPlate,,0,0,0,,{{\\blur{blur_r}\\alpha&HFF&}}{ass_text}")
+                events.append(f"Dialogue: 1,{start_str},{end_str},Default,,0,0,0,,{ass_text}")
+            else:
+                events.append(f"Dialogue: 0,{start_str},{end_str},Default,,0,0,0,,{ass_text}")
 
     return header + "\n".join(events) + "\n"
 
