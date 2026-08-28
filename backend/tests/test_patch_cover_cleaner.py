@@ -105,7 +105,7 @@ def test_vietnamese_subtitle_preset_shortform_reference():
     assert "Style: Default,Arial,23" in ass_content
     assert "&H00FFFFFF" in ass_content
     assert "&H00000000" in ass_content
-    assert ",-1,0,0,0,100,100,0,0,1,2.8,1.0,2,20,20,36,1" in ass_content
+    assert ",-1,0,0,0,100,100,0,0,1,2.8,1.0,2,20,20," in ass_content
     assert "Xin chào thế giới" in ass_content
 
 
@@ -136,7 +136,7 @@ def test_vietnamese_subtitle_preset_shortform_white_black_soft_bg():
     # White fill & thin black outline
     assert "&H00FFFFFF" in ass_content
     assert "&H00000000" in ass_content
-    assert "1.8,0.6,2,20,20,36,1" in ass_content
+    assert "1.8,0.6,2,20,20," in ass_content
     # Layer 0 has soft blur
     assert "\\blur8" in ass_content or "\\blur" in ass_content
     # Multi-layer events

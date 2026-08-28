@@ -112,7 +112,13 @@ def to_ass(
 
     font_name = options.font_name or "Arial"
     font_size = 23 if is_any_shortform else (options.font_size or 26)
-    margin_v = 36 if is_any_shortform else (options.margin_v or 38)
+    # Vertical position: raise shortform subtitles (margin_v ~58px at 480p) to directly overlap the original hard-sub band
+    if options.margin_v is not None:
+        margin_v = options.margin_v
+    elif is_any_shortform:
+        margin_v = max(48, int(round(height * 0.122)))
+    else:
+        margin_v = 38
     shadow_d = 0.6 if is_shortform_white_black else (1.2 if is_shortform_yellow else (1.0 if is_shortform_ref else (options.shadow_depth or 0.8)))
     font_color = options.font_color or "&H00FFFFFF"
     bold_val = -1
