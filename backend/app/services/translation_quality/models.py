@@ -13,12 +13,40 @@ class QualitySeverity(str, Enum):
 
 
 class QualityIssue(BaseModel):
-    type: str  # e.g. "cue.content_migration", "accuracy.mistranslation", "relationship.polysemy_mismatch", etc.
+    type: str  # e.g. "cue.content_migration", "accuracy.mistranslation", "relationship.polysemy_mismatch", "idiom.literal_mistranslation", "filler.unrelated_lexical", etc.
     severity: QualitySeverity = QualitySeverity.MAJOR
     message: str
     source_span: str | None = None
     target_span: str | None = None
     reviewer: str = "general"
+
+
+class FigurativeReviewResult(BaseModel):
+    cue_id: str
+    figurative: bool = False
+    literal_meaning: str = ""
+    intended_meaning: str = ""
+    tone: Literal["humorous", "sarcastic", "insulting", "affectionate", "dramatic", "neutral"] = "neutral"
+    speaker_intention: str = ""
+    status: Literal["PASS", "FAIL"] = "PASS"
+    issues: list[str] = Field(default_factory=list)
+    candidate_vi: str = ""
+
+
+class FillerReviewResult(BaseModel):
+    cue_id: str
+    filler_token: str = ""
+    is_filler: bool = True
+    action: Literal["TRANSLATE", "SUPPRESS_FILLER"] = "TRANSLATE"
+    translated_vi: str = ""
+    suppression_reason: str | None = None
+
+
+class NaturalnessScore(BaseModel):
+    cue_id: str
+    score: int = Field(default=5, ge=1, le=5)  # 5=native, 4=natural, 3=machine-like, 2=awkward, 1=nonsense
+    issues: list[str] = Field(default_factory=list)
+    proposed_vi: str = ""
 
 
 class CueQualityResult(BaseModel):
@@ -30,6 +58,7 @@ class CueQualityResult(BaseModel):
     final_translation: str = ""
     confidence: float | None = None
     review_notes: str | None = None
+    naturalness_score: int = 5
 
 
 class TranslationQualityReport(BaseModel):
@@ -78,10 +107,13 @@ class TranslationQualityConfig(BaseModel):
     cue_integrity: bool = True
     accuracy: bool = True
     relationships: bool = True
+    idioms: bool = True
+    fillers: bool = True
     targeted_repair: bool = True
     max_retries: int = 2
     naturalness: bool = True
+    naturalness_min_score: int = 4
     consistency: bool = True
     deterministic_validation: bool = True
-    translation_quality_version: str = "v1"
-    translation_prompt_version: str = "v1"
+    translation_quality_version: str = "v2"
+    translation_prompt_version: str = "v2"

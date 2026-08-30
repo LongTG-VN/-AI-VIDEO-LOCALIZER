@@ -112,14 +112,14 @@ class DeterministicValidator:
             # 6. Required Canonical Names Preserved
             req_names = source_name_mentions(project, src)
             for req in req_names:
-                target_name = req.get("name_vi")
+                target_name = req.get("target") or req.get("name_vi")
                 if target_name and not re.search(r"\b" + re.escape(target_name) + r"\b", vi, re.IGNORECASE):
                     issues.append(
                         QualityIssue(
                             type="validation.canonical_name_dropped",
-                            severity=QualitySeverity.MAJOR,
+                            severity=QualitySeverity.CRITICAL,
                             message=f"Required canonical name '{target_name}' present in source is missing from translation.",
-                            source_span=req.get("name_zh"),
+                            source_span=req.get("name_zh") or str(req.get("source_forms", [""])[0]),
                             target_span=vi,
                             reviewer="validator",
                         )
@@ -199,7 +199,7 @@ class DeterministicValidator:
                 issues.append(
                     QualityIssue(
                         type="validation.broken_syntax",
-                        severity=QualitySeverity.MAJOR,
+                        severity=QualitySeverity.CRITICAL,
                         message=f"Syntactically broken Vietnamese or nonsense phrase detected: '{match_txt}'",
                         target_span=vi,
                         reviewer="validator",
