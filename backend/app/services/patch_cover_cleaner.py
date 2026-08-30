@@ -164,13 +164,13 @@ class PatchCoverCleaner:
 
         return mask.astype(np.float32) / 255.0
 
-    def compute_vi_backing_intervals(
+    def build_render_cue_contexts(
         self,
         cues: list[SubtitleCue],
         width: int,
         height: int,
     ) -> list[dict[str, Any]]:
-        """Compute exact VI text bounding boxes for each rendered Vietnamese subtitle cue."""
+        """Build exact render context for each RenderSubtitleCue with 1:1 synchronized backing and Chinese polygons."""
         from app.services.subtitles import UtteranceEngine
 
         engine = UtteranceEngine()
@@ -228,7 +228,7 @@ class PatchCoverCleaner:
         pad_x = 22
         pad_y = 10
 
-        vi_intervals: list[dict[str, Any]] = []
+        contexts: list[dict[str, Any]] = []
         for idx, cue in enumerate(render_cues):
             lines = [l.strip() for l in cue.render_text.replace(r"\N", "\n").split("\n") if l.strip()]
             if not lines:
@@ -244,14 +244,41 @@ class PatchCoverCleaner:
             y1 = max(int(height * 0.68), int(y_pos - text_h / 2 - pad_y))
             y2 = min(int(height * 0.98), int(y_pos + text_h / 2 + pad_y))
 
-            vi_intervals.append({
+            # Chinese polygons for this cue only
+            chinese_polygons: list[list[list[float]]] = []
+            for cid in getattr(cue, "source_cue_ids", []):
+                orig = cues_by_id.get(cid)
+                if not orig:
+                    continue
+                for r in getattr(orig, "ocr_regions", []) or []:
+                    pts = getattr(r, "points", []) or []
+                    if self._is_valid_subtitle_polygon(pts):
+                        chinese_polygons.append(pts)
+                if not chinese_polygons:
+                    for ev in getattr(orig, "ocr_evidence", []) or []:
+                        for r in getattr(ev, "regions", []) or []:
+                            pts = getattr(r, "points", []) or []
+                            if self._is_valid_subtitle_polygon(pts):
+                                chinese_polygons.append(pts)
+
+            contexts.append({
                 "start": cue.start,
                 "end": cue.end,
                 "cue_id": getattr(cue, "render_id", str(idx)),
                 "bbox": (x1, y1, x2, y2),
+                "chinese_polygons": chinese_polygons,
             })
 
-        return vi_intervals
+        return contexts
+
+    def compute_vi_backing_intervals(
+        self,
+        cues: list[SubtitleCue],
+        width: int,
+        height: int,
+    ) -> list[dict[str, Any]]:
+        """Backwards compatibility alias for build_render_cue_contexts."""
+        return self.build_render_cue_contexts(cues, width, height)
 
     def create_rounded_rect_mask(
         self,
@@ -336,7 +363,7 @@ class PatchCoverCleaner:
         cues: list[SubtitleCue],
         lossless_intermediate: bool = True,
     ) -> dict[str, Any]:
-        """Process video and apply fast feathered patch cover on all subtitle intervals."""
+        """Process video and apply 1:1 cue-synchronized patch cover and backdrop blur."""
         t_start = time.time()
         output_path.parent.mkdir(parents=True, exist_ok=True)
 
@@ -349,8 +376,7 @@ class PatchCoverCleaner:
         fps = float(cap.get(cv2.CAP_PROP_FPS)) or 30.0
         total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
 
-        intervals = self.extract_active_intervals(cues, fps)
-        vi_intervals = self.compute_vi_backing_intervals(cues, width, height)
+        contexts = self.build_render_cue_contexts(cues, width, height)
 
         # Setup VideoWriter
         fourcc = cv2.VideoWriter_fourcc(*"mp4v")
@@ -364,11 +390,9 @@ class PatchCoverCleaner:
         frame_idx = 0
         patched_frames_count = 0
 
-        # Mask caches across frames
-        cached_cn_id = None
+        # Mask cache across frames for the active cue
+        cached_ctx_id = None
         cached_cn_mask = None
-
-        cached_vi_id = None
         cached_vi_mask = None
 
         while True:
@@ -378,49 +402,34 @@ class PatchCoverCleaner:
 
             cur_time = frame_idx / fps
 
-            # Find active Chinese interval
-            active_cn = None
-            for item in intervals:
-                if item["start"] <= cur_time <= item["end"]:
-                    active_cn = item
+            # Find active render cue: EXACT 1:1 timestamp match with subtitle lifecycle
+            active_ctx = None
+            for ctx in contexts:
+                if ctx["start"] <= cur_time < ctx["end"]:
+                    active_ctx = ctx
                     break
 
-            # Find active VI backing interval
-            active_vi = None
-            for item in vi_intervals:
-                if item["start"] <= cur_time <= item["end"]:
-                    active_vi = item
-                    break
-
-            if active_cn is not None or active_vi is not None:
+            if active_ctx is not None:
                 patched_frames_count += 1
+                ctx_key = (active_ctx["cue_id"], active_ctx["start"], active_ctx["end"])
 
-                # Chinese mask
-                alpha_cn_mask = None
-                if active_cn is not None:
-                    cn_key = (active_cn["cue_id"], active_cn["start"], active_cn["end"])
-                    if cn_key == cached_cn_id and cached_cn_mask is not None:
-                        alpha_cn_mask = cached_cn_mask
+                if ctx_key == cached_ctx_id and cached_vi_mask is not None:
+                    alpha_cn_mask = cached_cn_mask
+                    alpha_vi_mask = cached_vi_mask
+                else:
+                    if active_ctx["chinese_polygons"]:
+                        alpha_cn_mask = self.create_feathered_mask(height, width, active_ctx["chinese_polygons"])
                     else:
-                        alpha_cn_mask = self.create_feathered_mask(height, width, active_cn["polygons"])
-                        cached_cn_id = cn_key
-                        cached_cn_mask = alpha_cn_mask
-
-                # VI backing mask
-                alpha_vi_mask = None
-                if active_vi is not None:
-                    vi_key = (active_vi["cue_id"], active_vi["start"], active_vi["end"])
-                    if vi_key == cached_vi_id and cached_vi_mask is not None:
-                        alpha_vi_mask = cached_vi_mask
-                    else:
-                        alpha_vi_mask = self.create_rounded_rect_mask(height, width, active_vi["bbox"], radius=10, feather=8)
-                        cached_vi_id = vi_key
-                        cached_vi_mask = alpha_vi_mask
+                        alpha_cn_mask = None
+                    alpha_vi_mask = self.create_rounded_rect_mask(height, width, active_ctx["bbox"], radius=10, feather=8)
+                    cached_ctx_id = ctx_key
+                    cached_cn_mask = alpha_cn_mask
+                    cached_vi_mask = alpha_vi_mask
 
                 covered_frame = self.apply_patch_cover(frame, alpha_mask=alpha_cn_mask, vi_backing_mask=alpha_vi_mask)
                 writer.write(covered_frame)
             else:
-                # Fast path: 100% untouched frame
+                # Fast path: NO active subtitle -> 100% UNTOUCHED FRAME (0 backing, 0 blur, 0 ghost)
                 writer.write(frame)
 
             frame_idx += 1
@@ -434,7 +443,7 @@ class PatchCoverCleaner:
             "cleanup_time_s": round(t_elapsed, 3),
             "total_frames": total_frames,
             "patched_frames": patched_frames_count,
-            "intervals_count": len(intervals),
+            "intervals_count": len(contexts),
             "output_path": str(output_path),
         }
         self.last_metrics = metrics
