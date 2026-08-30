@@ -344,12 +344,12 @@ class PatchCoverCleaner:
 
         # Step 2: VI Subtitle Backing (consistent soft backdrop blur + subtle dark tint)
         if vi_backing_mask is not None and np.any(vi_backing_mask > 0.001):
-            blur_sigma_bg = 6.0
-            k_bg = 19
+            blur_sigma_bg = 8.0
+            k_bg = 25
             blurred_bg = cv2.GaussianBlur(out, (k_bg, k_bg), blur_sigma_bg)
-            dark_tint_bg = 0.32  # subtle dark tint (~32%)
+            dark_tint_bg = 0.38  # moderate dark tint (~38%)
             blurred_bg = (blurred_bg.astype(np.float32) * (1.0 - dark_tint_bg)).astype(np.uint8)
-            backing_opacity = 0.75  # soft semi-translucent blend
+            backing_opacity = 0.88  # distinct soft backdrop blend across all scene brightness levels
             alpha_bg_3d = np.repeat((vi_backing_mask * backing_opacity)[:, :, np.newaxis], 3, axis=2)
             out = (1.0 - alpha_bg_3d) * out.astype(np.float32) + alpha_bg_3d * blurred_bg.astype(np.float32)
             out = np.clip(out, 0, 255).astype(np.uint8)

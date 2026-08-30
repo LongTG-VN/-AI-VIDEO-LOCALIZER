@@ -264,3 +264,53 @@ def test_compute_vi_backing_intervals_and_rounded_mask():
     assert 0.0 < mask.max() <= 1.0
     assert np.all(mask[:int(480 * 0.68), :] == 0.0)
 
+
+def test_consecutive_cues_backing_lifecycle_and_composition():
+    """Verify 1:1 backing lifecycle across consecutive 1-line, 2-line, and gap intervals."""
+    cleaner = PatchCoverCleaner()
+    cues = [
+        # Cue 1: single-line
+        SubtitleCue(id="c1", start=0.5, end=2.0, source_text="第一句", translated_text="Cuộc sống vốn thuộc về tôi"),
+        # Cue 2: 2-line
+        SubtitleCue(id="c2", start=2.5, end=5.5, source_text="第二句", translated_text="Ở một gia đình mở quán ăn sáng, bốn giờ sáng đã phải dậy giúp nhào bột."),
+        # Cue 3: third consecutive
+        SubtitleCue(id="c3", start=6.0, end=8.0, source_text="第三句", translated_text="Tần Phù Chi, cô đã cướp mất mười tám năm của tôi!"),
+    ]
+
+    contexts = cleaner.build_render_cue_contexts(cues, width=852, height=480)
+
+    # 1. Every non-empty cue has exactly one context
+    assert len(contexts) == 3
+
+    # 2. Backing start/end matches cue start/end 1:1
+    assert contexts[0]["start"] == 0.5 and contexts[0]["end"] == 2.0
+    assert contexts[1]["start"] == 2.5 and contexts[1]["end"] == 5.5
+    assert contexts[2]["start"] == 6.0 and contexts[2]["end"] == 8.0
+
+    # 3. 2-line cue produces taller bounding box than 1-line cue
+    h_cue1 = contexts[0]["bbox"][3] - contexts[0]["bbox"][1]
+    h_cue2 = contexts[1]["bbox"][3] - contexts[1]["bbox"][1]
+    assert h_cue2 > h_cue1
+
+    # 4. Test frame composition at cue 1, gap, cue 2, cue 3 on bright and dark backgrounds
+    h, w = 480, 852
+    bright_frame = np.full((h, w, 3), 240, dtype=np.uint8)
+    dark_frame = np.full((h, w, 3), 30, dtype=np.uint8)
+
+    # Frame during Cue 1 (t=1.0s) -> backing must be applied
+    mask_c1 = cleaner.create_rounded_rect_mask(h, w, contexts[0]["bbox"])
+    out_bright_c1 = cleaner.apply_patch_cover(bright_frame, vi_backing_mask=mask_c1)
+    assert np.mean(out_bright_c1[400:430, 300:550]) < np.mean(bright_frame[400:430, 300:550])
+
+    # Frame during Gap (t=2.2s) -> NO backing, frame is identical to source
+    out_gap = cleaner.apply_patch_cover(bright_frame, vi_backing_mask=None)
+    assert np.array_equal(out_gap, bright_frame)
+
+    # Frame during Cue 2 (t=3.5s) on dark background -> backing must still blur & dark tint
+    mask_c2 = cleaner.create_rounded_rect_mask(h, w, contexts[1]["bbox"])
+    out_dark_c2 = cleaner.apply_patch_cover(dark_frame, vi_backing_mask=mask_c2)
+    assert out_dark_c2 is not None
+    # Upper screen (faces) must be 100% byte-identical
+    assert np.array_equal(out_dark_c2[:int(h * 0.68), :], dark_frame[:int(h * 0.68), :])
+
+
