@@ -149,7 +149,9 @@ def to_ass(
     styles_list = []
 
     if has_backing:
-        opacity = backing_cfg.opacity if backing_cfg else 0.72
+        # Subtle black tint (~0.30 - 0.35) combined with video-level backdrop blur
+        default_opacity = 0.35 if is_shortform_white_black else 0.60
+        opacity = backing_cfg.opacity if backing_cfg else default_opacity
         pad_x = backing_cfg.padding_x if backing_cfg else 20
         # Calculate hex alpha: 0.0=solid (&H00), 1.0=transparent (&HFF)
         alpha_int = int(max(0, min(255, round((1.0 - opacity) * 255))))
@@ -240,7 +242,7 @@ Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
 
         if is_any_shortform:
             if has_backing:
-                blur_r = backing_cfg.blur_radius if backing_cfg else 8
+                blur_r = 12 if is_shortform_white_black else (backing_cfg.blur_radius if backing_cfg else 8)
                 # Layer 0: Soft blurred backing plate centered directly over Chinese subtitle region
                 events.append(f"Dialogue: 0,{start_str},{end_str},BackingPlate,,0,0,0,,{{\\an5\\pos({center_x},{y_pos})\\blur{blur_r}\\alpha&HFF&}}{ass_text}")
                 # Layer 1: Crisp text centered directly over Chinese subtitle region

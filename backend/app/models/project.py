@@ -136,9 +136,10 @@ class BlurConfig(BaseModel):
 class PatchCoverConfig(BaseModel):
     enabled: bool = True
     patch_opacity: float = Field(default=0.92, ge=0.5, le=1.0)
-    padding_px: int = Field(default=6, ge=0, le=32)
-    feather_px: int = Field(default=8, ge=0, le=32)
-    blur_sigma: float = Field(default=6.0, ge=1.0, le=30.0)
+    dark_tint: float = Field(default=0.30, ge=0.0, le=1.0)  # subtle background darkening
+    padding_px: int = Field(default=8, ge=0, le=32)
+    feather_px: int = Field(default=12, ge=0, le=32)
+    blur_sigma: float = Field(default=8.0, ge=1.0, le=30.0)
     min_ocr_confidence: float = Field(default=0.30, ge=0.0, le=1.0)
     temporal_gap_fill_frames: int = Field(default=6, ge=0, le=30)
     mask_persistence_frames: int = Field(default=3, ge=0, le=15)

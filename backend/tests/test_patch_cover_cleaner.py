@@ -21,8 +21,9 @@ def test_patch_cover_config_defaults():
     assert cfg.enabled is True
     assert 0.88 <= cfg.patch_opacity <= 0.96
     assert 4 <= cfg.padding_px <= 8
-    assert 5 <= cfg.feather_px <= 10
-    assert 4 <= cfg.blur_sigma <= 10
+    assert 5 <= cfg.feather_px <= 16
+    assert 4 <= cfg.blur_sigma <= 12
+    assert 0.0 <= cfg.dark_tint <= 0.5
     assert cfg.temporal_gap_fill_frames == 6
     assert cfg.mask_persistence_frames == 3
 
@@ -138,7 +139,7 @@ def test_vietnamese_subtitle_preset_shortform_white_black_soft_bg():
     assert "&H00000000" in ass_content
     assert "1.8,0.6,2,20,20," in ass_content
     # Layer 0 has soft blur
-    assert "\\blur8" in ass_content or "\\blur" in ass_content
+    assert "\\blur12" in ass_content or "\\blur" in ass_content
     # Multi-layer events
     assert "Dialogue: 0," in ass_content
     assert "BackingPlate" in ass_content

@@ -148,12 +148,16 @@ class PatchCoverCleaner:
                 if k_blur % 2 == 0:
                     k_blur += 1
                 patch = cv2.GaussianBlur(patch, (k_blur, k_blur), sigma)
-        else:
-            # Priority 2/3: Local soft blur patch
-            k_blur = max(1, int(sigma * 3 + 1))
-            if k_blur % 2 == 0:
-                k_blur += 1
-            patch = cv2.GaussianBlur(frame, (k_blur, k_blur), sigma)
+        # Priority 2/3: Local soft blur patch
+        k_blur = max(1, int(sigma * 3 + 1))
+        if k_blur % 2 == 0:
+            k_blur += 1
+        patch = cv2.GaussianBlur(frame, (k_blur, k_blur), sigma)
+
+        # Apply subtle dark tint (e.g. 30%) to the blurred video backdrop patch
+        dark_tint = getattr(self.config, "dark_tint", 0.0)
+        if dark_tint > 0:
+            patch = (patch.astype(np.float32) * (1.0 - dark_tint)).astype(np.uint8)
 
         # 3-channel alpha
         alpha_3d = np.repeat((alpha_mask * opacity)[:, :, np.newaxis], 3, axis=2)
