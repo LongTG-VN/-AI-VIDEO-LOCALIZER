@@ -38,12 +38,31 @@ class PatchCoverCleaner:
         self.ffmpeg_bin = ffmpeg_bin
         self.last_metrics: dict[str, Any] = {}
 
+    def _is_valid_subtitle_polygon(self, points: list[list[float]]) -> bool:
+        """Reject polygons that are too tall, too wide, or located outside the subtitle band."""
+        if not points or len(points) < 3:
+            return False
+        ys = [p[1] for p in points]
+        xs = [p[0] for p in points]
+        min_y, max_y = min(ys), max(ys)
+        min_x, max_x = min(xs), max(xs)
+        # Subtitles must be in the bottom band: y in [0.68, 0.98]
+        if max_y < 0.68 or min_y > 0.98:
+            return False
+        # Height must not exceed 14% of frame height (reject face/body boxes)
+        if (max_y - min_y) > 0.14:
+            return False
+        # Width must not exceed 82% of frame width
+        if (max_x - min_x) > 0.82:
+            return False
+        return True
+
     def extract_active_intervals(
         self,
         cues: list[SubtitleCue],
         fps: float,
     ) -> list[dict[str, Any]]:
-        """Extract and bridge subtitle intervals with temporal persistence."""
+        """Extract subtitle intervals with tight glyph polygons only."""
         min_conf = self.config.min_ocr_confidence
         gap_fill_sec = self.config.temporal_gap_fill_frames / max(1.0, fps)
         persistence_sec = self.config.mask_persistence_frames / max(1.0, fps)
@@ -63,17 +82,19 @@ class PatchCoverCleaner:
             if cue.ocr_regions:
                 for region in cue.ocr_regions:
                     if region.points and (region.confidence is None or region.confidence >= min_conf):
-                        polygons.append(region.points)
+                        if self._is_valid_subtitle_polygon(region.points):
+                            polygons.append(region.points)
 
             if not polygons and cue.ocr_evidence:
                 for ev in cue.ocr_evidence:
                     for region in ev.regions:
                         if region.points and (region.confidence is None or region.confidence >= min_conf):
-                            polygons.append(region.points)
+                            if self._is_valid_subtitle_polygon(region.points):
+                                polygons.append(region.points)
 
+            # If no valid OCR polygons exist, keep empty list (never insert giant screen-wide fallback)
             if not polygons:
-                # Default bottom subtitle band
-                polygons = [[[0.08, 0.76], [0.92, 0.76], [0.92, 0.94], [0.08, 0.94]]]
+                continue
 
             raw_intervals.append({
                 "start": start_t,
@@ -87,13 +108,15 @@ class PatchCoverCleaner:
 
         raw_intervals.sort(key=lambda x: x["start"])
 
-        # Temporal bridging
+        # Temporal bridging: merge timing without creating oversized polygon unions
         bridged: list[dict[str, Any]] = [raw_intervals[0]]
         for cur in raw_intervals[1:]:
             prev = bridged[-1]
             if cur["start"] - prev["end"] <= gap_fill_sec:
                 prev["end"] = max(prev["end"], cur["end"])
-                prev["polygons"].extend(cur["polygons"])
+                for poly in cur["polygons"]:
+                    if poly not in prev["polygons"]:
+                        prev["polygons"].append(poly)
             else:
                 bridged.append(cur)
 
@@ -105,7 +128,7 @@ class PatchCoverCleaner:
         width: int,
         polygons: list[list[list[float]]],
     ) -> np.ndarray:
-        """Create a smooth feathered alpha mask in range [0.0, 1.0]."""
+        """Create a smooth feathered alpha mask strictly in the bottom subtitle band."""
         mask = np.zeros((height, width), dtype=np.uint8)
 
         for poly in polygons:
@@ -126,6 +149,18 @@ class PatchCoverCleaner:
         if feather > 0:
             k_feat = max(1, feather * 2 + 1)
             mask = cv2.GaussianBlur(mask, (k_feat, k_feat), feather)
+
+        # Hard Face / Body Safety Cutoff: zero out any mask pixels above y = 0.68
+        safe_top_cutoff = int(height * 0.68)
+        mask[:safe_top_cutoff, :] = 0
+
+        # Max area safety check: ensure mask does not cover > 15% of frame area
+        total_pixels = height * width
+        masked_pixels = np.count_nonzero(mask)
+        if total_pixels > 0 and (masked_pixels / total_pixels) > 0.15:
+            # Downscale mask intensity if anomalous
+            scale_factor = 0.15 / (masked_pixels / total_pixels)
+            mask = (mask.astype(np.float32) * scale_factor).astype(np.uint8)
 
         return mask.astype(np.float32) / 255.0
 

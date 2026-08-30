@@ -149,10 +149,9 @@ def to_ass(
     styles_list = []
 
     if has_backing:
-        # Subtle black tint (~0.30 - 0.35) combined with video-level backdrop blur
-        default_opacity = 0.35 if is_shortform_white_black else 0.60
+        default_opacity = 0.62 if is_shortform_white_black else 0.60
         opacity = backing_cfg.opacity if backing_cfg else default_opacity
-        pad_x = backing_cfg.padding_x if backing_cfg else 20
+        pad_x = backing_cfg.padding_x if backing_cfg else 18
         # Calculate hex alpha: 0.0=solid (&H00), 1.0=transparent (&HFF)
         alpha_int = int(max(0, min(255, round((1.0 - opacity) * 255))))
         backing_color = f"&H{alpha_int:02X}000000"
@@ -202,20 +201,24 @@ Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
             if not orig:
                 continue
             for r in getattr(orig, "ocr_regions", []) or []:
-                for pt in getattr(r, "points", []) or []:
-                    if len(pt) >= 2 and pt[1] >= 0.65:  # Focus on bottom subtitle region
-                        y_pts.append(pt[1])
+                pts = getattr(r, "points", []) or []
+                if len(pts) >= 3:
+                    ys = [p[1] for p in pts if len(p) >= 2]
+                    if ys and min(ys) >= 0.70 and max(ys) <= 0.98 and (max(ys) - min(ys)) <= 0.14:
+                        y_pts.extend(ys)
             for ev in getattr(orig, "ocr_evidence", []) or []:
                 for r in getattr(ev, "regions", []) or []:
-                    for pt in getattr(r, "points", []) or []:
-                        if len(pt) >= 2 and pt[1] >= 0.65:
-                            y_pts.append(pt[1])
+                    pts = getattr(r, "points", []) or []
+                    if len(pts) >= 3:
+                        ys = [p[1] for p in pts if len(p) >= 2]
+                        if ys and min(ys) >= 0.70 and max(ys) <= 0.98 and (max(ys) - min(ys)) <= 0.14:
+                            y_pts.extend(ys)
 
         if y_pts:
             min_y = min(y_pts)
             max_y = max(y_pts)
             mid_y = (min_y + max_y) / 2.0 * height - 4.0  # -4px visual overlap tuning
-            clamped_y = int(round(max(height * 0.72, min(height * 0.90, mid_y))))
+            clamped_y = int(round(max(height * 0.75, min(height * 0.90, mid_y))))
             cue_y_centers.append(clamped_y)
         else:
             cue_y_centers.append(default_y_center)
@@ -242,7 +245,7 @@ Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
 
         if is_any_shortform:
             if has_backing:
-                blur_r = 12 if is_shortform_white_black else (backing_cfg.blur_radius if backing_cfg else 8)
+                blur_r = 8 if is_shortform_white_black else (backing_cfg.blur_radius if backing_cfg else 8)
                 # Layer 0: Soft blurred backing plate centered directly over Chinese subtitle region
                 events.append(f"Dialogue: 0,{start_str},{end_str},BackingPlate,,0,0,0,,{{\\an5\\pos({center_x},{y_pos})\\blur{blur_r}\\alpha&HFF&}}{ass_text}")
                 # Layer 1: Crisp text centered directly over Chinese subtitle region

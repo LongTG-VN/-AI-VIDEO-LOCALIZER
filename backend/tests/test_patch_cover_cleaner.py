@@ -164,3 +164,83 @@ def test_patch_cover_preserves_translation_and_cues_invariance():
 
     assert proj.cues[0].translated_text == "Cổ áo lệch rồi."
     assert proj.cues[1].translated_text == "Ở một gia đình mở quán ăn sáng"
+
+
+def test_malformed_oversized_ocr_region_rejected_by_cleaner():
+    """Verify that giant/malformed OCR polygons (e.g. face/screen wide) are rejected."""
+    cleaner = PatchCoverCleaner()
+    # Anomalously tall polygon (e.g. face box at y=0.30 - 0.75)
+    tall_poly = [[0.3, 0.3], [0.7, 0.3], [0.7, 0.75], [0.3, 0.75]]
+    assert cleaner._is_valid_subtitle_polygon(tall_poly) is False
+
+    # Anomalously wide polygon
+    wide_poly = [[0.05, 0.8], [0.95, 0.8], [0.95, 0.9], [0.05, 0.9]]
+    assert cleaner._is_valid_subtitle_polygon(wide_poly) is False
+
+    # Valid subtitle polygon
+    valid_poly = [[0.35, 0.82], [0.65, 0.82], [0.65, 0.89], [0.35, 0.89]]
+    assert cleaner._is_valid_subtitle_polygon(valid_poly) is True
+
+
+def test_face_safety_cutoff_zeroes_upper_screen_mask():
+    """Verify that create_feathered_mask guarantees 0 alpha in upper 68% of screen."""
+    cleaner = PatchCoverCleaner()
+    h, w = 480, 852
+    # Even if an upper polygon slipped through, safety cutoff must force it to 0
+    poly = [[0.1, 0.2], [0.9, 0.2], [0.9, 0.9], [0.1, 0.9]]
+    mask = cleaner.create_feathered_mask(h, w, [poly])
+    cutoff = int(h * 0.68)
+    assert np.all(mask[:cutoff, :] == 0.0)
+
+
+def test_no_backing_without_active_vi_subtitle():
+    """Verify that ASS generated subtitles have no dialogue events during empty intervals."""
+    cues = [
+        SubtitleCue(id="c1", start=5.0, end=7.0, source_text="你好", translated_text="Xin chào")
+    ]
+    opts = RenderOptions(
+        visual_edit=VisualEditConfig(
+            mode=VisualEditMode.PATCH_COVER,
+            preset="shortform_white_black_soft_bg",
+        )
+    )
+    ass_content = to_ass(cues, opts, width=852, height=480)
+    lines = [l for l in ass_content.split("\n") if l.startswith("Dialogue:")]
+    # Exactly 2 dialogue lines (Layer 0 BackingPlate + Layer 1 Default) for the single active cue
+    assert len(lines) == 2
+    assert "0:00:05.00" in lines[0]
+    assert "0:00:07.00" in lines[0]
+
+
+def test_ocr_y_anchor_stability_with_anomalous_polygon():
+    """Verify that an anomalous OCR polygon does not pull subtitle anchor into the upper screen."""
+    cues = [
+        SubtitleCue(
+            id="c1",
+            start=1.0,
+            end=2.0,
+            source_text="正常",
+            translated_text="Bình thường",
+            ocr_regions=[
+                # Valid subtitle region
+                OCRRegion(points=[[0.35, 0.83], [0.65, 0.83], [0.65, 0.89], [0.35, 0.89]]),
+                # Anomalous face region
+                OCRRegion(points=[[0.30, 0.20], [0.70, 0.20], [0.70, 0.60], [0.30, 0.60]]),
+            ]
+        )
+    ]
+    opts = RenderOptions(
+        visual_edit=VisualEditConfig(
+            mode=VisualEditMode.PATCH_COVER,
+            preset="shortform_white_black_soft_bg",
+        )
+    )
+    ass_content = to_ass(cues, opts, width=852, height=480)
+    # Target pos Y should be around ~408px on 480p, definitely >= 360px
+    assert "\\pos(426," in ass_content
+    # Find pos Y value
+    import re
+    match = re.search(r"\\pos\(426,(\d+)\)", ass_content)
+    assert match is not None
+    pos_y = int(match.group(1))
+    assert 380 <= pos_y <= 430
