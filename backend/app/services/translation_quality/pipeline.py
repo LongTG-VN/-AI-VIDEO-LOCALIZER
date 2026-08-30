@@ -120,13 +120,16 @@ class TranslationQualityPipeline:
             context_card = self.context_card_builder.build_context_card(project)
             self.audit_artifacts["context_card.json"] = context_card.model_dump()
 
-        # PASS 1: DRAFT TRANSLATION (Uses Repaired Source Cues)
+        # PASS 1: DRAFT TRANSLATION (Uses SemanticTranslationGroups on Repaired Source Cues)
         untranslated = [c for c in cues if not c.translated_text]
         if untranslated and self.base_url and self.model:
-            from app.services.translation import OpenAICompatibleTranslator
-            translator = OpenAICompatibleTranslator(self.base_url, self.api_key, self.model, use_quality_pipeline=False)
-            translator.translate_project(project, enable_critic=False, use_quality_pipeline=False)
-            metrics["draft_calls"] += len(untranslated)
+            from app.services.semantic_grouping.pipeline import SemanticGroupingPipeline
+            group_pipeline = SemanticGroupingPipeline(self.base_url, self.api_key, self.model)
+            groups = group_pipeline.process_project(project, save_trace_dir=audit_output_dir)
+            metrics["semantic_groups"] = len(groups)
+            metrics["multi_cue_groups"] = sum(1 for g in groups if len(g.source_cue_ids) > 1)
+            metrics["draft_calls"] += len(groups)
+            self.audit_artifacts["semantic_translation_groups.json"] = [g.model_dump() for g in groups]
 
         draft_map = {c.id: c.translated_text or "" for c in cues}
         self.audit_artifacts["draft_translation.json"] = draft_map
