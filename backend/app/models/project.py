@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from datetime import datetime, timezone
 from enum import Enum
-from typing import Literal
+from typing import Any, Literal
 from uuid import uuid4
 
 from pydantic import BaseModel, Field
@@ -248,6 +248,7 @@ class Project(BaseModel):
     relationships: list[RelationshipRule] = Field(default_factory=list)
     glossary: list[GlossaryEntry] = Field(default_factory=list)
     cues: list[SubtitleCue] = Field(default_factory=list)
+    translation_quality: dict[str, Any] | None = None
 
 
 class CharacterVoiceProfile(BaseModel):
@@ -297,3 +298,4 @@ class ProjectPatch(BaseModel):
     relationships: list[RelationshipRule] | None = None
     glossary: list[GlossaryEntry] | None = None
     cues: list[SubtitleCue] | None = None
+    translation_quality: dict[str, Any] | None = None

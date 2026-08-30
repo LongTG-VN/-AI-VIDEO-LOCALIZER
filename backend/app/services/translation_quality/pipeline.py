@@ -1,0 +1,325 @@
+from __future__ import annotations
+
+import hashlib
+import json
+import logging
+import time
+from pathlib import Path
+from typing import Any
+
+from app.models.project import Project, SubtitleCue
+from app.services.translation_quality.accuracy import AccuracyReviewer
+from app.services.translation_quality.consistency import ConsistencySweeper
+from app.services.translation_quality.context_card import ContextCardBuilder
+from app.services.translation_quality.cue_integrity import CueIntegrityReviewer
+from app.services.translation_quality.models import (
+    CueQualityResult,
+    QualityIssue,
+    QualitySeverity,
+    TranslationContextCard,
+    TranslationQualityConfig,
+    TranslationQualityReport,
+)
+from app.services.translation_quality.naturalness import NaturalnessPolisher
+from app.services.translation_quality.relationships import RelationshipReviewer
+from app.services.translation_quality.repair import TargetedRepairer
+from app.services.translation_quality.validators import DeterministicValidator
+
+logger = logging.getLogger(__name__)
+
+
+class TranslationQualityPipeline:
+    """End-to-End Orchestrator for Translation Quality Pipeline V1.
+    
+    Pass 0: GLOBAL CONTEXT CARD
+    Pass 1: DRAFT TRANSLATION
+    Pass 2: CUE INTEGRITY REVIEW
+    Pass 3: ACCURACY REVIEW
+    Pass 4: ENTITY / RELATIONSHIP REVIEW
+    Pass 5: TARGETED REPAIR (only failed cues, max 2 retries)
+    Pass 6: VIETNAMESE NATURALNESS POLISH (semantic safety gate)
+    Pass 7: GLOBAL CONSISTENCY SWEEP (patch suggestions only)
+    Pass 8: DETERMINISTIC FINAL VALIDATION (17 code-level checks)
+    """
+
+    def __init__(
+        self,
+        base_url: str = "",
+        api_key: str = "",
+        model: str = "",
+        config: TranslationQualityConfig | None = None,
+    ):
+        self.base_url = base_url.rstrip("/") if base_url else ""
+        self.api_key = api_key
+        self.model = model
+        self.config = config or TranslationQualityConfig()
+
+        # Initialize modular reviewers & components
+        self.context_card_builder = ContextCardBuilder(self.base_url, self.api_key, self.model)
+        self.cue_integrity_reviewer = CueIntegrityReviewer(self.base_url, self.api_key, self.model)
+        self.accuracy_reviewer = AccuracyReviewer(self.base_url, self.api_key, self.model)
+        self.relationship_reviewer = RelationshipReviewer(self.base_url, self.api_key, self.model)
+        self.repairer = TargetedRepairer(self.base_url, self.api_key, self.model)
+        self.naturalness_polisher = NaturalnessPolisher(self.base_url, self.api_key, self.model)
+        self.consistency_sweeper = ConsistencySweeper(self.base_url, self.api_key, self.model)
+        self.deterministic_validator = DeterministicValidator()
+
+        self._translation_cache: dict[str, str] = {}
+        self.last_report: TranslationQualityReport | None = None
+        self.audit_artifacts: dict[str, Any] = {}
+
+    def run_pipeline(
+        self,
+        project: Project,
+        audit_output_dir: Path | str | None = None,
+    ) -> TranslationQualityReport:
+        t_start = time.time()
+        cues = project.cues
+        if not cues:
+            return TranslationQualityReport()
+
+        report = TranslationQualityReport(total_cues=len(cues))
+        issue_counts: dict[str, int] = {}
+        metrics: dict[str, Any] = {
+            "draft_calls": 0,
+            "review_calls": 0,
+            "repair_calls": 0,
+            "naturalness_calls": 0,
+            "retry_distribution": {"0_retries": 0, "1_retry": 0, "2_retries": 0, "needs_review": 0},
+            "cache_hits": 0,
+        }
+
+        # PASS 0: GLOBAL CONTEXT CARD
+        context_card: TranslationContextCard | None = None
+        if self.config.context_card:
+            context_card = self.context_card_builder.build_context_card(project)
+            self.audit_artifacts["context_card.json"] = context_card.model_dump()
+
+        # PASS 1: DRAFT TRANSLATION
+        # If cues lack translations, generate initial drafts
+        untranslated = [c for c in cues if not c.translated_text]
+        if untranslated and self.base_url and self.model:
+            from app.services.translation import OpenAICompatibleTranslator
+            translator = OpenAICompatibleTranslator(self.base_url, self.api_key, self.model)
+            translator.translate_project(project, enable_critic=False)
+            metrics["draft_calls"] += len(untranslated)
+
+        # Record draft translations
+        draft_map = {c.id: c.translated_text or "" for c in cues}
+        self.audit_artifacts["draft_translation.json"] = draft_map
+
+        # PASS 2, 3, 4: MULTI-PASS REVIEW (Pass 1 of reviews)
+        all_issues_by_cue: dict[str, list[QualityIssue]] = {c.id: [] for c in cues}
+
+        # Pass 2: Cue Integrity
+        if self.config.cue_integrity:
+            integ_issues = self.cue_integrity_reviewer.evaluate_cues(project, cues, context_card)
+            self.audit_artifacts["cue_integrity_review.json"] = {
+                cid: [iss.model_dump() for iss in iss_list] for cid, iss_list in integ_issues.items() if iss_list
+            }
+            for cid, iss_list in integ_issues.items():
+                all_issues_by_cue[cid].extend(iss_list)
+
+        # Pass 3: Accuracy Review
+        if self.config.accuracy:
+            acc_issues = self.accuracy_reviewer.evaluate_cues(project, cues, context_card)
+            self.audit_artifacts["accuracy_review.json"] = {
+                cid: [iss.model_dump() for iss in iss_list] for cid, iss_list in acc_issues.items() if iss_list
+            }
+            for cid, iss_list in acc_issues.items():
+                all_issues_by_cue[cid].extend(iss_list)
+
+        # Pass 4: Entity & Relationship Review
+        if self.config.relationships:
+            rel_issues = self.relationship_reviewer.evaluate_cues(project, cues, context_card)
+            self.audit_artifacts["relationship_review.json"] = {
+                cid: [iss.model_dump() for iss in iss_list] for cid, iss_list in rel_issues.items() if iss_list
+            }
+            for cid, iss_list in rel_issues.items():
+                all_issues_by_cue[cid].extend(iss_list)
+
+        # Classify first-pass status
+        first_pass_failed_ids: set[str] = set()
+        repair_log: list[dict[str, Any]] = []
+
+        for cue in cues:
+            cue_issues = all_issues_by_cue.get(cue.id, [])
+            for iss in cue_issues:
+                issue_counts[iss.type] = issue_counts.get(iss.type, 0) + 1
+
+            has_major_crit = any(iss.severity in [QualitySeverity.MAJOR, QualitySeverity.CRITICAL] for iss in cue_issues)
+            if has_major_crit:
+                first_pass_failed_ids.add(cue.id)
+                report.cue_results[cue.id] = CueQualityResult(
+                    cue_id=cue.id,
+                    status="FAIL",
+                    issues=cue_issues,
+                    original_translation=cue.translated_text or "",
+                    final_translation=cue.translated_text or "",
+                )
+            else:
+                report.passed_first_attempt += 1
+                report.cue_results[cue.id] = CueQualityResult(
+                    cue_id=cue.id,
+                    status="PASS",
+                    issues=cue_issues,
+                    original_translation=cue.translated_text or "",
+                    final_translation=cue.translated_text or "",
+                )
+
+        metrics["retry_distribution"]["0_retries"] = report.passed_first_attempt
+
+        # PASS 5: TARGETED REPAIR (Only failed cues enter repair)
+        current_failed_ids = set(first_pass_failed_ids)
+        cues_repaired_count = 0
+
+        if self.config.targeted_repair and current_failed_ids:
+            for retry_round in range(1, self.config.max_retries + 1):
+                if not current_failed_ids:
+                    break
+
+                failed_cues = [c for c in cues if c.id in current_failed_ids]
+                logger.info(
+                    "Starting Targeted Repair Round %d for %d failed cues...",
+                    retry_round,
+                    len(failed_cues),
+                )
+                metrics["repair_calls"] += len(failed_cues)
+
+                repairs = self.repairer.repair_failed_cues(
+                    project,
+                    failed_cues,
+                    all_issues_by_cue,
+                    context_card=context_card,
+                )
+
+                for cue in failed_cues:
+                    if cue.id in repairs:
+                        repaired_text, rep_conf = repairs[cue.id]
+                        repair_log.append({
+                            "cue_id": cue.id,
+                            "round": retry_round,
+                            "before": cue.translated_text,
+                            "after": repaired_text,
+                            "issues_targeted": [iss.type for iss in all_issues_by_cue.get(cue.id, [])],
+                        })
+                        cue.translated_text = repaired_text
+                        if rep_conf is not None:
+                            cue.translation_confidence = rep_conf
+                            cue.confidence = rep_conf
+
+                # Re-evaluate only repaired cues with reviewers
+                re_integ = self.cue_integrity_reviewer.evaluate_cues(project, failed_cues, context_card) if self.config.cue_integrity else {}
+                re_acc = self.accuracy_reviewer.evaluate_cues(project, failed_cues, context_card) if self.config.accuracy else {}
+                re_rel = self.relationship_reviewer.evaluate_cues(project, failed_cues, context_card) if self.config.relationships else {}
+
+                next_failed: set[str] = set()
+                for cue in failed_cues:
+                    new_issues = []
+                    new_issues.extend(re_integ.get(cue.id, []))
+                    new_issues.extend(re_acc.get(cue.id, []))
+                    new_issues.extend(re_rel.get(cue.id, []))
+                    all_issues_by_cue[cue.id] = new_issues
+
+                    has_still_fail = any(iss.severity in [QualitySeverity.MAJOR, QualitySeverity.CRITICAL] for iss in new_issues)
+                    if has_still_fail:
+                        next_failed.add(cue.id)
+                    else:
+                        cues_repaired_count += 1
+                        res = report.cue_results[cue.id]
+                        res.status = "PASS"
+                        res.attempts = retry_round
+                        res.final_translation = cue.translated_text or ""
+                        if retry_round == 1:
+                            metrics["retry_distribution"]["1_retry"] += 1
+                        elif retry_round == 2:
+                            metrics["retry_distribution"]["2_retries"] += 1
+
+                current_failed_ids = next_failed
+
+            # Mark remaining failed cues after max retries
+            for cid in current_failed_ids:
+                res = report.cue_results[cid]
+                res.status = "NEEDS_REVIEW"
+                res.attempts = self.config.max_retries
+                target_cue = next((c for c in cues if c.id == cid), None)
+                if target_cue:
+                    target_cue.needs_review = True
+                    target_cue.review_notes = "; ".join([iss.message for iss in all_issues_by_cue.get(cid, [])])
+                    res.review_notes = target_cue.review_notes
+
+            metrics["retry_distribution"]["needs_review"] = len(current_failed_ids)
+
+        report.repaired = cues_repaired_count
+        report.needs_review = len(current_failed_ids)
+        self.audit_artifacts["repair_log.json"] = repair_log
+
+        # PASS 6: VIETNAMESE NATURALNESS POLISH (Semantic Safety Gate)
+        if self.config.naturalness:
+            # Only polish cues that have passed semantic & integrity checks
+            passed_cues = [c for c in cues if c.id not in current_failed_ids]
+            nat_issues, polished_map = self.naturalness_polisher.evaluate_and_polish_cues(
+                project, passed_cues, context_card
+            )
+            self.audit_artifacts["naturalness_review.json"] = {
+                "issues": {cid: [iss.model_dump() for iss in iss_list] for cid, iss_list in nat_issues.items() if iss_list},
+                "polished_applied": polished_map,
+            }
+            metrics["naturalness_calls"] += len(passed_cues)
+            for cid, pol_text in polished_map.items():
+                t_cue = next((c for c in cues if c.id == cid), None)
+                if t_cue:
+                    t_cue.translated_text = pol_text
+                    if cid in report.cue_results:
+                        report.cue_results[cid].final_translation = pol_text
+
+        # PASS 7: GLOBAL CONSISTENCY SWEEP
+        if self.config.consistency:
+            cons_issues, patches_map = self.consistency_sweeper.sweep_project(project, cues, context_card)
+            self.audit_artifacts["consistency_review.json"] = {
+                "issues": [iss.model_dump() for iss in cons_issues],
+                "patches_applied": patches_map,
+            }
+            for cid, pat_text in patches_map.items():
+                t_cue = next((c for c in cues if c.id == cid), None)
+                if t_cue:
+                    t_cue.translated_text = pat_text
+                    if cid in report.cue_results:
+                        report.cue_results[cid].final_translation = pat_text
+
+        # PASS 8: DETERMINISTIC FINAL VALIDATION (17 Hard Checks)
+        if self.config.deterministic_validation:
+            val_pass, val_issues = self.deterministic_validator.validate_project(project)
+            self.audit_artifacts["final_validation.json"] = {
+                "validation_passed": val_pass,
+                "issues": [iss.model_dump() for iss in val_issues],
+            }
+            for iss in val_issues:
+                issue_counts[iss.type] = issue_counts.get(iss.type, 0) + 1
+
+        # Summary Metrics
+        t_elapsed = time.time() - t_start
+        metrics["pipeline_time_s"] = round(t_elapsed, 3)
+        report.issue_counts = issue_counts
+        report.metrics = metrics
+        self.audit_artifacts["quality_summary.json"] = report.model_dump()
+
+        # Persist audit artifacts to disk if directory provided
+        if audit_output_dir:
+            out_dir = Path(audit_output_dir)
+            out_dir.mkdir(parents=True, exist_ok=True)
+            for filename, artifact_data in self.audit_artifacts.items():
+                with open(out_dir / filename, "w", encoding="utf-8") as f:
+                    json.dump(artifact_data, f, ensure_ascii=False, indent=2)
+            logger.info("Saved all translation quality audit artifacts to %s", out_dir)
+
+        self.last_report = report
+        logger.info(
+            "TranslationQualityPipeline completed in %.3fs: total=%d, passed_1st=%d, repaired=%d, needs_review=%d",
+            t_elapsed,
+            report.total_cues,
+            report.passed_first_attempt,
+            report.repaired,
+            report.needs_review,
+        )
+        return report

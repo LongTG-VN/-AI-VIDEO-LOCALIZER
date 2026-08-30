@@ -288,10 +288,20 @@ class OpenAICompatibleTranslator:
         batch_size: int = 12,
         enable_critic: bool = True,
         max_retries: int = 2,
+        use_quality_pipeline: bool = True,
+        audit_output_dir: Any = None,
     ) -> list[SubtitleCue]:
         self._validate_config()
         if not project.cues:
             return []
+
+        if use_quality_pipeline:
+            from app.services.translation_quality import TranslationQualityPipeline
+            pipeline = TranslationQualityPipeline(self.base_url, self.api_key, self.model)
+            report = pipeline.run_pipeline(project, audit_output_dir=audit_output_dir)
+            project.translation_quality = report.model_dump()
+            self.last_metrics = report.metrics
+            return project.cues
 
         char_list = [
             {
