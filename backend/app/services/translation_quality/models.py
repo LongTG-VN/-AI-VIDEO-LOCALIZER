@@ -83,3 +83,5 @@ class TranslationQualityConfig(BaseModel):
     naturalness: bool = True
     consistency: bool = True
     deterministic_validation: bool = True
+    translation_quality_version: str = "v1"
+    translation_prompt_version: str = "v1"

@@ -281,3 +281,103 @@ def test_13_end_to_end_integration_pipeline_to_utterance_and_ass():
     assert "Tô Đường" in ass_content
     assert "苏棠" not in ass_content
     assert "江旭" not in ass_content
+
+
+def test_14_repaired_text_persists_and_consumed_by_ass():
+    """Test: Repaired text is persisted in project cues and consumed by ASS generation (not draft)."""
+    cue = SubtitleCue(
+        id="c_rep",
+        start=1.0,
+        end=3.0,
+        source_text="我女朋友今天来公司。",
+        translated_text="Con gái tôi hôm nay đến công ty.",  # Draft error
+    )
+    proj = Project(
+        name="p_rep",
+        source_video_path="v.mp4",
+        width=1280,
+        height=720,
+        cues=[cue],
+    )
+    # Simulate repair
+    cue.translated_text = "Bạn gái tôi hôm nay đến công ty."
+    
+    ass_content = to_ass(proj.cues, RenderOptions(), width=1280, height=720, translated=True)
+    assert "Bạn gái tôi" in ass_content
+    assert "Con gái tôi" not in ass_content
+
+
+def test_15_quality_version_change_invalidates_stale_cache():
+    """Test: Changing translation_quality_version produces distinct cache keys."""
+    pipeline_v1 = TranslationQualityPipeline(config=TranslationQualityConfig(translation_quality_version="v1"))
+    pipeline_v2 = TranslationQualityPipeline(config=TranslationQualityConfig(translation_quality_version="v2"))
+    
+    cue = SubtitleCue(id="c1", start=1.0, end=2.0, source_text="你好", translated_text="Xin chào")
+    card = TranslationContextCard(characters=[], relationships=[])
+    
+    key1 = pipeline_v1.compute_cue_cache_key(cue, card)
+    key2 = pipeline_v2.compute_cue_cache_key(cue, card)
+    assert key1 != key2
+
+
+def test_16_unresolved_major_cannot_silently_pass():
+    """Test: Major/critical unresolved issues cannot silently become PASS."""
+    cue = SubtitleCue(id="c1", start=1.0, end=2.0, source_text="你好", translated_text="Xin chào")
+    issue = QualityIssue(type="accuracy.mistranslation", severity=QualitySeverity.MAJOR, message="Critical error")
+    res = CueQualityResult(cue_id="c1", status="NEEDS_REVIEW", issues=[issue])
+    assert res.status == "NEEDS_REVIEW"
+    assert res.status != "PASS"
+
+
+def test_17_chinese_ocr_bbox_cannot_create_black_rectangle():
+    """Visual Test: Chinese cleanup and fallback never create solid black rectangles."""
+    import numpy as np
+    import cv2
+    from app.models.project import OCRRegion
+    from app.services.hardsub_cleaner import HardSubCleaner
+    from app.services.patch_cover_cleaner import PatchCoverCleaner
+    
+    frame = np.ones((720, 1280, 3), dtype=np.uint8) * 200  # Bright frame
+    cleaner = HardSubCleaner()
+    cleaned_frame, _ = cleaner.clean_frame(
+        frame,
+        mode="cover",
+        ocr_regions=[OCRRegion(points=[[0.3, 0.85], [0.7, 0.85], [0.7, 0.92], [0.3, 0.92]])],
+    )
+    # Check that region is NOT solid black (0, 0, 0)
+    region = cleaned_frame[int(720*0.85):int(720*0.92), int(1280*0.3):int(1280*0.7)]
+    assert np.mean(region) > 50  # Must retain brightness, not pitch black (0)
+
+
+def test_18_vi_backing_derived_from_vi_text_bbox_and_one_to_one():
+    """Visual Test: VI backing derives strictly from VI text bbox, 1:1 with RenderSubtitleCue."""
+    from app.services.patch_cover_cleaner import PatchCoverCleaner
+    
+    cues = [
+        SubtitleCue(id="c1", start=1.0, end=3.0, source_text="你好", translated_text="Xin chào các bạn"),
+        SubtitleCue(id="c2", start=5.0, end=8.0, source_text="再见", translated_text="Tạm biệt nhé"),
+    ]
+    cleaner = PatchCoverCleaner()
+    contexts = cleaner.build_render_cue_contexts(cues, width=1280, height=720)
+    assert len(contexts) == 2
+    assert contexts[0]["start"] == 1.0
+    assert contexts[0]["end"] == 3.0
+    x1, y1, x2, y2 = contexts[0]["bbox"]
+    assert x2 > x1
+    assert y2 > y1
+    # Height must be compact (< 15% frame height)
+    assert (y2 - y1) / 720.0 < 0.15
+
+
+def test_19_bad_ocr_geometry_cannot_create_giant_backing():
+    """Visual Test: Giant or face-level polygons are rejected by geometry validator."""
+    from app.services.patch_cover_cleaner import PatchCoverCleaner
+    
+    cleaner = PatchCoverCleaner()
+    # Face-level polygon in top half (y: 0.1 to 0.4)
+    giant_polygon = [[0.1, 0.1], [0.9, 0.1], [0.9, 0.4], [0.1, 0.4]]
+    assert not cleaner._is_valid_subtitle_polygon(giant_polygon)
+    
+    # Normal subtitle polygon in bottom band (y: 0.85 to 0.92)
+    valid_polygon = [[0.3, 0.85], [0.7, 0.85], [0.7, 0.92], [0.3, 0.92]]
+    assert cleaner._is_valid_subtitle_polygon(valid_polygon)

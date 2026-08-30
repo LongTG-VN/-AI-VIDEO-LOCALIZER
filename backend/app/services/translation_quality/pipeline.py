@@ -68,6 +68,20 @@ class TranslationQualityPipeline:
         self.last_report: TranslationQualityReport | None = None
         self.audit_artifacts: dict[str, Any] = {}
 
+    def compute_cue_cache_key(
+        self,
+        cue: SubtitleCue,
+        context_card: TranslationContextCard | None = None,
+    ) -> str:
+        """Cache identity including source_text, cue_id, context_hash, relationship_hash, prompt_version, quality_version."""
+        ctx_hash = hashlib.sha256(
+            json.dumps(context_card.model_dump() if context_card else {}, sort_keys=True).encode("utf-8")
+        ).hexdigest()[:16]
+        rel_str = f"{cue.speaker_character_id}:{cue.addressee_character_id}:{cue.discourse_mode}"
+        rel_hash = hashlib.sha256(rel_str.encode("utf-8")).hexdigest()[:16]
+        raw_key = f"{cue.id}:{cue.source_text}:{ctx_hash}:{rel_hash}:{self.config.translation_prompt_version}:{self.config.translation_quality_version}"
+        return hashlib.sha256(raw_key.encode("utf-8")).hexdigest()
+
     def run_pipeline(
         self,
         project: Project,

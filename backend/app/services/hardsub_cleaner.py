@@ -699,12 +699,12 @@ class HardSubCleaner:
                     self._metrics["avg_region_mask_coverage"] = round(float(np.mean(all_covs)), 3)
 
                 if mode == "cover":
-                    cleaned = frame.copy()
-                    for bx1, by1, bx2, by2 in geo_stats.get("bboxes", []):
-                        overlay = cleaned.copy()
-                        cv2.rectangle(overlay, (bx1, by1), (bx2, by2), (0, 0, 0), -1)
-                        cleaned = cv2.addWeighted(overlay, 0.45, cleaned, 0.55, 0)
-                    return cleaned, True
+                    # Soft local blur inside tight glyph mask only - NO black rectangle
+                    k_blur = 15
+                    blurred = cv2.GaussianBlur(frame, (k_blur, k_blur), 8.0)
+                    alpha = (geo_mask.astype(np.float32) / 255.0)[:, :, np.newaxis]
+                    cleaned = (1.0 - alpha) * frame.astype(np.float32) + alpha * blurred.astype(np.float32)
+                    return np.clip(cleaned, 0, 255).astype(np.uint8), True
 
                 pts = cv2.findNonZero(geo_mask)
                 if pts is None:
@@ -808,10 +808,14 @@ class HardSubCleaner:
             return frame, False
 
         if mode == "cover":
-            overlay = frame.copy()
-            cv2.rectangle(overlay, (0, y1), (frame.shape[1], y2), (0, 0, 0), -1)
-            cleaned = cv2.addWeighted(overlay, 0.45, frame, 0.55, 0)
-            return cleaned, True
+            # Soft local blur inside tight glyph mask only - NO black rectangle
+            full_mask = np.zeros(frame.shape[:2], dtype=np.uint8)
+            full_mask[y1:y2, x1:x2] = mask_roi
+            k_blur = 15
+            blurred = cv2.GaussianBlur(frame, (k_blur, k_blur), 8.0)
+            alpha = (full_mask.astype(np.float32) / 255.0)[:, :, np.newaxis]
+            cleaned = (1.0 - alpha) * frame.astype(np.float32) + alpha * blurred.astype(np.float32)
+            return np.clip(cleaned, 0, 255).astype(np.uint8), True
 
         cleaned = frame.copy()
         if mode in {"quality", "auto"} and temporal_donors:

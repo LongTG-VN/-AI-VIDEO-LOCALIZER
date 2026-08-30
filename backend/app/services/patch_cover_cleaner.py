@@ -356,6 +356,54 @@ class PatchCoverCleaner:
 
         return out
 
+    def _open_lossless_writer(
+        self,
+        output_path: Path,
+        fps: float,
+        width: int,
+        height: int,
+    ) -> subprocess.Popen[bytes]:
+        cmd = [
+            self.ffmpeg_bin,
+            "-y",
+            "-f",
+            "rawvideo",
+            "-vcodec",
+            "rawvideo",
+            "-pix_fmt",
+            "bgr24",
+            "-s",
+            f"{width}x{height}",
+            "-r",
+            f"{fps:.6f}",
+            "-i",
+            "pipe:0",
+            "-an",
+            "-c:v",
+            "ffv1" if output_path.suffix == ".mkv" else "libx264",
+            *(["-preset", "ultrafast", "-crf", "0"] if output_path.suffix != ".mkv" else ["-level", "3"]),
+            str(output_path),
+        ]
+        proc = subprocess.Popen(cmd, stdin=subprocess.PIPE, stderr=subprocess.PIPE)
+        if proc.stdin is None:
+            raise RuntimeError("Failed to open FFmpeg raw-video stdin")
+        return proc
+
+    @staticmethod
+    def _write_lossless_frame(proc: subprocess.Popen[bytes], frame: np.ndarray) -> None:
+        if proc.stdin is None:
+            raise RuntimeError("FFmpeg writer stdin is closed")
+        proc.stdin.write(np.ascontiguousarray(frame).tobytes())
+
+    @staticmethod
+    def _close_lossless_writer(proc: subprocess.Popen[bytes]) -> None:
+        if proc.stdin is not None:
+            proc.stdin.close()
+        stderr = proc.stderr.read().decode("utf-8", errors="replace") if proc.stderr is not None else ""
+        return_code = proc.wait()
+        if return_code != 0:
+            raise RuntimeError(f"Intermediate encode failed: {stderr[-2000:]}")
+
     def clean_video(
         self,
         source_path: Path,
@@ -378,14 +426,19 @@ class PatchCoverCleaner:
 
         contexts = self.build_render_cue_contexts(cues, width, height)
 
-        # Setup VideoWriter
-        fourcc = cv2.VideoWriter_fourcc(*"mp4v")
-        writer = cv2.VideoWriter(
-            str(output_path),
-            fourcc,
-            fps,
-            (width, height),
-        )
+        lossless_proc: subprocess.Popen[bytes] | None = None
+        cv_writer: cv2.VideoWriter | None = None
+        if lossless_intermediate or output_path.suffix == ".mkv":
+            lossless_proc = self._open_lossless_writer(output_path, fps, width, height)
+        else:
+            fourcc = cv2.VideoWriter_fourcc(*"mp4v")
+            cv_writer = cv2.VideoWriter(str(output_path), fourcc, fps, (width, height))
+
+        def write_frame(frame: np.ndarray) -> None:
+            if lossless_proc is not None:
+                self._write_lossless_frame(lossless_proc, frame)
+            elif cv_writer is not None:
+                cv_writer.write(frame)
 
         frame_idx = 0
         patched_frames_count = 0
@@ -427,15 +480,18 @@ class PatchCoverCleaner:
                     cached_vi_mask = alpha_vi_mask
 
                 covered_frame = self.apply_patch_cover(frame, alpha_mask=alpha_cn_mask, vi_backing_mask=alpha_vi_mask)
-                writer.write(covered_frame)
+                write_frame(covered_frame)
             else:
                 # Fast path: NO active subtitle -> 100% UNTOUCHED FRAME (0 backing, 0 blur, 0 ghost)
-                writer.write(frame)
+                write_frame(frame)
 
             frame_idx += 1
 
         cap.release()
-        writer.release()
+        if cv_writer is not None:
+            cv_writer.release()
+        if lossless_proc is not None:
+            self._close_lossless_writer(lossless_proc)
 
         t_elapsed = time.time() - t_start
         metrics = {

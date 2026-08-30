@@ -261,6 +261,37 @@ def translate_project(project_id: str, force: bool = False) -> Project:
     return store.save(project)
 
 
+@router.post("/projects/{project_id}/translation-quality", response_model=Project)
+def run_translation_quality_endpoint(project_id: str, force: bool = False) -> Project:
+    """Run Translation Quality Pipeline V1 (Audit, Targeted Repair, Naturalness, Validation).
+    
+    If force=true, invalidates existing quality/repair outputs and re-runs quality evaluation
+    while strictly preserving ASR, OCR, fusion, character graph, and relationships.
+    """
+    try:
+        project = store.get(project_id)
+    except FileNotFoundError as exc:
+        raise HTTPException(status_code=404, detail="Project not found") from exc
+    if not project.cues:
+        raise HTTPException(status_code=400, detail="Project has no subtitle cues")
+
+    if force:
+        for cue in project.cues:
+            cue.needs_review = False
+            cue.review_notes = None
+            cue.critic_flags = []
+            cue.critic_score = None
+        project.translation_quality = None
+
+    from app.services.translation_quality.pipeline import TranslationQualityPipeline
+    pipeline = TranslationQualityPipeline(
+        settings.llm_base_url, settings.llm_api_key, settings.llm_model
+    )
+    report = pipeline.run_pipeline(project)
+    project.translation_quality = report.model_dump()
+    return store.save(project)
+
+
 @router.post("/projects/{project_id}/render")
 def render_project(project_id: str, options: RenderOptions) -> dict:
     try:

@@ -137,7 +137,10 @@ class Renderer:
                 VisualEditMode.BLUR,
                 VisualEditMode.BLUR_OVERLAY,
             }
-            is_patch_cover = visual_edit is not None and visual_edit.mode == VisualEditMode.PATCH_COVER
+            is_patch_cover = visual_edit is not None and (
+                visual_edit.mode == VisualEditMode.PATCH_COVER
+                or visual_edit.preset in {"shortform_white_black_soft_bg", "shortform_soft_bg"}
+            )
 
             # 1. Chinese Hard-Sub Cleanup / Dynamic Blur Mask / Patch Cover Preparation
             if is_patch_cover:
