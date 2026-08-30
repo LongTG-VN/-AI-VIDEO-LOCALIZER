@@ -1,0 +1,332 @@
+[
+  {
+    "SOURCE": {
+      "cue_id": "f40e80b2-c50e-4c6b-b97a-d4de60140886",
+      "start": 96.13,
+      "end": 97.135,
+      "source_text": "有点存在感的是我。",
+      "speaker_character_id": null,
+      "addressee_character_id": null,
+      "discourse_mode": "unknown"
+    },
+    "DRAFT": {
+      "draft_vi": "người có chút cảm giác tồn tại chính là tôi.",
+      "draft_confidence": 0.95
+    },
+    "QUALITY": {
+      "cue_integrity_status": "PASS",
+      "accuracy_status": "PASS",
+      "relationship_status": "PASS",
+      "naturalness_status": "PASS",
+      "quality_status": "PASS",
+      "issues": []
+    },
+    "REPAIR": {
+      "repair_attempts": 0,
+      "repaired_vi": "người có chút cảm giác tồn tại chính là tôi.",
+      "repair_status": "PASS"
+    },
+    "PERSISTENCE": {
+      "translated_text": "người có chút cảm giác tồn tại chính là tôi.",
+      "final_translation": "người có chút cảm giác tồn tại chính là tôi.",
+      "quality_version": "v1",
+      "quality_status": "PASS"
+    },
+    "UTTERANCE_INPUT": {
+      "cue_id": "f40e80b2-c50e-4c6b-b97a-d4de60140886",
+      "source_text": "有点存在感的是我。",
+      "selected_vi_text": "người có chút cảm giác tồn tại chính là tôi.",
+      "discourse_mode": "unknown"
+    },
+    "UTTERANCE_OUTPUT": {
+      "render_id": "sub_036",
+      "source_cue_ids": [
+        "f40e80b2-c50e-4c6b-b97a-d4de60140886"
+      ],
+      "start": 96.13,
+      "end": 97.14,
+      "render_text": "Người có chút cảm giác\\Ntồn tại chính là tôi."
+    },
+    "ASS": {
+      "event_id": "evt_49",
+      "start": "0:01:36.13",
+      "end": "0:01:37.14",
+      "text": "Người có chút cảm giác\\Ntồn tại chính là tôi."
+    }
+  },
+  {
+    "SOURCE": {
+      "cue_id": "4752a988-6717-4e9a-8271-65bf72cc6969",
+      "start": 98.33,
+      "end": 103.115,
+      "source_text": "妈传给我的手印做饭嗯你这犯案给外卖泡了死碗这是苏唐今天入职以后跟你们。",
+      "speaker_character_id": null,
+      "addressee_character_id": null,
+      "discourse_mode": "unknown"
+    },
+    "DRAFT": {
+      "draft_vi": "Món ăn mẹ truyền lại cho tôi. Cậu làm hỏng đồ ăn giao tận nơi rồi, ngâm vào bát bẩn thỉu này. Đây là Tô Đường, người sẽ làm việc cùng mọi người sau khi vào làm hôm nay.",
+      "draft_confidence": 0.8
+    },
+    "QUALITY": {
+      "cue_integrity_status": "PASS",
+      "accuracy_status": "PASS",
+      "relationship_status": "PASS",
+      "naturalness_status": "PASS",
+      "quality_status": "PASS",
+      "issues": []
+    },
+    "REPAIR": {
+      "repair_attempts": 0,
+      "repaired_vi": "Món ăn mẹ truyền lại cho tôi. Cậu làm hỏng đồ ăn giao tận nơi rồi, ngâm vào bát bẩn thỉu này. Đây là Tô Đường, người sẽ làm việc cùng mọi người sau khi vào làm hôm nay.",
+      "repair_status": "PASS"
+    },
+    "PERSISTENCE": {
+      "translated_text": "Món ăn mẹ truyền lại cho tôi. Cậu làm hỏng đồ ăn giao tận nơi rồi, ngâm vào bát bẩn thỉu này. Đây là Tô Đường, người sẽ làm việc cùng mọi người sau khi vào làm hôm nay.",
+      "final_translation": "Món ăn mẹ truyền lại cho tôi. Cậu làm hỏng đồ ăn giao tận nơi rồi, ngâm vào bát bẩn thỉu này. Đây là Tô Đường, người sẽ làm việc cùng mọi người sau khi vào làm hôm nay.",
+      "quality_version": "v1",
+      "quality_status": "PASS"
+    },
+    "UTTERANCE_INPUT": {
+      "cue_id": "4752a988-6717-4e9a-8271-65bf72cc6969",
+      "source_text": "妈传给我的手印做饭嗯你这犯案给外卖泡了死碗这是苏唐今天入职以后跟你们。",
+      "selected_vi_text": "Món ăn mẹ truyền lại cho tôi. Cậu làm hỏng đồ ăn giao tận nơi rồi, ngâm vào bát bẩn thỉu này. Đây là Tô Đường, người sẽ làm việc cùng mọi người sau khi vào làm hôm nay.",
+      "discourse_mode": "unknown"
+    },
+    "UTTERANCE_OUTPUT": {
+      "render_id": "sub_037",
+      "source_cue_ids": [
+        "4752a988-6717-4e9a-8271-65bf72cc6969"
+      ],
+      "start": 98.33,
+      "end": 103.11,
+      "render_text": "Món ăn mẹ truyền lại cho tôi. Cậu làm hỏng đồ ăn giao tận nơi rồi, ngâm vào bát bẩn thỉu này.\\NĐây là Tô Đường, người sẽ làm việc cùng mọi người sau khi vào làm hôm nay."
+    },
+    "ASS": {
+      "event_id": "evt_50",
+      "start": "0:01:38.33",
+      "end": "0:01:43.11",
+      "text": "Món ăn mẹ truyền lại cho tôi. Cậu làm hỏng đồ ăn giao tận nơi rồi, ngâm vào bát bẩn thỉu này.\\NĐây là Tô Đường, người sẽ làm việc cùng mọi người sau khi vào làm hôm nay."
+    }
+  },
+  {
+    "SOURCE": {
+      "cue_id": "4d1ff225-9363-4076-bd63-7b2d0b4a2f83",
+      "start": 104.2,
+      "end": 104.545,
+      "source_text": "一，",
+      "speaker_character_id": null,
+      "addressee_character_id": null,
+      "discourse_mode": "unknown"
+    },
+    "DRAFT": {
+      "draft_vi": "Một.",
+      "draft_confidence": 0.95
+    },
+    "QUALITY": {
+      "cue_integrity_status": "PASS",
+      "accuracy_status": "PASS",
+      "relationship_status": "PASS",
+      "naturalness_status": "PASS",
+      "quality_status": "PASS",
+      "issues": []
+    },
+    "REPAIR": {
+      "repair_attempts": 0,
+      "repaired_vi": "Một.",
+      "repair_status": "PASS"
+    },
+    "PERSISTENCE": {
+      "translated_text": "Một.",
+      "final_translation": "Một.",
+      "quality_version": "v1",
+      "quality_status": "PASS"
+    },
+    "UTTERANCE_INPUT": {
+      "cue_id": "4d1ff225-9363-4076-bd63-7b2d0b4a2f83",
+      "source_text": "一，",
+      "selected_vi_text": "Một.",
+      "discourse_mode": "unknown"
+    },
+    "UTTERANCE_OUTPUT": {
+      "render_id": "sub_038",
+      "source_cue_ids": [
+        "4d1ff225-9363-4076-bd63-7b2d0b4a2f83"
+      ],
+      "start": 104.2,
+      "end": 105.0,
+      "render_text": "Một."
+    },
+    "ASS": {
+      "event_id": "evt_51",
+      "start": "0:01:44.20",
+      "end": "0:01:45.00",
+      "text": "Một."
+    }
+  },
+  {
+    "SOURCE": {
+      "cue_id": "4716213f-9e18-4b42-bc94-ab8b0e253a97",
+      "start": 104.5,
+      "end": 105.0,
+      "source_text": "嗯",
+      "speaker_character_id": null,
+      "addressee_character_id": null,
+      "discourse_mode": "unknown"
+    },
+    "DRAFT": {
+      "draft_vi": "Ừm.",
+      "draft_confidence": 0.95
+    },
+    "QUALITY": {
+      "cue_integrity_status": "PASS",
+      "accuracy_status": "PASS",
+      "relationship_status": "PASS",
+      "naturalness_status": "PASS",
+      "quality_status": "PASS",
+      "issues": []
+    },
+    "REPAIR": {
+      "repair_attempts": 0,
+      "repaired_vi": "Ừm.",
+      "repair_status": "PASS"
+    },
+    "PERSISTENCE": {
+      "translated_text": "Ừm.",
+      "final_translation": "Ừm.",
+      "quality_version": "v1",
+      "quality_status": "PASS"
+    },
+    "UTTERANCE_INPUT": {
+      "cue_id": "4716213f-9e18-4b42-bc94-ab8b0e253a97",
+      "source_text": "嗯",
+      "selected_vi_text": "Ừm.",
+      "discourse_mode": "unknown"
+    },
+    "UTTERANCE_OUTPUT": {
+      "render_id": null,
+      "source_cue_ids": [
+        "4716213f-9e18-4b42-bc94-ab8b0e253a97"
+      ],
+      "start": 104.5,
+      "end": 105.0,
+      "render_text": "Ừm."
+    },
+    "ASS": {
+      "event_id": null,
+      "start": null,
+      "end": null,
+      "text": null
+    }
+  },
+  {
+    "SOURCE": {
+      "cue_id": "7fedace1-e344-46da-8fbc-e48516cc699f",
+      "start": 105.07,
+      "end": 107.075,
+      "source_text": "个项目组大家好我刚准备动筷，",
+      "speaker_character_id": null,
+      "addressee_character_id": null,
+      "discourse_mode": "unknown"
+    },
+    "DRAFT": {
+      "draft_vi": "một nhóm dự án. Chào mọi người, tôi vừa chuẩn bị dùng đũa.",
+      "draft_confidence": 0.95
+    },
+    "QUALITY": {
+      "cue_integrity_status": "PASS",
+      "accuracy_status": "PASS",
+      "relationship_status": "PASS",
+      "naturalness_status": "PASS",
+      "quality_status": "PASS",
+      "issues": []
+    },
+    "REPAIR": {
+      "repair_attempts": 0,
+      "repaired_vi": "một nhóm dự án. Chào mọi người, tôi vừa chuẩn bị dùng đũa.",
+      "repair_status": "PASS"
+    },
+    "PERSISTENCE": {
+      "translated_text": "một nhóm dự án. Chào mọi người, tôi vừa chuẩn bị dùng đũa.",
+      "final_translation": "một nhóm dự án. Chào mọi người, tôi vừa chuẩn bị dùng đũa.",
+      "quality_version": "v1",
+      "quality_status": "PASS"
+    },
+    "UTTERANCE_INPUT": {
+      "cue_id": "7fedace1-e344-46da-8fbc-e48516cc699f",
+      "source_text": "个项目组大家好我刚准备动筷，",
+      "selected_vi_text": "một nhóm dự án. Chào mọi người, tôi vừa chuẩn bị dùng đũa.",
+      "discourse_mode": "unknown"
+    },
+    "UTTERANCE_OUTPUT": {
+      "render_id": "sub_039",
+      "source_cue_ids": [
+        "7fedace1-e344-46da-8fbc-e48516cc699f"
+      ],
+      "start": 105.07,
+      "end": 107.08,
+      "render_text": "Một nhóm dự án. Chào mọi người,\\Ntôi vừa chuẩn bị dùng đũa."
+    },
+    "ASS": {
+      "event_id": "evt_52",
+      "start": "0:01:45.07",
+      "end": "0:01:47.08",
+      "text": "Một nhóm dự án. Chào mọi người,\\Ntôi vừa chuẩn bị dùng đũa."
+    }
+  },
+  {
+    "SOURCE": {
+      "cue_id": "371d2df2-592f-4fb6-8df8-af76b9f8fd63",
+      "start": 111.26,
+      "end": 111.86,
+      "source_text": "子突然感。",
+      "speaker_character_id": null,
+      "addressee_character_id": null,
+      "discourse_mode": "unknown"
+    },
+    "DRAFT": {
+      "draft_vi": "Tôi chợt cảm...",
+      "draft_confidence": 0.95
+    },
+    "QUALITY": {
+      "cue_integrity_status": "PASS",
+      "accuracy_status": "PASS",
+      "relationship_status": "PASS",
+      "naturalness_status": "PASS",
+      "quality_status": "PASS",
+      "issues": []
+    },
+    "REPAIR": {
+      "repair_attempts": 0,
+      "repaired_vi": "Tôi chợt cảm...",
+      "repair_status": "PASS"
+    },
+    "PERSISTENCE": {
+      "translated_text": "Tôi chợt cảm...",
+      "final_translation": "Tôi chợt cảm...",
+      "quality_version": "v1",
+      "quality_status": "PASS"
+    },
+    "UTTERANCE_INPUT": {
+      "cue_id": "371d2df2-592f-4fb6-8df8-af76b9f8fd63",
+      "source_text": "子突然感。",
+      "selected_vi_text": "Tôi chợt cảm...",
+      "discourse_mode": "unknown"
+    },
+    "UTTERANCE_OUTPUT": {
+      "render_id": "sub_040",
+      "source_cue_ids": [
+        "371d2df2-592f-4fb6-8df8-af76b9f8fd63"
+      ],
+      "start": 111.26,
+      "end": 112.06,
+      "render_text": "Tôi chợt cảm..."
+    },
+    "ASS": {
+      "event_id": "evt_53",
+      "start": "0:01:51.26",
+      "end": "0:01:52.06",
+      "text": "Tôi chợt cảm..."
+    }
+  }
+]

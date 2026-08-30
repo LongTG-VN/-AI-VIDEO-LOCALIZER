@@ -381,3 +381,70 @@ def test_19_bad_ocr_geometry_cannot_create_giant_backing():
     # Normal subtitle polygon in bottom band (y: 0.85 to 0.92)
     valid_polygon = [[0.3, 0.85], [0.7, 0.85], [0.7, 0.92], [0.3, 0.92]]
     assert cleaner._is_valid_subtitle_polygon(valid_polygon)
+
+
+def test_20_nonsense_vi_phrase_rejected_by_validator():
+    """Test: Nonsense or syntactically broken Vietnamese phrases cannot silently PASS."""
+    cue = SubtitleCue(
+        id="c_err",
+        start=1.0,
+        end=2.5,
+        source_text="我刚准备动筷",
+        translated_text="Một nhóm dự án, tôi vừa chuẩn bị bị đứng đũa.",
+    )
+    proj = Project(name="p_err", source_video_path="v.mp4", cues=[cue])
+    val = DeterministicValidator()
+    passed, issues = val.validate_project(proj)
+    assert any(iss.type == "validation.broken_syntax" for iss in issues)
+
+
+def test_21_missing_source_cue_detected_by_validator():
+    """Test: Source cue with missing/empty translation is detected as CRITICAL issue."""
+    cue = SubtitleCue(id="c_empty", start=1.0, end=2.0, source_text="你好", translated_text="")
+    proj = Project(name="p_empty", source_video_path="v.mp4", cues=[cue])
+    val = DeterministicValidator()
+    passed, issues = val.validate_project(proj)
+    assert not passed
+    assert any(iss.type == "validation.missing_translation" and iss.severity == QualitySeverity.CRITICAL for iss in issues)
+
+
+def test_22_unrelated_three_cue_merge_rejected_by_utterance_engine():
+    """Test: UtteranceEngine rejects merging more than 2 cues or unrelated sentences without continuation."""
+    cues = [
+        SubtitleCue(id="c1", start=1.0, end=2.0, source_text="这是第一句话。", translated_text="Đây là câu thứ nhất."),
+        SubtitleCue(id="c2", start=2.2, end=3.2, source_text="这是第二句话。", translated_text="Đây là câu thứ hai."),
+        SubtitleCue(id="c3", start=3.4, end=4.4, source_text="这是第三句话。", translated_text="Đây là câu thứ ba."),
+    ]
+    engine = UtteranceEngine(max_source_cues_per_group=2)
+    render_cues, _ = engine.process_cues(cues)
+    for rc in render_cues:
+        assert len(rc.source_cue_ids) <= 2
+
+
+def test_23_force_quality_preserves_asr_ocr_fusion_data():
+    """Test: Quality pipeline / routes force-quality preserves ASR/OCR/fusion and character rules."""
+    cue = SubtitleCue(
+        id="c1",
+        start=1.0,
+        end=3.0,
+        source_text="你好",
+        translated_text="Chào bạn",
+        ocr_start=1.05,
+        ocr_end=2.95,
+        ocr_confidence=0.98,
+        speaker_character_id="char_1",
+    )
+    proj = Project(
+        name="p_preserve",
+        source_video_path="v.mp4",
+        characters=[Character(id="char_1", name="A", name_zh="甲", name_vi="A")],
+        relationships=[RelationshipRule(from_character_id="char_1", to_character_id="char_1", relationship="peer", vi_self="tôi", vi_other="bạn")],
+        cues=[cue],
+    )
+    pipeline = TranslationQualityPipeline()
+    report = pipeline.run_pipeline(proj)
+    assert proj.cues[0].ocr_start == 1.05
+    assert proj.cues[0].ocr_end == 2.95
+    assert proj.cues[0].speaker_character_id == "char_1"
+    assert len(proj.characters) == 1
+    assert len(proj.relationships) == 1

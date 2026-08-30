@@ -192,6 +192,20 @@ class DeterministicValidator:
                     )
                 )
 
+            # 18. Generic Vietnamese Syntax Sanity / Nonsense Gate
+            # Catch broken auxiliary combinations like "chuẩn bị bị", "bị được", "đang đã", "rất quá"
+            if re.search(r"\b(chuẩn\s+bị\s+bị|bị\s+được|đang\s+đã|rất\s+quá|đứng\s+đũa)\b", vi, re.IGNORECASE):
+                match_txt = re.search(r"\b(chuẩn\s+bị\s+bị|bị\s+được|đang\s+đã|rất\s+quá|đứng\s+đũa)\b", vi, re.IGNORECASE).group(0)
+                issues.append(
+                    QualityIssue(
+                        type="validation.broken_syntax",
+                        severity=QualitySeverity.MAJOR,
+                        message=f"Syntactically broken Vietnamese or nonsense phrase detected: '{match_txt}'",
+                        target_span=vi,
+                        reviewer="validator",
+                    )
+                )
+
         has_critical = any(iss.severity == QualitySeverity.CRITICAL for iss in issues)
         is_pass = not has_critical
         logger.info(
