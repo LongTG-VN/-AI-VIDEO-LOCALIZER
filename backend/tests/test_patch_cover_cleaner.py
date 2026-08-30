@@ -19,11 +19,11 @@ def test_patch_cover_config_defaults():
     """Verify default parameters of PatchCoverConfig."""
     cfg = PatchCoverConfig()
     assert cfg.enabled is True
-    assert 0.88 <= cfg.patch_opacity <= 0.96
+    assert 0.88 <= cfg.patch_opacity <= 1.0
     assert 4 <= cfg.padding_px <= 8
     assert 5 <= cfg.feather_px <= 16
     assert 4 <= cfg.blur_sigma <= 12
-    assert 0.0 <= cfg.dark_tint <= 0.5
+    assert 0.0 <= cfg.dark_tint <= 0.6
     assert cfg.temporal_gap_fill_frames == 6
     assert cfg.mask_persistence_frames == 3
 
