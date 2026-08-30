@@ -114,8 +114,8 @@ class TranslationQualityPipeline:
         untranslated = [c for c in cues if not c.translated_text]
         if untranslated and self.base_url and self.model:
             from app.services.translation import OpenAICompatibleTranslator
-            translator = OpenAICompatibleTranslator(self.base_url, self.api_key, self.model)
-            translator.translate_project(project, enable_critic=False)
+            translator = OpenAICompatibleTranslator(self.base_url, self.api_key, self.model, use_quality_pipeline=False)
+            translator.translate_project(project, enable_critic=False, use_quality_pipeline=False)
             metrics["draft_calls"] += len(untranslated)
 
         # Record draft translations

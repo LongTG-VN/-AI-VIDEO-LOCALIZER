@@ -1,0 +1,505 @@
+[
+  {
+    "cue_id": "f40e80b2-c50e-4c6b-b97a-d4de60140886",
+    "start": 96.13,
+    "end": 97.135,
+    "source_text": "有点存在感的是我。",
+    "translated_text": "người có chút cảm giác tồn tại chính là tôi.",
+    "speaker_id": "speaker_1",
+    "speaker_character_id": null,
+    "ocr_evidence": [
+      {
+        "id": "e51cd88a-28cb-4e60-9397-bd1bcfc91257",
+        "text": "够活但活得不太体面",
+        "confidence": 0.9996,
+        "start": 94.9,
+        "end": 98.1,
+        "regions": [
+          {
+            "text": "够活但活得不太体面",
+            "confidence": 0.9996,
+            "points": [
+              [
+                0.3375,
+                0.8708
+              ],
+              [
+                0.6578,
+                0.8708
+              ],
+              [
+                0.6578,
+                0.95
+              ],
+              [
+                0.3375,
+                0.95
+              ]
+            ]
+          }
+        ],
+        "matched_span_start": null,
+        "matched_span_end": null,
+        "match_score": 0.4
+      }
+    ],
+    "word_timestamps": []
+  },
+  {
+    "cue_id": "4752a988-6717-4e9a-8271-65bf72cc6969",
+    "start": 98.33,
+    "end": 103.115,
+    "source_text": "妈传给我的手印做饭嗯你这犯案给外卖泡了死碗这是苏唐今天入职以后跟你们。",
+    "translated_text": "Món ăn mẹ truyền lại cho tôi. Cậu làm hỏng đồ ăn giao tận nơi rồi, ngâm vào bát bẩn thỉu này. Đây là Tô Đường, người sẽ làm việc cùng mọi người sau khi vào làm hôm nay.",
+    "speaker_id": "speaker_1",
+    "speaker_character_id": null,
+    "ocr_evidence": [
+      {
+        "id": "6733c3cd-4906-4083-8b3d-5eb0f962606f",
+        "text": "唯一让我在这个",
+        "confidence": 1.0,
+        "start": 97.9,
+        "end": 100.1,
+        "regions": [
+          {
+            "text": "唯一让我在这个",
+            "confidence": 1.0,
+            "points": [
+              [
+                0.3742,
+                0.8722
+              ],
+              [
+                0.6234,
+                0.8722
+              ],
+              [
+                0.6234,
+                0.9472
+              ],
+              [
+                0.3742,
+                0.9472
+              ]
+            ]
+          }
+        ],
+        "matched_span_start": null,
+        "matched_span_end": null,
+        "match_score": 0.206
+      },
+      {
+        "id": "60db684b-c6ee-4a13-933f-b4f4bb7c0685",
+        "text": "写字楼里有点存在感的",
+        "confidence": 1.0,
+        "start": 98.9,
+        "end": 101.6,
+        "regions": [
+          {
+            "text": "写字楼里有点存在感的",
+            "confidence": 1.0,
+            "points": [
+              [
+                0.3211,
+                0.8736
+              ],
+              [
+                0.675,
+                0.8736
+              ],
+              [
+                0.675,
+                0.9486
+              ],
+              [
+                0.3211,
+                0.9486
+              ]
+            ]
+          }
+        ],
+        "matched_span_start": null,
+        "matched_span_end": null,
+        "match_score": 0.253
+      },
+      {
+        "id": "16e57555-5558-4aa4-b38b-27e3ba4cb5de",
+        "text": "是我妈传给我的手艺做饭",
+        "confidence": 0.9999,
+        "start": 100.4,
+        "end": 103.6,
+        "regions": [
+          {
+            "text": "是我妈传给我的手艺做饭",
+            "confidence": 0.9999,
+            "points": [
+              [
+                0.3047,
+                0.875
+              ],
+              [
+                0.6914,
+                0.875
+              ],
+              [
+                0.6914,
+                0.9444
+              ],
+              [
+                0.3047,
+                0.9444
+              ]
+            ]
+          }
+        ],
+        "matched_span_start": null,
+        "matched_span_end": null,
+        "match_score": 0.44
+      }
+    ],
+    "word_timestamps": []
+  },
+  {
+    "cue_id": "4d1ff225-9363-4076-bd63-7b2d0b4a2f83",
+    "start": 104.2,
+    "end": 104.545,
+    "source_text": "一，",
+    "translated_text": "Một.",
+    "speaker_id": "speaker_1",
+    "speaker_character_id": null,
+    "ocr_evidence": [],
+    "word_timestamps": []
+  },
+  {
+    "cue_id": "4716213f-9e18-4b42-bc94-ab8b0e253a97",
+    "start": 104.5,
+    "end": 105.0,
+    "source_text": "嗯",
+    "translated_text": "Ừm.",
+    "speaker_id": null,
+    "speaker_character_id": null,
+    "ocr_evidence": [
+      {
+        "id": "4716213f-9e18-4b42-bc94-ab8b0e253a97",
+        "text": "嗯",
+        "confidence": 0.999,
+        "start": 103.9,
+        "end": 105.6,
+        "regions": [
+          {
+            "text": "嗯",
+            "confidence": 0.999,
+            "points": [
+              [
+                0.4781,
+                0.875
+              ],
+              [
+                0.5203,
+                0.875
+              ],
+              [
+                0.5203,
+                0.9472
+              ],
+              [
+                0.4781,
+                0.9472
+              ]
+            ]
+          }
+        ],
+        "matched_span_start": null,
+        "matched_span_end": null,
+        "match_score": 1.0
+      }
+    ],
+    "word_timestamps": []
+  },
+  {
+    "cue_id": "7fedace1-e344-46da-8fbc-e48516cc699f",
+    "start": 105.07,
+    "end": 107.075,
+    "source_text": "个项目组大家好我刚准备动筷，",
+    "translated_text": "một nhóm dự án. Chào mọi người, tôi vừa chuẩn bị dùng đũa.",
+    "speaker_id": "speaker_1",
+    "speaker_character_id": null,
+    "ocr_evidence": [
+      {
+        "id": "e6670aff-e5f2-451a-aa75-d2ae4ab04486",
+        "text": "你这饭给外卖判了死缓",
+        "confidence": 0.9995,
+        "start": 105.0,
+        "end": 107.2,
+        "regions": [
+          {
+            "text": "你这饭给外卖判了死缓",
+            "confidence": 0.9995,
+            "points": [
+              [
+                0.325,
+                0.875
+              ],
+              [
+                0.675,
+                0.875
+              ],
+              [
+                0.675,
+                0.9444
+              ],
+              [
+                0.325,
+                0.9444
+              ]
+            ]
+          }
+        ],
+        "matched_span_start": null,
+        "matched_span_end": null,
+        "match_score": 0.4
+      }
+    ],
+    "word_timestamps": []
+  },
+  {
+    "cue_id": "371d2df2-592f-4fb6-8df8-af76b9f8fd63",
+    "start": 111.26,
+    "end": 111.86,
+    "source_text": "子突然感。",
+    "translated_text": "Tôi chợt cảm...",
+    "speaker_id": "speaker_1",
+    "speaker_character_id": null,
+    "ocr_evidence": [
+      {
+        "id": "7cb95380-fdc9-4171-9d2e-7f7dcf6b3d27",
+        "text": "这是苏棠",
+        "confidence": 0.9998,
+        "start": 110.9,
+        "end": 112.6,
+        "regions": [
+          {
+            "text": "这是苏棠",
+            "confidence": 0.9998,
+            "points": [
+              [
+                0.425,
+                0.8736
+              ],
+              [
+                0.5727,
+                0.8736
+              ],
+              [
+                0.5727,
+                0.9514
+              ],
+              [
+                0.425,
+                0.9514
+              ]
+            ]
+          }
+        ],
+        "matched_span_start": null,
+        "matched_span_end": null,
+        "match_score": 0.4
+      }
+    ],
+    "word_timestamps": []
+  },
+  {
+    "cue_id": "4e922104-0c6e-452e-9f8a-ff7b23468a6b",
+    "start": 112.1,
+    "end": 114.165,
+    "source_text": "觉到一道很强烈的视线那表情怎么。",
+    "translated_text": "Tôi cảm thấy một ánh mắt rất mãnh liệt. Biểu cảm đó thế nào?",
+    "speaker_id": "speaker_1",
+    "speaker_character_id": null,
+    "ocr_evidence": [
+      {
+        "id": "7cb95380-fdc9-4171-9d2e-7f7dcf6b3d27",
+        "text": "这是苏棠",
+        "confidence": 0.9998,
+        "start": 110.9,
+        "end": 112.6,
+        "regions": [
+          {
+            "text": "这是苏棠",
+            "confidence": 0.9998,
+            "points": [
+              [
+                0.425,
+                0.8736
+              ],
+              [
+                0.5727,
+                0.8736
+              ],
+              [
+                0.5727,
+                0.9514
+              ],
+              [
+                0.425,
+                0.9514
+              ]
+            ]
+          }
+        ],
+        "matched_span_start": null,
+        "matched_span_end": null,
+        "match_score": 0.097
+      },
+      {
+        "id": "64cf1a6d-07e3-4318-8c76-2f718617ede9",
+        "text": "今天入职",
+        "confidence": 0.9999,
+        "start": 111.9,
+        "end": 113.6,
+        "regions": [
+          {
+            "text": "今天入职",
+            "confidence": 0.9999,
+            "points": [
+              [
+                0.4242,
+                0.8722
+              ],
+              [
+                0.5734,
+                0.8722
+              ],
+              [
+                0.5734,
+                0.95
+              ],
+              [
+                0.4242,
+                0.95
+              ]
+            ]
+          }
+        ],
+        "matched_span_start": null,
+        "matched_span_end": null,
+        "match_score": 0.291
+      },
+      {
+        "id": "4f299f35-4499-4f8e-91c6-4d83517b091e",
+        "text": "以后跟你们一个项目组",
+        "confidence": 1.0,
+        "start": 112.4,
+        "end": 115.1,
+        "regions": [
+          {
+            "text": "以后跟你们一个项目组",
+            "confidence": 1.0,
+            "points": [
+              [
+                0.3242,
+                0.875
+              ],
+              [
+                0.6758,
+                0.875
+              ],
+              [
+                0.6758,
+                0.9444
+              ],
+              [
+                0.3242,
+                0.9444
+              ]
+            ]
+          }
+        ],
+        "matched_span_start": null,
+        "matched_span_end": null,
+        "match_score": 0.39
+      }
+    ],
+    "word_timestamps": []
+  },
+  {
+    "cue_id": "66f296df-298d-42d5-8618-3bc7b06ef36d",
+    "start": 114.8,
+    "end": 115.365,
+    "source_text": "形容呢，",
+    "translated_text": "Mô tả thế nào đây?",
+    "speaker_id": "speaker_0",
+    "speaker_character_id": null,
+    "ocr_evidence": [
+      {
+        "id": "4f299f35-4499-4f8e-91c6-4d83517b091e",
+        "text": "以后跟你们一个项目组",
+        "confidence": 1.0,
+        "start": 112.4,
+        "end": 115.1,
+        "regions": [
+          {
+            "text": "以后跟你们一个项目组",
+            "confidence": 1.0,
+            "points": [
+              [
+                0.3242,
+                0.875
+              ],
+              [
+                0.6758,
+                0.875
+              ],
+              [
+                0.6758,
+                0.9444
+              ],
+              [
+                0.3242,
+                0.9444
+              ]
+            ]
+          }
+        ],
+        "matched_span_start": null,
+        "matched_span_end": null,
+        "match_score": 0.212
+      },
+      {
+        "id": "77a4f5f9-e74b-4629-a793-5c0d4f0f8a02",
+        "text": "大家好",
+        "confidence": 1.0,
+        "start": 114.4,
+        "end": 115.6,
+        "regions": [
+          {
+            "text": "大家好",
+            "confidence": 1.0,
+            "points": [
+              [
+                0.4406,
+                0.8681
+              ],
+              [
+                0.5578,
+                0.8681
+              ],
+              [
+                0.5578,
+                0.9528
+              ],
+              [
+                0.4406,
+                0.9528
+              ]
+            ]
+          }
+        ],
+        "matched_span_start": null,
+        "matched_span_end": null,
+        "match_score": 0.4
+      }
+    ],
+    "word_timestamps": []
+  }
+]

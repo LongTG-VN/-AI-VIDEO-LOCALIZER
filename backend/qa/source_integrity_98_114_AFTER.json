@@ -1,0 +1,307 @@
+[
+  {
+    "cue_id": "f40e80b2-c50e-4c6b-b97a-d4de60140886",
+    "original_source_cue_ids": [
+      "f40e80b2-c50e-4c6b-b97a-d4de60140886"
+    ],
+    "start": 96.13,
+    "end": 97.135,
+    "source_text": "够活但活得不太体面",
+    "speaker_id": "speaker_1",
+    "speaker_character_id": null,
+    "segmentation_method": "reconciled",
+    "source_integrity_status": "REPAIRED",
+    "source_corrections": [
+      {
+        "original_asr": "有点存在感的是我。",
+        "corrected_text": "够活但活得不太体面",
+        "evidence": "OCR interval [94.90s - 98.10s]: '够活但活得不太体面' (conf=1.00)",
+        "confidence": 0.9996,
+        "source": "ocr_reconciliation",
+        "span_start": null,
+        "span_end": null
+      }
+    ],
+    "translated_text": null
+  },
+  {
+    "cue_id": "4752a988-6717-4e9a-8271-65bf72cc6969_seg1",
+    "original_source_cue_ids": [
+      "4752a988-6717-4e9a-8271-65bf72cc6969"
+    ],
+    "start": 98.33,
+    "end": 100.1,
+    "source_text": "唯一让我在这个",
+    "speaker_id": "speaker_1",
+    "speaker_character_id": null,
+    "segmentation_method": "ocr_turnover_split",
+    "source_integrity_status": "REPAIRED",
+    "source_corrections": [
+      {
+        "original_asr": "妈传给我的手印做饭嗯你这犯案给外卖泡了死碗这是苏唐今天入职以后跟你们。",
+        "corrected_text": "唯一让我在这个",
+        "evidence": "Split from merged cue 4752a988-6717-4e9a-8271-65bf72cc6969 via OCR turnover: '唯一让我在这个'",
+        "confidence": 1.0,
+        "source": "ocr_segmentation",
+        "span_start": null,
+        "span_end": null
+      }
+    ],
+    "translated_text": null
+  },
+  {
+    "cue_id": "4752a988-6717-4e9a-8271-65bf72cc6969_seg2",
+    "original_source_cue_ids": [
+      "4752a988-6717-4e9a-8271-65bf72cc6969"
+    ],
+    "start": 98.9,
+    "end": 101.6,
+    "source_text": "写字楼里有点存在感的",
+    "speaker_id": "speaker_1",
+    "speaker_character_id": null,
+    "segmentation_method": "ocr_turnover_split",
+    "source_integrity_status": "REPAIRED",
+    "source_corrections": [
+      {
+        "original_asr": "妈传给我的手印做饭嗯你这犯案给外卖泡了死碗这是苏唐今天入职以后跟你们。",
+        "corrected_text": "写字楼里有点存在感的",
+        "evidence": "Split from merged cue 4752a988-6717-4e9a-8271-65bf72cc6969 via OCR turnover: '写字楼里有点存在感的'",
+        "confidence": 1.0,
+        "source": "ocr_segmentation",
+        "span_start": null,
+        "span_end": null
+      }
+    ],
+    "translated_text": null
+  },
+  {
+    "cue_id": "4752a988-6717-4e9a-8271-65bf72cc6969_seg3",
+    "original_source_cue_ids": [
+      "4752a988-6717-4e9a-8271-65bf72cc6969"
+    ],
+    "start": 100.4,
+    "end": 103.115,
+    "source_text": "是我妈传给我的手艺做饭",
+    "speaker_id": "speaker_1",
+    "speaker_character_id": null,
+    "segmentation_method": "ocr_turnover_split",
+    "source_integrity_status": "REPAIRED",
+    "source_corrections": [
+      {
+        "original_asr": "妈传给我的手印做饭嗯你这犯案给外卖泡了死碗这是苏唐今天入职以后跟你们。",
+        "corrected_text": "是我妈传给我的手艺做饭",
+        "evidence": "Split from merged cue 4752a988-6717-4e9a-8271-65bf72cc6969 via OCR turnover: '是我妈传给我的手艺做饭'",
+        "confidence": 0.9999,
+        "source": "ocr_segmentation",
+        "span_start": null,
+        "span_end": null
+      }
+    ],
+    "translated_text": null
+  },
+  {
+    "cue_id": "4d1ff225-9363-4076-bd63-7b2d0b4a2f83",
+    "original_source_cue_ids": [
+      "4d1ff225-9363-4076-bd63-7b2d0b4a2f83"
+    ],
+    "start": 104.2,
+    "end": 104.545,
+    "source_text": "一，",
+    "speaker_id": "speaker_1",
+    "speaker_character_id": null,
+    "segmentation_method": "unmodified",
+    "source_integrity_status": "PASS",
+    "source_corrections": [],
+    "translated_text": "Một."
+  },
+  {
+    "cue_id": "4716213f-9e18-4b42-bc94-ab8b0e253a97",
+    "original_source_cue_ids": [
+      "4716213f-9e18-4b42-bc94-ab8b0e253a97"
+    ],
+    "start": 104.5,
+    "end": 105.0,
+    "source_text": "嗯",
+    "speaker_id": null,
+    "speaker_character_id": null,
+    "segmentation_method": "unmodified",
+    "source_integrity_status": "PASS",
+    "source_corrections": [],
+    "translated_text": "Ừm."
+  },
+  {
+    "cue_id": "7fedace1-e344-46da-8fbc-e48516cc699f",
+    "original_source_cue_ids": [
+      "7fedace1-e344-46da-8fbc-e48516cc699f"
+    ],
+    "start": 105.07,
+    "end": 107.075,
+    "source_text": "你这饭给外卖判了死缓",
+    "speaker_id": "speaker_1",
+    "speaker_character_id": null,
+    "segmentation_method": "reconciled",
+    "source_integrity_status": "REPAIRED",
+    "source_corrections": [
+      {
+        "original_asr": "个项目组大家好我刚准备动筷，",
+        "corrected_text": "你这饭给外卖判了死缓",
+        "evidence": "OCR interval [105.00s - 107.20s]: '你这饭给外卖判了死缓' (conf=1.00)",
+        "confidence": 0.9995,
+        "source": "ocr_reconciliation",
+        "span_start": null,
+        "span_end": null
+      }
+    ],
+    "translated_text": null
+  },
+  {
+    "cue_id": "371d2df2-592f-4fb6-8df8-af76b9f8fd63",
+    "original_source_cue_ids": [
+      "371d2df2-592f-4fb6-8df8-af76b9f8fd63"
+    ],
+    "start": 111.26,
+    "end": 111.86,
+    "source_text": "这是苏棠",
+    "speaker_id": "speaker_1",
+    "speaker_character_id": null,
+    "segmentation_method": "reconciled",
+    "source_integrity_status": "REPAIRED",
+    "source_corrections": [
+      {
+        "original_asr": "子突然感。",
+        "corrected_text": "这是苏棠",
+        "evidence": "OCR interval [110.90s - 112.60s]: '这是苏棠' (conf=1.00)",
+        "confidence": 0.9998,
+        "source": "ocr_reconciliation",
+        "span_start": null,
+        "span_end": null
+      }
+    ],
+    "translated_text": null
+  },
+  {
+    "cue_id": "4e922104-0c6e-452e-9f8a-ff7b23468a6b_seg1",
+    "original_source_cue_ids": [
+      "4e922104-0c6e-452e-9f8a-ff7b23468a6b"
+    ],
+    "start": 112.1,
+    "end": 112.6,
+    "source_text": "这是苏棠",
+    "speaker_id": "speaker_1",
+    "speaker_character_id": null,
+    "segmentation_method": "ocr_turnover_split",
+    "source_integrity_status": "REPAIRED",
+    "source_corrections": [
+      {
+        "original_asr": "觉到一道很强烈的视线那表情怎么。",
+        "corrected_text": "这是苏棠",
+        "evidence": "Split from merged cue 4e922104-0c6e-452e-9f8a-ff7b23468a6b via OCR turnover: '这是苏棠'",
+        "confidence": 0.9998,
+        "source": "ocr_segmentation",
+        "span_start": null,
+        "span_end": null
+      }
+    ],
+    "translated_text": null
+  },
+  {
+    "cue_id": "4e922104-0c6e-452e-9f8a-ff7b23468a6b_seg2",
+    "original_source_cue_ids": [
+      "4e922104-0c6e-452e-9f8a-ff7b23468a6b"
+    ],
+    "start": 112.1,
+    "end": 113.6,
+    "source_text": "今天入职",
+    "speaker_id": "speaker_1",
+    "speaker_character_id": null,
+    "segmentation_method": "ocr_turnover_split",
+    "source_integrity_status": "REPAIRED",
+    "source_corrections": [
+      {
+        "original_asr": "觉到一道很强烈的视线那表情怎么。",
+        "corrected_text": "今天入职",
+        "evidence": "Split from merged cue 4e922104-0c6e-452e-9f8a-ff7b23468a6b via OCR turnover: '今天入职'",
+        "confidence": 0.9999,
+        "source": "ocr_segmentation",
+        "span_start": null,
+        "span_end": null
+      }
+    ],
+    "translated_text": null
+  },
+  {
+    "cue_id": "4e922104-0c6e-452e-9f8a-ff7b23468a6b_seg3",
+    "original_source_cue_ids": [
+      "4e922104-0c6e-452e-9f8a-ff7b23468a6b"
+    ],
+    "start": 112.4,
+    "end": 114.165,
+    "source_text": "以后跟你们一个项目组",
+    "speaker_id": "speaker_1",
+    "speaker_character_id": null,
+    "segmentation_method": "ocr_turnover_split",
+    "source_integrity_status": "REPAIRED",
+    "source_corrections": [
+      {
+        "original_asr": "觉到一道很强烈的视线那表情怎么。",
+        "corrected_text": "以后跟你们一个项目组",
+        "evidence": "Split from merged cue 4e922104-0c6e-452e-9f8a-ff7b23468a6b via OCR turnover: '以后跟你们一个项目组'",
+        "confidence": 1.0,
+        "source": "ocr_segmentation",
+        "span_start": null,
+        "span_end": null
+      }
+    ],
+    "translated_text": null
+  },
+  {
+    "cue_id": "66f296df-298d-42d5-8618-3bc7b06ef36d_seg1",
+    "original_source_cue_ids": [
+      "66f296df-298d-42d5-8618-3bc7b06ef36d"
+    ],
+    "start": 114.8,
+    "end": 115.1,
+    "source_text": "以后跟你们一个项目组",
+    "speaker_id": "speaker_0",
+    "speaker_character_id": null,
+    "segmentation_method": "ocr_turnover_split",
+    "source_integrity_status": "REPAIRED",
+    "source_corrections": [
+      {
+        "original_asr": "形容呢，",
+        "corrected_text": "以后跟你们一个项目组",
+        "evidence": "Split from merged cue 66f296df-298d-42d5-8618-3bc7b06ef36d via OCR turnover: '以后跟你们一个项目组'",
+        "confidence": 1.0,
+        "source": "ocr_segmentation",
+        "span_start": null,
+        "span_end": null
+      }
+    ],
+    "translated_text": null
+  },
+  {
+    "cue_id": "66f296df-298d-42d5-8618-3bc7b06ef36d_seg2",
+    "original_source_cue_ids": [
+      "66f296df-298d-42d5-8618-3bc7b06ef36d"
+    ],
+    "start": 114.8,
+    "end": 115.365,
+    "source_text": "大家好",
+    "speaker_id": "speaker_0",
+    "speaker_character_id": null,
+    "segmentation_method": "ocr_turnover_split",
+    "source_integrity_status": "REPAIRED",
+    "source_corrections": [
+      {
+        "original_asr": "形容呢，",
+        "corrected_text": "大家好",
+        "evidence": "Split from merged cue 66f296df-298d-42d5-8618-3bc7b06ef36d via OCR turnover: '大家好'",
+        "confidence": 1.0,
+        "source": "ocr_segmentation",
+        "span_start": null,
+        "span_end": null
+      }
+    ],
+    "translated_text": null
+  }
+]

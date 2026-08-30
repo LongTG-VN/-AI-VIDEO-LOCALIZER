@@ -176,10 +176,11 @@ Return JSON ONLY:
 
 
 class OpenAICompatibleTranslator:
-    def __init__(self, base_url: str, api_key: str, model: str):
+    def __init__(self, base_url: str, api_key: str, model: str, use_quality_pipeline: bool = True):
         self.base_url = base_url.rstrip("/") if base_url else ""
         self.api_key = api_key
         self.model = model
+        self.use_quality_pipeline = use_quality_pipeline
         self.last_metrics: dict[str, Any] = {}
 
     def _validate_config(self) -> None:
@@ -285,7 +286,7 @@ class OpenAICompatibleTranslator:
     def translate_project(
         self,
         project: Project,
-        batch_size: int = 12,
+        batch_size: int = 4,
         enable_critic: bool = True,
         max_retries: int = 2,
         use_quality_pipeline: bool = True,

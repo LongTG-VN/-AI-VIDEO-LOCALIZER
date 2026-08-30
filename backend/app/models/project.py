@@ -55,6 +55,12 @@ class SubtitleCue(BaseModel):
     review_notes: str | None = None
     critic_score: float | None = None
     critic_flags: list[str] = Field(default_factory=list)
+    original_source_cue_ids: list[str] = Field(default_factory=list)
+    source_integrity_status: str | None = None
+    source_confidence: float | None = Field(default=None, ge=0, le=1)
+    segmentation_method: str | None = None
+    source_corrections: list[dict[str, Any]] = Field(default_factory=list)
+    word_timestamps: list[dict[str, Any]] = Field(default_factory=list)
 
 
 class Character(BaseModel):
@@ -249,6 +255,7 @@ class Project(BaseModel):
     glossary: list[GlossaryEntry] = Field(default_factory=list)
     cues: list[SubtitleCue] = Field(default_factory=list)
     translation_quality: dict[str, Any] | None = None
+    source_integrity: dict[str, Any] | None = None
 
 
 class CharacterVoiceProfile(BaseModel):

@@ -1,0 +1,393 @@
+[
+  {
+    "cue_id": "f40e80b2-c50e-4c6b-b97a-d4de60140886",
+    "original_source_cue_ids": [
+      "f40e80b2-c50e-4c6b-b97a-d4de60140886"
+    ],
+    "start": 96.13,
+    "end": 97.135,
+    "source_text": "够活但活得不太体面",
+    "segmentation_method": "unmodified",
+    "source_integrity_status": "PASS",
+    "draft_vi": "Sống đủ nhưng không sống một cách trang nhã.",
+    "final_vi": "Sống đủ nhưng không sống một cách trang nhã.",
+    "render_cue": {
+      "render_id": "sub_047",
+      "source_cue_ids": [
+        "f40e80b2-c50e-4c6b-b97a-d4de60140886"
+      ],
+      "start": 96.13,
+      "end": 97.14,
+      "render_text": "Sống đủ\\Nnhưng không sống một cách trang nhã."
+    },
+    "ass_event": {
+      "event_id": "evt_60",
+      "start": "0:01:36.13",
+      "end": "0:01:37.14",
+      "text": "Sống đủ\\Nnhưng không sống một cách trang nhã."
+    }
+  },
+  {
+    "cue_id": "4752a988-6717-4e9a-8271-65bf72cc6969_seg1",
+    "original_source_cue_ids": [
+      "4752a988-6717-4e9a-8271-65bf72cc6969"
+    ],
+    "start": 98.33,
+    "end": 100.1,
+    "source_text": "写字楼里有点存在感的",
+    "segmentation_method": "reconciled",
+    "source_integrity_status": "REPAIRED",
+    "draft_vi": "có chút hiện diện trong tòa nhà văn phòng",
+    "final_vi": "có chút hiện diện trong tòa nhà văn phòng",
+    "render_cue": {
+      "render_id": "sub_048",
+      "source_cue_ids": [
+        "4752a988-6717-4e9a-8271-65bf72cc6969_seg1"
+      ],
+      "start": 98.33,
+      "end": 100.1,
+      "render_text": "Có chút hiện diện\\Ntrong tòa nhà văn phòng"
+    },
+    "ass_event": {
+      "event_id": "evt_61",
+      "start": "0:01:38.33",
+      "end": "0:01:40.10",
+      "text": "Có chút hiện diện\\Ntrong tòa nhà văn phòng"
+    }
+  },
+  {
+    "cue_id": "4752a988-6717-4e9a-8271-65bf72cc6969_seg2_seg1",
+    "original_source_cue_ids": [
+      "4752a988-6717-4e9a-8271-65bf72cc6969_seg2"
+    ],
+    "start": 98.9,
+    "end": 100.1,
+    "source_text": "唯一让我在这个",
+    "segmentation_method": "ocr_turnover_split",
+    "source_integrity_status": "REPAIRED",
+    "draft_vi": "điều duy nhất khiến tôi ở trong này",
+    "final_vi": "điều duy nhất khiến tôi ở trong này",
+    "render_cue": {
+      "render_id": "sub_049",
+      "source_cue_ids": [
+        "4752a988-6717-4e9a-8271-65bf72cc6969_seg2_seg1"
+      ],
+      "start": 100.13,
+      "end": 100.93,
+      "render_text": "Điều duy nhất khiến tôi ở trong này"
+    },
+    "ass_event": {
+      "event_id": "evt_62",
+      "start": "0:01:40.13",
+      "end": "0:01:40.93",
+      "text": "Điều duy nhất khiến tôi ở trong này"
+    }
+  },
+  {
+    "cue_id": "4752a988-6717-4e9a-8271-65bf72cc6969_seg2_seg2",
+    "original_source_cue_ids": [
+      "4752a988-6717-4e9a-8271-65bf72cc6969_seg2"
+    ],
+    "start": 98.9,
+    "end": 101.6,
+    "source_text": "写字楼里有点存在感的",
+    "segmentation_method": "ocr_turnover_split",
+    "source_integrity_status": "REPAIRED",
+    "draft_vi": "có chút hiện diện trong tòa nhà văn phòng",
+    "final_vi": "có chút hiện diện trong tòa nhà văn phòng",
+    "render_cue": {
+      "render_id": "sub_050",
+      "source_cue_ids": [
+        "4752a988-6717-4e9a-8271-65bf72cc6969_seg2_seg2"
+      ],
+      "start": 100.96,
+      "end": 101.76,
+      "render_text": "Có chút hiện diện\\Ntrong tòa nhà văn phòng"
+    },
+    "ass_event": {
+      "event_id": "evt_61",
+      "start": "0:01:38.33",
+      "end": "0:01:40.10",
+      "text": "Có chút hiện diện\\Ntrong tòa nhà văn phòng"
+    }
+  },
+  {
+    "cue_id": "4752a988-6717-4e9a-8271-65bf72cc6969_seg2_seg3",
+    "original_source_cue_ids": [
+      "4752a988-6717-4e9a-8271-65bf72cc6969_seg2"
+    ],
+    "start": 100.4,
+    "end": 101.6,
+    "source_text": "是我妈传给我的手艺做饭",
+    "segmentation_method": "ocr_turnover_split",
+    "source_integrity_status": "REPAIRED",
+    "draft_vi": "là kỹ năng nấu ăn mà mẹ truyền cho tôi",
+    "final_vi": "là kỹ năng nấu ăn mà mẹ truyền cho tôi",
+    "render_cue": {
+      "render_id": "sub_051",
+      "source_cue_ids": [
+        "4752a988-6717-4e9a-8271-65bf72cc6969_seg2_seg3",
+        "4752a988-6717-4e9a-8271-65bf72cc6969_seg3"
+      ],
+      "start": 101.79,
+      "end": 103.11,
+      "render_text": "Là kỹ năng nấu ăn\\Nmà mẹ truyền cho tôi"
+    },
+    "ass_event": {
+      "event_id": "evt_64",
+      "start": "0:01:41.79",
+      "end": "0:01:43.11",
+      "text": "Là kỹ năng nấu ăn\\Nmà mẹ truyền cho tôi"
+    }
+  },
+  {
+    "cue_id": "4752a988-6717-4e9a-8271-65bf72cc6969_seg3",
+    "original_source_cue_ids": [
+      "4752a988-6717-4e9a-8271-65bf72cc6969"
+    ],
+    "start": 100.4,
+    "end": 103.115,
+    "source_text": "是我妈传给我的手艺做饭",
+    "segmentation_method": "reconciled",
+    "source_integrity_status": "REPAIRED",
+    "draft_vi": "Đó là kỹ năng nấu ăn mà mẹ tôi truyền lại",
+    "final_vi": "Đó là kỹ năng nấu ăn mà mẹ tôi truyền lại",
+    "render_cue": {
+      "render_id": "sub_051",
+      "source_cue_ids": [
+        "4752a988-6717-4e9a-8271-65bf72cc6969_seg2_seg3",
+        "4752a988-6717-4e9a-8271-65bf72cc6969_seg3"
+      ],
+      "start": 101.79,
+      "end": 103.11,
+      "render_text": "Là kỹ năng nấu ăn\\Nmà mẹ truyền cho tôi"
+    },
+    "ass_event": {
+      "event_id": "evt_64",
+      "start": "0:01:41.79",
+      "end": "0:01:43.11",
+      "text": "Là kỹ năng nấu ăn\\Nmà mẹ truyền cho tôi"
+    }
+  },
+  {
+    "cue_id": "4d1ff225-9363-4076-bd63-7b2d0b4a2f83",
+    "original_source_cue_ids": [
+      "4d1ff225-9363-4076-bd63-7b2d0b4a2f83"
+    ],
+    "start": 104.2,
+    "end": 104.545,
+    "source_text": "一，",
+    "segmentation_method": "unmodified",
+    "source_integrity_status": "PASS",
+    "draft_vi": "Một.",
+    "final_vi": "Một.",
+    "render_cue": {
+      "render_id": "sub_052",
+      "source_cue_ids": [
+        "4d1ff225-9363-4076-bd63-7b2d0b4a2f83"
+      ],
+      "start": 104.2,
+      "end": 105.0,
+      "render_text": "Một."
+    },
+    "ass_event": {
+      "event_id": "evt_65",
+      "start": "0:01:44.20",
+      "end": "0:01:45.00",
+      "text": "Một."
+    }
+  },
+  {
+    "cue_id": "4716213f-9e18-4b42-bc94-ab8b0e253a97",
+    "original_source_cue_ids": [
+      "4716213f-9e18-4b42-bc94-ab8b0e253a97"
+    ],
+    "start": 104.5,
+    "end": 105.0,
+    "source_text": "嗯",
+    "segmentation_method": "unmodified",
+    "source_integrity_status": "PASS",
+    "draft_vi": "Ừm.",
+    "final_vi": "Ừm.",
+    "render_cue": {
+      "render_id": null,
+      "source_cue_ids": [
+        "4716213f-9e18-4b42-bc94-ab8b0e253a97"
+      ],
+      "start": 104.5,
+      "end": 105.0,
+      "render_text": "Ừm."
+    },
+    "ass_event": null
+  },
+  {
+    "cue_id": "7fedace1-e344-46da-8fbc-e48516cc699f",
+    "original_source_cue_ids": [
+      "7fedace1-e344-46da-8fbc-e48516cc699f"
+    ],
+    "start": 105.07,
+    "end": 107.075,
+    "source_text": "你这饭给外卖判了死缓",
+    "segmentation_method": "unmodified",
+    "source_integrity_status": "PASS",
+    "draft_vi": "Cơm này của bạn đã bị giao đồ ăn 'đánh bại' tới mức bị treo án.",
+    "final_vi": "Cơm này của bạn đã bị giao đồ ăn 'đánh bại' tới mức bị treo án.",
+    "render_cue": {
+      "render_id": "sub_053",
+      "source_cue_ids": [
+        "7fedace1-e344-46da-8fbc-e48516cc699f"
+      ],
+      "start": 105.07,
+      "end": 107.08,
+      "render_text": "Cơm này của bạn đã bị giao đồ ăn\\N'đánh bại' tới mức bị treo án."
+    },
+    "ass_event": {
+      "event_id": "evt_66",
+      "start": "0:01:45.07",
+      "end": "0:01:47.08",
+      "text": "Cơm này của bạn đã bị giao đồ ăn\\N'đánh bại' tới mức bị treo án."
+    }
+  },
+  {
+    "cue_id": "371d2df2-592f-4fb6-8df8-af76b9f8fd63",
+    "original_source_cue_ids": [
+      "371d2df2-592f-4fb6-8df8-af76b9f8fd63"
+    ],
+    "start": 111.26,
+    "end": 111.86,
+    "source_text": "这是苏棠",
+    "segmentation_method": "unmodified",
+    "source_integrity_status": "PASS",
+    "draft_vi": "Đây là Tô Đường",
+    "final_vi": "Đây là Tô Đường",
+    "render_cue": {
+      "render_id": "sub_054",
+      "source_cue_ids": [
+        "371d2df2-592f-4fb6-8df8-af76b9f8fd63"
+      ],
+      "start": 111.26,
+      "end": 112.06,
+      "render_text": "Đây là Tô Đường"
+    },
+    "ass_event": {
+      "event_id": "evt_67",
+      "start": "0:01:51.26",
+      "end": "0:01:52.06",
+      "text": "Đây là Tô Đường"
+    }
+  },
+  {
+    "cue_id": "4e922104-0c6e-452e-9f8a-ff7b23468a6b_seg1",
+    "original_source_cue_ids": [
+      "4e922104-0c6e-452e-9f8a-ff7b23468a6b"
+    ],
+    "start": 112.1,
+    "end": 112.6,
+    "source_text": "今天入职",
+    "segmentation_method": "reconciled",
+    "source_integrity_status": "REPAIRED",
+    "draft_vi": "Hôm nay mình vào công ty.",
+    "final_vi": "Hôm nay mình vào công ty.",
+    "render_cue": {
+      "render_id": "sub_055",
+      "source_cue_ids": [
+        "4e922104-0c6e-452e-9f8a-ff7b23468a6b_seg1"
+      ],
+      "start": 112.1,
+      "end": 112.9,
+      "render_text": "Hôm nay mình vào công ty."
+    },
+    "ass_event": {
+      "event_id": "evt_68",
+      "start": "0:01:52.10",
+      "end": "0:01:52.90",
+      "text": "Hôm nay mình vào công ty."
+    }
+  },
+  {
+    "cue_id": "4e922104-0c6e-452e-9f8a-ff7b23468a6b_seg2",
+    "original_source_cue_ids": [
+      "4e922104-0c6e-452e-9f8a-ff7b23468a6b"
+    ],
+    "start": 112.1,
+    "end": 113.6,
+    "source_text": "以后跟你们一个项目组",
+    "segmentation_method": "reconciled",
+    "source_integrity_status": "REPAIRED",
+    "draft_vi": "Từ nay mình sẽ làm cùng các bạn trong một nhóm dự án.",
+    "final_vi": "Từ nay mình sẽ làm cùng các bạn trong một nhóm dự án.",
+    "render_cue": {
+      "render_id": "sub_056",
+      "source_cue_ids": [
+        "4e922104-0c6e-452e-9f8a-ff7b23468a6b_seg2",
+        "4e922104-0c6e-452e-9f8a-ff7b23468a6b_seg3"
+      ],
+      "start": 112.93,
+      "end": 114.17,
+      "render_text": "Từ nay mình sẽ làm cùng các bạn\\Ntrong một nhóm dự án."
+    },
+    "ass_event": {
+      "event_id": "evt_69",
+      "start": "0:01:52.93",
+      "end": "0:01:54.17",
+      "text": "Từ nay mình sẽ làm cùng các bạn\\Ntrong một nhóm dự án."
+    }
+  },
+  {
+    "cue_id": "4e922104-0c6e-452e-9f8a-ff7b23468a6b_seg3",
+    "original_source_cue_ids": [
+      "4e922104-0c6e-452e-9f8a-ff7b23468a6b"
+    ],
+    "start": 112.4,
+    "end": 114.165,
+    "source_text": "以后跟你们一个项目组",
+    "segmentation_method": "unmodified",
+    "source_integrity_status": "PASS",
+    "draft_vi": "Từ nay mình sẽ làm việc trong cùng một nhóm dự án với các bạn.",
+    "final_vi": "Từ nay mình sẽ làm việc trong cùng một nhóm dự án với các bạn.",
+    "render_cue": {
+      "render_id": "sub_056",
+      "source_cue_ids": [
+        "4e922104-0c6e-452e-9f8a-ff7b23468a6b_seg2",
+        "4e922104-0c6e-452e-9f8a-ff7b23468a6b_seg3"
+      ],
+      "start": 112.93,
+      "end": 114.17,
+      "render_text": "Từ nay mình sẽ làm cùng các bạn\\Ntrong một nhóm dự án."
+    },
+    "ass_event": {
+      "event_id": "evt_69",
+      "start": "0:01:52.93",
+      "end": "0:01:54.17",
+      "text": "Từ nay mình sẽ làm cùng các bạn\\Ntrong một nhóm dự án."
+    }
+  },
+  {
+    "cue_id": "66f296df-298d-42d5-8618-3bc7b06ef36d",
+    "original_source_cue_ids": [
+      "66f296df-298d-42d5-8618-3bc7b06ef36d"
+    ],
+    "start": 114.8,
+    "end": 115.365,
+    "source_text": "大家好",
+    "segmentation_method": "unmodified",
+    "source_integrity_status": "PASS",
+    "draft_vi": "Xin chào mọi người",
+    "final_vi": "Xin chào mọi người",
+    "render_cue": {
+      "render_id": "sub_057",
+      "source_cue_ids": [
+        "66f296df-298d-42d5-8618-3bc7b06ef36d"
+      ],
+      "start": 114.8,
+      "end": 115.6,
+      "render_text": "Xin chào mọi người"
+    },
+    "ass_event": {
+      "event_id": "evt_70",
+      "start": "0:01:54.80",
+      "end": "0:01:55.60",
+      "text": "Xin chào mọi người"
+    }
+  }
+]

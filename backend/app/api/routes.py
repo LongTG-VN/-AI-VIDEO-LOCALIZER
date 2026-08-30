@@ -157,10 +157,11 @@ def analyze_project(project_id: str) -> Project:
         ocr_engine = _create_project_ocr_engine()
         asr_cues = asr_engine.transcribe(audio_path, project.source_language)
         ocr_cues = ocr_engine.extract_subtitles(Path(project.source_video_path))
-        if ocr_cues:
-            tracker = VisualBoundaryTracker()
-            ocr_cues = tracker.refine_cues(Path(project.source_video_path), ocr_cues)
-        project.cues = fuse_cues(asr_cues, ocr_cues) if ocr_cues else asr_cues
+        fused = fuse_cues(asr_cues, ocr_cues) if ocr_cues else asr_cues
+        from app.services.source_integrity.pipeline import SourceIntegrityPipeline
+        source_pipeline = SourceIntegrityPipeline()
+        project.cues, report = source_pipeline.run_pipeline(fused, ocr_cues=ocr_cues)
+        project.source_integrity = report.model_dump()
     except (MediaError, RuntimeError, NotImplementedError, ValueError) as exc:
         raise HTTPException(status_code=500, detail=str(exc)) from exc
     return store.save(project)
@@ -289,6 +290,26 @@ def run_translation_quality_endpoint(project_id: str, force: bool = False) -> Pr
     )
     report = pipeline.run_pipeline(project)
     project.translation_quality = report.model_dump()
+    return store.save(project)
+
+
+@router.post("/projects/{project_id}/source-integrity", response_model=Project)
+def run_source_integrity_endpoint(
+    project_id: str,
+    force: bool = Query(default=False, description="Force re-running source integrity"),
+) -> Project:
+    """Runs source integrity gate and re-segmentation across project cues."""
+    try:
+        project = store.get(project_id)
+    except FileNotFoundError as exc:
+        raise HTTPException(status_code=404, detail="Project not found") from exc
+    if not project.cues:
+        raise HTTPException(status_code=400, detail="Project has no subtitle cues")
+
+    from app.services.source_integrity.pipeline import SourceIntegrityPipeline
+    pipeline = SourceIntegrityPipeline()
+    project.cues, report = pipeline.run_pipeline(project.cues)
+    project.source_integrity = report.model_dump()
     return store.save(project)
 
 
