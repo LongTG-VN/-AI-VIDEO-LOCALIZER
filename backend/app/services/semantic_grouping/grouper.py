@@ -119,7 +119,11 @@ class SemanticGrouper:
         if re.search(r"^(这是|这位是|我是)[^，,。！？!?]{2,8}$", prev_src):
             return False, "character_intro_boundary"
 
-        # 9. Positive Continuation Evidence:
+        # 9. Hard Stop: Subject transition across complete clauses (e.g. 我自己 -> 就是你...)
+        if re.search(r"(我自己|自己|他们|别人)$", prev_src) and re.search(r"^(就是你|是你|你|我|他|她)", curr_src):
+            return False, "subject_transition_boundary"
+
+        # 10. Positive Continuation Evidence:
         # (A) Explicit incomplete ending in prev_src
         is_incomplete = any(re.search(pat, prev_src) for pat in INCOMPLETE_ZH_ENDINGS)
         # (B) No punctuation in prev_src and short clause length

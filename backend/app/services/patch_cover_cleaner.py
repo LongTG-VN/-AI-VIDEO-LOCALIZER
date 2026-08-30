@@ -20,13 +20,13 @@ logger = logging.getLogger(__name__)
 
 
 class PatchCoverCleaner:
-    """Fast, feathered background patch-cover cleaner for hard subtitles.
+    """SourceSubtitleCoverPlate and fast background patch-cover cleaner for hard subtitles.
 
-    Target style:
-    - Leaves surrounding background untouched.
-    - Softly attenuates/covers Chinese glyphs so they become faint and unreadable.
-    - Preserves lighting and scene texture without Telea inpainting smudges or hard rectangular borders.
-    - Places Vietnamese ASS subtitles sharply on top.
+    Target visual style:
+    - Base video -> compact dark/black blurred subtitle cover covering Chinese source text
+    - Vietnamese white subtitle with thin black outline rendered directly on top.
+    - Soft feathered rounded-rectangle plate (semi-transparent black tint ~50-60% + backdrop blur).
+    - Lifecycle strictly matches active subtitle cue (no cover during subtitle gaps).
     """
 
     def __init__(
@@ -57,12 +57,51 @@ class PatchCoverCleaner:
             return False
         return True
 
+    def create_feathered_mask(
+        self,
+        height: int,
+        width: int,
+        polygons: list[list[list[float]]],
+    ) -> np.ndarray:
+        """Create a feathered binary mask from normalized polygon coordinates."""
+        mask = np.zeros((height, width), dtype=np.uint8)
+        if not polygons:
+            return mask.astype(np.float32)
+
+        pad = self.config.padding_px
+        feather = self.config.feather_px
+
+        for poly in polygons:
+            pts = np.array([[int(p[0] * width), int(p[1] * height)] for p in poly], dtype=np.int32)
+            if len(pts) < 3:
+                continue
+            if pad > 0:
+                rect = cv2.boundingRect(pts)
+                x, y, w, h = rect
+                x = max(0, x - pad)
+                y = max(0, y - pad)
+                w = min(width - x, w + 2 * pad)
+                h = min(height - y, h + 2 * pad)
+                cv2.rectangle(mask, (x, y), (x + w, y + h), 255, -1)
+            else:
+                cv2.fillPoly(mask, [pts], 255)
+
+        if feather > 0:
+            k = max(1, feather * 2 + 1)
+            mask = cv2.GaussianBlur(mask, (k, k), feather)
+
+        # Safety cutoff: enforce 0 alpha in upper screen
+        cutoff_y = int(height * getattr(self.config, "face_safety_y_cutoff", 0.68))
+        mask[:cutoff_y, :] = 0
+
+        return mask.astype(np.float32) / 255.0
+
     def extract_active_intervals(
         self,
         cues: list[SubtitleCue],
         fps: float,
     ) -> list[dict[str, Any]]:
-        """Extract subtitle intervals with tight glyph polygons only."""
+        """Extract active subtitle intervals with tight glyph polygons."""
         min_conf = self.config.min_ocr_confidence
         gap_fill_sec = self.config.temporal_gap_fill_frames / max(1.0, fps)
         persistence_sec = self.config.mask_persistence_frames / max(1.0, fps)
@@ -76,7 +115,7 @@ class PatchCoverCleaner:
             if end_t <= start_t:
                 continue
 
-            end_t += persistence_sec  # add persistence
+            end_t += persistence_sec
 
             polygons: list[list[list[float]]] = []
             if cue.ocr_regions:
@@ -92,7 +131,6 @@ class PatchCoverCleaner:
                             if self._is_valid_subtitle_polygon(region.points):
                                 polygons.append(region.points)
 
-            # If no valid OCR polygons exist, keep empty list (never insert giant screen-wide fallback)
             if not polygons:
                 continue
 
@@ -108,61 +146,21 @@ class PatchCoverCleaner:
 
         raw_intervals.sort(key=lambda x: x["start"])
 
-        # Temporal bridging: merge timing without creating oversized polygon unions
-        bridged: list[dict[str, Any]] = [raw_intervals[0]]
-        for cur in raw_intervals[1:]:
-            prev = bridged[-1]
-            if cur["start"] - prev["end"] <= gap_fill_sec:
-                prev["end"] = max(prev["end"], cur["end"])
-                for poly in cur["polygons"]:
-                    if poly not in prev["polygons"]:
-                        prev["polygons"].append(poly)
+        # Temporal gap bridging
+        merged: list[dict[str, Any]] = []
+        for interval in raw_intervals:
+            if not merged:
+                merged.append(interval)
+                continue
+
+            prev = merged[-1]
+            if interval["start"] <= (prev["end"] + gap_fill_sec):
+                prev["end"] = max(prev["end"], interval["end"])
+                prev["polygons"].extend(interval["polygons"])
             else:
-                bridged.append(cur)
+                merged.append(interval)
 
-        return bridged
-
-    def create_feathered_mask(
-        self,
-        height: int,
-        width: int,
-        polygons: list[list[list[float]]],
-    ) -> np.ndarray:
-        """Create a smooth feathered alpha mask strictly in the bottom subtitle band."""
-        mask = np.zeros((height, width), dtype=np.uint8)
-
-        for poly in polygons:
-            pts = np.array([
-                [int(p[0] * width), int(p[1] * height)]
-                for p in poly
-            ], dtype=np.int32)
-            if len(pts) >= 3:
-                cv2.fillPoly(mask, [pts], 255)
-
-        pad = self.config.padding_px
-        if pad > 0:
-            k_pad = max(1, pad * 2 + 1)
-            dilate_kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (k_pad, k_pad))
-            mask = cv2.dilate(mask, dilate_kernel)
-
-        feather = self.config.feather_px
-        if feather > 0:
-            k_feat = max(1, feather * 2 + 1)
-            mask = cv2.GaussianBlur(mask, (k_feat, k_feat), feather)
-
-        # Hard Face / Body Safety Cutoff: zero out any mask pixels above y = 0.68
-        safe_top_cutoff = int(height * 0.68)
-        mask[:safe_top_cutoff, :] = 0
-
-        # Max area safety check: ensure mask does not cover > 15% of frame area
-        total_pixels = height * width
-        masked_pixels = np.count_nonzero(mask)
-        if total_pixels > 0 and (masked_pixels / total_pixels) > 0.15:
-            # Downscale mask intensity if anomalous
-            scale_factor = 0.15 / (masked_pixels / total_pixels)
-            mask = (mask.astype(np.float32) * scale_factor).astype(np.uint8)
-
-        return mask.astype(np.float32) / 255.0
+        return merged
 
     def build_render_cue_contexts(
         self,
@@ -170,11 +168,13 @@ class PatchCoverCleaner:
         width: int,
         height: int,
     ) -> list[dict[str, Any]]:
-        """Build exact render context for each RenderSubtitleCue with 1:1 synchronized backing and Chinese polygons."""
+        """Build exact SourceSubtitleCoverPlate render contexts for each active subtitle cue."""
         from app.services.subtitles import UtteranceEngine
 
         engine = UtteranceEngine()
         render_cues, _ = engine.process_cues(cues, translated=True)
+        if not render_cues and cues:
+            render_cues = cues
         cues_by_id = {
             (getattr(c, "id", None) or getattr(c, "render_id", None)): c
             for c in cues
@@ -186,7 +186,9 @@ class PatchCoverCleaner:
 
         for cue in render_cues:
             y_pts: list[float] = []
-            for cid in getattr(cue, "source_cue_ids", []):
+            for cid in getattr(cue, "source_cue_ids", []) or [getattr(cue, "id", None)]:
+                if not cid:
+                    continue
                 orig = cues_by_id.get(cid)
                 if not orig:
                     continue
@@ -230,7 +232,8 @@ class PatchCoverCleaner:
 
         contexts: list[dict[str, Any]] = []
         for idx, cue in enumerate(render_cues):
-            lines = [l.strip() for l in cue.render_text.replace(r"\N", "\n").split("\n") if l.strip()]
+            text = getattr(cue, "render_text", None) or getattr(cue, "translated_text", None) or getattr(cue, "source_text", "")
+            lines = [l.strip() for l in str(text).replace(r"\N", "\n").split("\n") if l.strip()]
             if not lines:
                 continue
             line_count = len(lines)
@@ -239,12 +242,11 @@ class PatchCoverCleaner:
             text_h = int(round(line_count * (font_size * 1.25)))
 
             y_pos = cue_y_centers[idx] if idx < len(cue_y_centers) else default_y_center
-            x1 = max(0, int(center_x - text_w / 2 - pad_x))
-            x2 = min(width, int(center_x + text_w / 2 + pad_x))
-            y1 = max(int(height * 0.68), int(y_pos - text_h / 2 - pad_y))
-            y2 = min(int(height * 0.98), int(y_pos + text_h / 2 + pad_y))
+            vi_x1 = max(0, int(center_x - text_w / 2 - pad_x))
+            vi_x2 = min(width, int(center_x + text_w / 2 + pad_x))
+            vi_y1 = max(int(height * 0.68), int(y_pos - text_h / 2 - pad_y))
+            vi_y2 = min(int(height * 0.98), int(y_pos + text_h / 2 + pad_y))
 
-            # Chinese polygons for this cue only
             chinese_polygons: list[list[list[float]]] = []
             for cid in getattr(cue, "source_cue_ids", []):
                 orig = cues_by_id.get(cid)
@@ -261,11 +263,29 @@ class PatchCoverCleaner:
                             if self._is_valid_subtitle_polygon(pts):
                                 chinese_polygons.append(pts)
 
+            if chinese_polygons:
+                zh_xs = [int(p[0] * width) for poly in chinese_polygons for p in poly]
+                zh_ys = [int(p[1] * height) for poly in chinese_polygons for p in poly]
+                zh_x1, zh_x2 = min(zh_xs), max(zh_xs)
+                zh_y1, zh_y2 = min(zh_ys), max(zh_ys)
+
+                cover_x1 = max(0, min(vi_x1, zh_x1 - 14))
+                cover_x2 = min(width, max(vi_x2, zh_x2 + 14))
+                cover_y1 = max(int(height * 0.68), min(vi_y1, zh_y1 - 6))
+                cover_y2 = min(int(height * 0.98), max(vi_y2, zh_y2 + 6))
+            else:
+                cover_x1, cover_y1, cover_x2, cover_y2 = vi_x1, vi_y1, vi_x2, vi_y2
+
+            max_plate_h = int(height * (0.095 if line_count == 1 else 0.145))
+            if (cover_y2 - cover_y1) > max_plate_h:
+                cover_y1 = max(int(height * 0.68), int(y_pos - max_plate_h / 2))
+                cover_y2 = min(int(height * 0.98), int(y_pos + max_plate_h / 2))
+
             contexts.append({
                 "start": cue.start,
                 "end": cue.end,
                 "cue_id": getattr(cue, "render_id", str(idx)),
-                "bbox": (x1, y1, x2, y2),
+                "bbox": (cover_x1, cover_y1, cover_x2, cover_y2),
                 "chinese_polygons": chinese_polygons,
             })
 
@@ -313,43 +333,25 @@ class PatchCoverCleaner:
         vi_backing_mask: np.ndarray | None = None,
         donor_frame: np.ndarray | None = None,
     ) -> np.ndarray:
-        """Blend Chinese patch cover and VI subtitle backdrop blur over video frame."""
+        """Blend dark source subtitle cover plate and backdrop blur over video frame."""
         out = frame.copy()
         h, w = frame.shape[:2]
-        opacity = self.config.patch_opacity
-        sigma = self.config.blur_sigma
 
-        # Step 1: Chinese Hard-Sub Patch Cover (tight glyph mask)
         if alpha_mask is not None and np.any(alpha_mask > 0.001):
-            if donor_frame is not None and self.config.use_temporal_donor:
-                patch = donor_frame
-                if sigma > 0:
-                    k_blur = max(1, int(sigma * 2 + 1))
-                    if k_blur % 2 == 0:
-                        k_blur += 1
-                    patch = cv2.GaussianBlur(patch, (k_blur, k_blur), sigma)
-            else:
-                k_blur = max(1, int(sigma * 3 + 1))
-                if k_blur % 2 == 0:
-                    k_blur += 1
-                patch = cv2.GaussianBlur(out, (k_blur, k_blur), sigma)
-
-            dark_tint = getattr(self.config, "dark_tint", 0.48)
-            if dark_tint > 0:
-                patch = (patch.astype(np.float32) * (1.0 - dark_tint)).astype(np.uint8)
-
-            alpha_3d = np.repeat((alpha_mask * opacity)[:, :, np.newaxis], 3, axis=2)
+            k_blur = 15
+            patch = cv2.GaussianBlur(out, (k_blur, k_blur), 6.0)
+            patch = (patch.astype(np.float32) * 0.40).astype(np.uint8)
+            alpha_3d = np.repeat((alpha_mask * 0.85)[:, :, np.newaxis], 3, axis=2)
             out = (1.0 - alpha_3d) * out.astype(np.float32) + alpha_3d * patch.astype(np.float32)
             out = np.clip(out, 0, 255).astype(np.uint8)
 
-        # Step 2: VI Subtitle Backing (consistent soft backdrop blur + subtle dark tint)
         if vi_backing_mask is not None and np.any(vi_backing_mask > 0.001):
-            blur_sigma_bg = 8.0
-            k_bg = 25
+            blur_sigma_bg = 12.0
+            k_bg = 27
             blurred_bg = cv2.GaussianBlur(out, (k_bg, k_bg), blur_sigma_bg)
-            dark_tint_bg = 0.38  # moderate dark tint (~38%)
+            dark_tint_bg = 0.55
             blurred_bg = (blurred_bg.astype(np.float32) * (1.0 - dark_tint_bg)).astype(np.uint8)
-            backing_opacity = 0.88  # distinct soft backdrop blend across all scene brightness levels
+            backing_opacity = 0.95
             alpha_bg_3d = np.repeat((vi_backing_mask * backing_opacity)[:, :, np.newaxis], 3, axis=2)
             out = (1.0 - alpha_bg_3d) * out.astype(np.float32) + alpha_bg_3d * blurred_bg.astype(np.float32)
             out = np.clip(out, 0, 255).astype(np.uint8)
@@ -411,7 +413,7 @@ class PatchCoverCleaner:
         cues: list[SubtitleCue],
         lossless_intermediate: bool = True,
     ) -> dict[str, Any]:
-        """Process video and apply 1:1 cue-synchronized patch cover and backdrop blur."""
+        """Process video and apply 1:1 cue-synchronized dark source cover plate and backdrop blur."""
         t_start = time.time()
         output_path.parent.mkdir(parents=True, exist_ok=True)
 
@@ -440,68 +442,73 @@ class PatchCoverCleaner:
             elif cv_writer is not None:
                 cv_writer.write(frame)
 
-        frame_idx = 0
-        patched_frames_count = 0
+        context_masks = []
+        for ctx in contexts:
+            bbox = ctx["bbox"]
+            vi_mask = self.create_rounded_rect_mask(height, width, bbox, radius=10, feather=8)
+            alpha_mask = None
+            if ctx.get("chinese_polygons"):
+                alpha_mask = np.zeros((height, width), dtype=np.uint8)
+                for poly in ctx["chinese_polygons"]:
+                    pts = np.array([[int(p[0] * width), int(p[1] * height)] for p in poly], dtype=np.int32)
+                    if len(pts) >= 3:
+                        cv2.fillPoly(alpha_mask, [pts], 255)
+                alpha_mask = cv2.GaussianBlur(alpha_mask, (15, 15), 6).astype(np.float32) / 255.0
 
-        # Mask cache across frames for the active cue
-        cached_ctx_id = None
-        cached_cn_mask = None
-        cached_vi_mask = None
+            context_masks.append({
+                "start": ctx["start"],
+                "end": ctx["end"],
+                "vi_mask": vi_mask,
+                "alpha_mask": alpha_mask,
+            })
+
+        patched_frames = 0
+        frame_idx = 0
 
         while True:
             ret, frame = cap.read()
             if not ret or frame is None:
                 break
 
-            cur_time = frame_idx / fps
+            current_time = frame_idx / max(1.0, fps)
 
-            # Find active render cue: EXACT 1:1 timestamp match with subtitle lifecycle
-            active_ctx = None
-            for ctx in contexts:
-                if ctx["start"] <= cur_time < ctx["end"]:
-                    active_ctx = ctx
-                    break
+            active = [cm for cm in context_masks if cm["start"] <= current_time <= cm["end"]]
+            if active:
+                combined_vi_mask = np.maximum.reduce([cm["vi_mask"] for cm in active])
+                alpha_masks = [cm["alpha_mask"] for cm in active if cm["alpha_mask"] is not None]
+                combined_alpha = np.maximum.reduce(alpha_masks) if alpha_masks else None
 
-            if active_ctx is not None:
-                patched_frames_count += 1
-                ctx_key = (active_ctx["cue_id"], active_ctx["start"], active_ctx["end"])
-
-                if ctx_key == cached_ctx_id and cached_vi_mask is not None:
-                    alpha_cn_mask = cached_cn_mask
-                    alpha_vi_mask = cached_vi_mask
-                else:
-                    if active_ctx["chinese_polygons"]:
-                        alpha_cn_mask = self.create_feathered_mask(height, width, active_ctx["chinese_polygons"])
-                    else:
-                        alpha_cn_mask = None
-                    alpha_vi_mask = self.create_rounded_rect_mask(height, width, active_ctx["bbox"], radius=10, feather=8)
-                    cached_ctx_id = ctx_key
-                    cached_cn_mask = alpha_cn_mask
-                    cached_vi_mask = alpha_vi_mask
-
-                covered_frame = self.apply_patch_cover(frame, alpha_mask=alpha_cn_mask, vi_backing_mask=alpha_vi_mask)
-                write_frame(covered_frame)
+                out_frame = self.apply_patch_cover(
+                    frame,
+                    alpha_mask=combined_alpha,
+                    vi_backing_mask=combined_vi_mask,
+                )
+                patched_frames += 1
             else:
-                # Fast path: NO active subtitle -> 100% UNTOUCHED FRAME (0 backing, 0 blur, 0 ghost)
-                write_frame(frame)
+                out_frame = frame
 
+            write_frame(out_frame)
             frame_idx += 1
 
         cap.release()
-        if cv_writer is not None:
-            cv_writer.release()
         if lossless_proc is not None:
             self._close_lossless_writer(lossless_proc)
+        elif cv_writer is not None:
+            cv_writer.release()
 
-        t_elapsed = time.time() - t_start
-        metrics = {
-            "cleanup_mode": "patch_cover",
-            "cleanup_time_s": round(t_elapsed, 3),
+        elapsed = time.time() - t_start
+        self.last_metrics = {
+            "cleanup_mode": "source_subtitle_cover_plate",
+            "cleanup_time_s": round(elapsed, 3),
             "total_frames": total_frames,
-            "patched_frames": patched_frames_count,
-            "intervals_count": len(contexts),
+            "patched_frames": patched_frames,
+            "contexts_count": len(contexts),
             "output_path": str(output_path),
         }
-        self.last_metrics = metrics
-        logger.info("PatchCover cleaned %d/%d frames in %.3fs", patched_frames_count, total_frames, t_elapsed)
-        return metrics
+        logger.info(
+            "SourceSubtitleCoverPlate cleaned %d/%d frames in %.3fs",
+            patched_frames,
+            total_frames,
+            elapsed,
+        )
+        return self.last_metrics

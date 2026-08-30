@@ -40,11 +40,13 @@ UNNATURAL_CHINESE_SYNTAX_PATTERNS = [
     r"\bchuẩn\s+bị\s+bị\b",
     # 10. "Cô chú hiện diện" literal corruption of 存在感
     r"\bcô\s+chú\s+hiện\s+diện\b",
+    # 11. Two predicates accidentally fused (e.g. "... chính là tôi là anh ...", "... tôi là anh ...")
+    r"\b(tôi|mình|em|anh|cô)\s+là\s+(anh|em|cô|bạn|tôi|chú|bác)\s+(nấu|làm|ăn|đi|đến)\b",
 ]
 
 
 class NaturalnessPolisher:
-    """Pass 7: Vietnamese Naturalness Polish V2 with Semantic Safety Gate and 1-5 Quality Scale.
+    """Pass 7: Vietnamese Naturalness Polish V3 with Semantic Safety Gate and 1-5 Quality Scale.
     
     Scale:
     5 = native/natural
@@ -87,7 +89,7 @@ class NaturalnessPolisher:
                     iss = QualityIssue(
                         type="naturalness.chinese_word_order",
                         severity=QualitySeverity.MAJOR,
-                        message=f"Unnatural Chinese literal syntax or nonsense phrasing detected: '{m.group(0)}'",
+                        message=f"Unnatural Chinese literal syntax or broken fused phrasing detected: '{m.group(0)}'",
                         target_span=vi,
                         reviewer="naturalness",
                     )
@@ -145,7 +147,7 @@ class NaturalnessPolisher:
         if "?" in old_vi and "?" not in new_vi and ("吗" in source_zh or "呢" in source_zh or "？" in source_zh):
             return False
 
-        # 4. Length sanity (do not drop entire sentences or add huge bloat)
+        # 4. Length sanity
         if len(new_vi) < 0.35 * len(old_vi) and len(old_vi) > 10:
             return False
         if len(new_vi) > 3.0 * len(old_vi) and len(old_vi) > 5:
@@ -168,7 +170,7 @@ Your task is to review Vietnamese subtitles translated from Chinese and rate the
 5 = Native, idiomatic, fluent Vietnamese subtitle
 4 = Natural enough for TV/cinema
 3 = Understandable but stiff or machine-translated
-2 = Awkward, ungrammatical, or literal Chinese word order
+2 = Awkward, ungrammatical, fused clauses, or literal Chinese word order
 1 = Nonsense or broken
 
 If a subtitle is scored <= 3:
@@ -223,7 +225,7 @@ Return JSON ONLY:
                         break
                     response.raise_for_status()
                     content = response.json().get("choices", [{}])[0].get("message", {}).get("content", "")
-                    
+
                     text = re.sub(r"<think>.*?</think>", "", content, flags=re.DOTALL).strip()
                     m = re.search(r"```(?:json)?\s*(\{.*?\})\s*```", text, re.DOTALL)
                     if m:

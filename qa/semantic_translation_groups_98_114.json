@@ -17,12 +17,12 @@
     "discourse_mode": "unknown",
     "grouping_reason": "single_cue_default",
     "confidence": 1.0,
-    "full_vi": "Điều duy nhất khiến tôi có chút tồn tại trong",
+    "full_vi": "唯一让我在这个",
     "allocations": [
       {
         "cue_id": "4752a988-6717-4e9a-8271-65bf72cc6969_seg1",
         "source_text": "唯一让我在这个",
-        "allocated_vi": "Điều duy nhất khiến tôi có chút tồn tại trong"
+        "allocated_vi": "唯一让我在这个"
       }
     ],
     "validation_status": "PASS",
@@ -46,12 +46,12 @@
     "discourse_mode": "unknown",
     "grouping_reason": "single_cue_default",
     "confidence": 1.0,
-    "full_vi": "tòa nhà văn phòng này",
+    "full_vi": "写字楼里有点存在感的",
     "allocations": [
       {
         "cue_id": "4752a988-6717-4e9a-8271-65bf72cc6969_seg2",
         "source_text": "写字楼里有点存在感的",
-        "allocated_vi": "tòa nhà văn phòng này"
+        "allocated_vi": "写字楼里有点存在感的"
       }
     ],
     "validation_status": "PASS",
@@ -75,12 +75,12 @@
     "discourse_mode": "unknown",
     "grouping_reason": "single_cue_default",
     "confidence": 1.0,
-    "full_vi": "Đây là kỹ năng nấu ăn mà mẹ tôi truyền lại cho tôi.",
+    "full_vi": "是我妈传给我的手艺做饭",
     "allocations": [
       {
         "cue_id": "4752a988-6717-4e9a-8271-65bf72cc6969_seg3",
         "source_text": "是我妈传给我的手艺做饭",
-        "allocated_vi": "Đây là kỹ năng nấu ăn mà mẹ tôi truyền lại cho tôi."
+        "allocated_vi": "是我妈传给我的手艺做饭"
       }
     ],
     "validation_status": "PASS",
@@ -104,12 +104,12 @@
     "discourse_mode": "unknown",
     "grouping_reason": "single_cue_default",
     "confidence": 1.0,
-    "full_vi": "Một,",
+    "full_vi": "一，",
     "allocations": [
       {
         "cue_id": "4d1ff225-9363-4076-bd63-7b2d0b4a2f83",
         "source_text": "一，",
-        "allocated_vi": "Một,"
+        "allocated_vi": "一，"
       }
     ],
     "validation_status": "PASS",
@@ -133,12 +133,12 @@
     "discourse_mode": "unknown",
     "grouping_reason": "single_cue_default",
     "confidence": 1.0,
-    "full_vi": "Ừm.",
+    "full_vi": "嗯",
     "allocations": [
       {
         "cue_id": "4716213f-9e18-4b42-bc94-ab8b0e253a97",
         "source_text": "嗯",
-        "allocated_vi": "Ừm."
+        "allocated_vi": "嗯"
       }
     ],
     "validation_status": "PASS",
@@ -162,12 +162,12 @@
     "discourse_mode": "unknown",
     "grouping_reason": "single_cue_default",
     "confidence": 1.0,
-    "full_vi": "Món ăn này của anh đã tuyên án tử hình treo cho dịch vụ giao đồ ăn rồi.",
+    "full_vi": "你这饭给外卖判了死缓",
     "allocations": [
       {
         "cue_id": "7fedace1-e344-46da-8fbc-e48516cc699f",
         "source_text": "你这饭给外卖判了死缓",
-        "allocated_vi": "Món ăn này của anh đã tuyên án tử hình treo cho dịch vụ giao đồ ăn rồi."
+        "allocated_vi": "你这饭给外卖判了死缓"
       }
     ],
     "validation_status": "PASS",
@@ -191,16 +191,18 @@
     "discourse_mode": "unknown",
     "grouping_reason": "single_cue_default",
     "confidence": 1.0,
-    "full_vi": "Đây là Tô Đường",
+    "full_vi": "这是苏棠",
     "allocations": [
       {
         "cue_id": "371d2df2-592f-4fb6-8df8-af76b9f8fd63",
         "source_text": "这是苏棠",
-        "allocated_vi": "Đây là Tô Đường"
+        "allocated_vi": "这是苏棠"
       }
     ],
-    "validation_status": "PASS",
-    "validation_issues": []
+    "validation_status": "FAIL",
+    "validation_issues": [
+      "Canonical name 'Tô Đường' owned by source '这是苏棠' missing from cue 371d2df2-592f-4fb6-8df8-af76b9f8fd63"
+    ]
   },
   {
     "group_id": "grp_4e922104-0c6e-452e-9f8a-ff7b23468a6b_seg1",
@@ -220,16 +222,18 @@
     "discourse_mode": "unknown",
     "grouping_reason": "single_cue_default",
     "confidence": 1.0,
-    "full_vi": "Đây là Tô Đường",
+    "full_vi": "这是苏棠",
     "allocations": [
       {
         "cue_id": "4e922104-0c6e-452e-9f8a-ff7b23468a6b_seg1",
         "source_text": "这是苏棠",
-        "allocated_vi": "Đây là Tô Đường"
+        "allocated_vi": "这是苏棠"
       }
     ],
-    "validation_status": "PASS",
-    "validation_issues": []
+    "validation_status": "FAIL",
+    "validation_issues": [
+      "Canonical name 'Tô Đường' owned by source '这是苏棠' missing from cue 4e922104-0c6e-452e-9f8a-ff7b23468a6b_seg1"
+    ]
   },
   {
     "group_id": "grp_4e922104-0c6e-452e-9f8a-ff7b23468a6b_seg2",
@@ -249,12 +253,12 @@
     "discourse_mode": "unknown",
     "grouping_reason": "single_cue_default",
     "confidence": 1.0,
-    "full_vi": "nhập chức hôm nay",
+    "full_vi": "今天入职",
     "allocations": [
       {
         "cue_id": "4e922104-0c6e-452e-9f8a-ff7b23468a6b_seg2",
         "source_text": "今天入职",
-        "allocated_vi": "nhập chức hôm nay"
+        "allocated_vi": "今天入职"
       }
     ],
     "validation_status": "PASS",
@@ -278,12 +282,12 @@
     "discourse_mode": "unknown",
     "grouping_reason": "single_cue_default",
     "confidence": 1.0,
-    "full_vi": "sau này sẽ cùng nhóm dự án với các bạn",
+    "full_vi": "以后跟你们一个项目组",
     "allocations": [
       {
         "cue_id": "4e922104-0c6e-452e-9f8a-ff7b23468a6b_seg3",
         "source_text": "以后跟你们一个项目组",
-        "allocated_vi": "sau này sẽ cùng nhóm dự án với các bạn"
+        "allocated_vi": "以后跟你们一个项目组"
       }
     ],
     "validation_status": "PASS",

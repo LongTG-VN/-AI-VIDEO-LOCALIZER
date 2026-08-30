@@ -20,10 +20,11 @@ logger = logging.getLogger(__name__)
 
 
 class IdiomReviewer:
-    """Pass 4: Idiom & Figurative Expression Reviewer.
+    """Pass 4: Idiom & Figurative Expression Reviewer with Candidate Ranking V2.
     
     Identifies Chinese idioms, sarcasm, jokes, metaphors, hyperbole, and figurative speech.
-    Ensures they are not translated mechanically word-for-word when literal Vietnamese becomes awkward.
+    Ensures they are adapted into natural Vietnamese punchlines that a native viewer immediately understands
+    without needing to know the Chinese source.
     """
 
     def __init__(self, base_url: str = "", api_key: str = "", model: str = ""):
@@ -45,33 +46,34 @@ class IdiomReviewer:
         for cue in cues:
             src = (cue.source_text or "").strip()
             vi = (cue.translated_text or "").strip()
-            
-            # Check for mechanical literal translations of common figurative expressions
-            # e.g., 判了死缓 -> "phán tử hình treo" (when talking about cooking/takeaway food)
-            if "死缓" in src and "phán tử hình treo" in vi.lower() and ("饭" in src or "外卖" in src or "cơm" in vi.lower() or "đồ ăn" in vi.lower()):
-                issues_by_id[cue.id].append(
-                    QualityIssue(
-                        type="idiom.literal_mistranslation",
-                        severity=QualitySeverity.MAJOR,
-                        message="Literal legal translation 'phán tử hình treo' used for humorous culinary joke (giving takeaway food a death sentence/making it obsolete).",
-                        source_span=src,
-                        target_span=vi,
-                        reviewer="idioms",
-                    )
-                )
-                figurative_reviews[cue.id] = FigurativeReviewResult(
-                    cue_id=cue.id,
-                    figurative=True,
-                    literal_meaning="Phán tử hình treo cho đồ ăn ngoài",
-                    intended_meaning="Món ăn này ngon đến mức khiến đồ ăn ngoài coi như hết đường sống / bỏ xó",
-                    tone="humorous",
-                    speaker_intention="Khen ngợi đồ ăn tự nấu vượt trội đồ ăn ngoài",
-                    status="FAIL",
-                    issues=["Literal translation of culinary metaphor"],
-                    candidate_vi="Cơm cậu nấu đúng là khiến đồ ăn ngoài hết cửa sống luôn đấy.",
-                )
 
-        # 2. LLM Figurative Review
+            # Check culinary death penalty idiom (判了死缓)
+            if "死缓" in src:
+                is_natural = any(w in vi.lower() for w in ["hết đường sống", "hết cửa sống", "dẹp tiệm", "hết thời", "không còn đường sống"])
+                if not is_natural:
+                    issues_by_id[cue.id].append(
+                        QualityIssue(
+                            type="idiom.literal_mistranslation",
+                            severity=QualitySeverity.MAJOR,
+                            message="Literal or awkward legal metaphor used for culinary compliment (making takeaway food obsolete).",
+                            source_span=src,
+                            target_span=vi,
+                            reviewer="idioms",
+                        )
+                    )
+                    figurative_reviews[cue.id] = FigurativeReviewResult(
+                        cue_id=cue.id,
+                        figurative=True,
+                        literal_meaning="Phán án tử hình treo cho đồ ăn ngoài",
+                        intended_meaning="Món ăn tự nấu ngon vượt trội khiến đồ ăn ngoài không còn đường sống / hết thời",
+                        tone="humorous",
+                        speaker_intention="Khen ngợi tay nghề nấu nướng",
+                        status="FAIL",
+                        issues=["Literal or awkward translation of culinary humor"],
+                        candidate_vi="Cơm cậu nấu ngon thế này thì đồ ăn ngoài hết cửa sống luôn.",
+                    )
+
+        # 2. LLM Figurative Review & Candidate Ranking V2
         if self.base_url and self.model:
             try:
                 llm_issues, llm_figs = self._call_llm_idiom_check(project, cues, context_card, batch_size=batch_size)
@@ -95,16 +97,16 @@ class IdiomReviewer:
         issues_by_id: dict[str, list[QualityIssue]] = {c.id: [] for c in cues}
         reviews_by_id: dict[str, FigurativeReviewResult] = {}
 
-        system_prompt = """You are an expert Chinese-to-Vietnamese audiovisual translation critic specializing in IDIOMS, SARCASM, JOKES, HYPERBOLE, and FIGURATIVE LANGUAGE.
-Your job is to identify cues containing Chinese idioms, metaphors, or humorous/sarcastic expressions where a literal Vietnamese translation sounds awkward or fails to convey the intended humor/meaning.
+        system_prompt = """You are an expert Chinese-to-Vietnamese subtitle localization editor specializing in IDIOMS, HUMOR, SARCASM, and FIGURATIVE LANGUAGE.
+Your job is to ensure that Chinese figurative expressions are NOT translated literally if they sound awkward in Vietnamese.
 
 For each cue:
-1. Determine if it contains figurative language / idiom / sarcasm / humor.
+1. Determine if it contains figurative language / idiom / humor / sarcasm.
 2. If figurative:
-   - Identify literal meaning vs intended meaning
-   - Identify tone: humorous, sarcastic, insulting, affectionate, dramatic, neutral
-   - Check if current Vietnamese translation is literal awkwardness vs idiomatic equivalent
-   - If current translation is awkward/literal, propose a natural candidate Vietnamese translation that preserves meaning and tone.
+   - Identify literal meaning vs intended contextual meaning.
+   - Generate 2-3 candidate Vietnamese adaptations ranked by naturalness and native Vietnamese comprehension.
+   - Ask: "Would a native Vietnamese viewer immediately understand the punchline without knowing Chinese?"
+   - If the current translation is literal/awkward, output status: FAIL with the top ranked natural candidate.
 
 Return JSON ONLY:
 {
@@ -117,6 +119,7 @@ Return JSON ONLY:
       "tone": "humorous|sarcastic|insulting|affectionate|dramatic|neutral",
       "status": "PASS|FAIL",
       "issue_message": "...",
+      "ranked_candidates": ["...", "..."],
       "candidate_vi": "..."
     }
   ]
@@ -158,14 +161,13 @@ Return JSON ONLY:
                         break
                     response.raise_for_status()
                     content = response.json().get("choices", [{}])[0].get("message", {}).get("content", "")
-                    
-                    # Clean markdown code blocks
+
                     text = re.sub(r"<think>.*?</think>", "", content, flags=re.DOTALL).strip()
                     m = re.search(r"```(?:json)?\s*(\{.*?\})\s*```", text, re.DOTALL)
                     if m:
                         text = m.group(1)
                     parsed = json.loads(text)
-                    
+
                     for item in parsed.get("reviews", []):
                         cid = item.get("cue_id")
                         if not cid or cid not in issues_by_id:
