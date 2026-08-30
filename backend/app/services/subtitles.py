@@ -244,14 +244,7 @@ Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
         y_pos = cue_y_centers[idx] if idx < len(cue_y_centers) else default_y_center
 
         if is_any_shortform:
-            if has_backing:
-                blur_r = 8 if is_shortform_white_black else (backing_cfg.blur_radius if backing_cfg else 8)
-                # Layer 0: Soft blurred backing plate centered directly over Chinese subtitle region
-                events.append(f"Dialogue: 0,{start_str},{end_str},BackingPlate,,0,0,0,,{{\\an5\\pos({center_x},{y_pos})\\blur{blur_r}\\alpha&HFF&}}{ass_text}")
-                # Layer 1: Crisp text centered directly over Chinese subtitle region
-                events.append(f"Dialogue: 1,{start_str},{end_str},Default,,0,0,0,,{{\\an5\\pos({center_x},{y_pos})}}{ass_text}")
-            else:
-                events.append(f"Dialogue: 0,{start_str},{end_str},Default,,0,0,0,,{{\\an5\\pos({center_x},{y_pos})}}{ass_text}")
+            events.append(f"Dialogue: 0,{start_str},{end_str},Default,,0,0,0,,{{\\an5\\pos({center_x},{y_pos})}}{ass_text}")
         else:
             if has_backing:
                 blur_r = backing_cfg.blur_radius if backing_cfg else 8

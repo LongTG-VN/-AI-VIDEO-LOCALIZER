@@ -111,7 +111,7 @@ def test_vietnamese_subtitle_preset_shortform_reference():
 
 
 def test_vietnamese_subtitle_preset_shortform_white_black_soft_bg():
-    """Verify that preset 'shortform_white_black_soft_bg' renders Layer 0 Soft Blurred Backing and Layer 1 White Text with Thin Black Outline."""
+    """Verify that preset 'shortform_white_black_soft_bg' formats crisp text centered at OCR anchor."""
     cues = [
         SubtitleCue(
             id="c1",
@@ -132,18 +132,13 @@ def test_vietnamese_subtitle_preset_shortform_white_black_soft_bg():
     ass_content = to_ass(cues, opts, width=1280, height=720)
 
     # Verify Style definitions
-    assert "Style: BackingPlate" in ass_content
     assert "Style: Default" in ass_content
     # White fill & thin black outline
     assert "&H00FFFFFF" in ass_content
     assert "&H00000000" in ass_content
     assert "1.8,0.6,2,20,20," in ass_content
-    # Layer 0 has soft blur
-    assert "\\blur12" in ass_content or "\\blur" in ass_content
-    # Multi-layer events
+    # Events
     assert "Dialogue: 0," in ass_content
-    assert "BackingPlate" in ass_content
-    assert "Dialogue: 1," in ass_content
     assert "Default" in ass_content
     assert "Xin chào thế giới" in ass_content
 
@@ -206,8 +201,8 @@ def test_no_backing_without_active_vi_subtitle():
     )
     ass_content = to_ass(cues, opts, width=852, height=480)
     lines = [l for l in ass_content.split("\n") if l.startswith("Dialogue:")]
-    # Exactly 2 dialogue lines (Layer 0 BackingPlate + Layer 1 Default) for the single active cue
-    assert len(lines) == 2
+    # Exactly 1 dialogue line for the single active cue
+    assert len(lines) == 1
     assert "0:00:05.00" in lines[0]
     assert "0:00:07.00" in lines[0]
 
@@ -244,3 +239,28 @@ def test_ocr_y_anchor_stability_with_anomalous_polygon():
     assert match is not None
     pos_y = int(match.group(1))
     assert 380 <= pos_y <= 430
+
+
+def test_compute_vi_backing_intervals_and_rounded_mask():
+    """Verify that compute_vi_backing_intervals and create_rounded_rect_mask generate valid bounds."""
+    cleaner = PatchCoverCleaner()
+    cues = [
+        SubtitleCue(id="c1", start=1.0, end=3.0, source_text="你好", translated_text="Xin chào"),
+        SubtitleCue(id="c2", start=4.0, end=7.0, source_text="两行字幕测试", translated_text="Ở một gia đình mở quán ăn sáng, bốn giờ sáng đã phải dậy giúp nhào bột."),
+    ]
+    intervals = cleaner.compute_vi_backing_intervals(cues, width=852, height=480)
+    assert len(intervals) == 2
+    # Check 1-line vs 2-line height
+    bbox1 = intervals[0]["bbox"]
+    bbox2 = intervals[1]["bbox"]
+    h1 = bbox1[3] - bbox1[1]
+    h2 = bbox2[3] - bbox2[1]
+    assert h2 > h1  # 2-line backing is taller than 1-line backing
+    assert bbox1[1] >= int(480 * 0.68)  # safe bottom cutoff
+
+    # Test mask generation
+    mask = cleaner.create_rounded_rect_mask(480, 852, bbox1, radius=10, feather=8)
+    assert mask.shape == (480, 852)
+    assert 0.0 < mask.max() <= 1.0
+    assert np.all(mask[:int(480 * 0.68), :] == 0.0)
+

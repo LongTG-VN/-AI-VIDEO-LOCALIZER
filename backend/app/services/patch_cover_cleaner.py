@@ -164,42 +164,170 @@ class PatchCoverCleaner:
 
         return mask.astype(np.float32) / 255.0
 
+    def compute_vi_backing_intervals(
+        self,
+        cues: list[SubtitleCue],
+        width: int,
+        height: int,
+    ) -> list[dict[str, Any]]:
+        """Compute exact VI text bounding boxes for each rendered Vietnamese subtitle cue."""
+        from app.services.subtitles import UtteranceEngine
+
+        engine = UtteranceEngine()
+        render_cues, _ = engine.process_cues(cues, translated=True)
+        cues_by_id = {
+            (getattr(c, "id", None) or getattr(c, "render_id", None)): c
+            for c in cues
+            if (getattr(c, "id", None) or getattr(c, "render_id", None))
+        }
+
+        cue_y_centers: list[int] = []
+        default_y_center = int(round(height * 0.862 - 4.0))
+
+        for cue in render_cues:
+            y_pts: list[float] = []
+            for cid in getattr(cue, "source_cue_ids", []):
+                orig = cues_by_id.get(cid)
+                if not orig:
+                    continue
+                for r in getattr(orig, "ocr_regions", []) or []:
+                    pts = getattr(r, "points", []) or []
+                    if len(pts) >= 3:
+                        ys = [p[1] for p in pts if len(p) >= 2]
+                        if ys and min(ys) >= 0.70 and max(ys) <= 0.98 and (max(ys) - min(ys)) <= 0.14:
+                            y_pts.extend(ys)
+                for ev in getattr(orig, "ocr_evidence", []) or []:
+                    for r in getattr(ev, "regions", []) or []:
+                        pts = getattr(r, "points", []) or []
+                        if len(pts) >= 3:
+                            ys = [p[1] for p in pts if len(p) >= 2]
+                            if ys and min(ys) >= 0.70 and max(ys) <= 0.98 and (max(ys) - min(ys)) <= 0.14:
+                                y_pts.extend(ys)
+
+            if y_pts:
+                min_y = min(y_pts)
+                max_y = max(y_pts)
+                mid_y = (min_y + max_y) / 2.0 * height - 4.0
+                clamped_y = int(round(max(height * 0.75, min(height * 0.90, mid_y))))
+                cue_y_centers.append(clamped_y)
+            else:
+                cue_y_centers.append(default_y_center)
+
+        if cue_y_centers:
+            median_y = int(round(float(np.median(cue_y_centers))))
+            smoothed_y_centers = []
+            for y_val in cue_y_centers:
+                if abs(y_val - median_y) <= 14:
+                    smoothed_y_centers.append(median_y)
+                else:
+                    smoothed_y_centers.append(y_val)
+            cue_y_centers = smoothed_y_centers
+
+        center_x = width // 2
+        font_size = max(18, int(round(height * 0.050)))
+        pad_x = 22
+        pad_y = 10
+
+        vi_intervals: list[dict[str, Any]] = []
+        for idx, cue in enumerate(render_cues):
+            lines = [l.strip() for l in cue.render_text.replace(r"\N", "\n").split("\n") if l.strip()]
+            if not lines:
+                continue
+            line_count = len(lines)
+            max_line_chars = max(len(l) for l in lines)
+            text_w = int(round(max_line_chars * (font_size * 0.54)))
+            text_h = int(round(line_count * (font_size * 1.25)))
+
+            y_pos = cue_y_centers[idx] if idx < len(cue_y_centers) else default_y_center
+            x1 = max(0, int(center_x - text_w / 2 - pad_x))
+            x2 = min(width, int(center_x + text_w / 2 + pad_x))
+            y1 = max(int(height * 0.68), int(y_pos - text_h / 2 - pad_y))
+            y2 = min(int(height * 0.98), int(y_pos + text_h / 2 + pad_y))
+
+            vi_intervals.append({
+                "start": cue.start,
+                "end": cue.end,
+                "cue_id": getattr(cue, "render_id", str(idx)),
+                "bbox": (x1, y1, x2, y2),
+            })
+
+        return vi_intervals
+
+    def create_rounded_rect_mask(
+        self,
+        height: int,
+        width: int,
+        bbox: tuple[int, int, int, int],
+        radius: int = 10,
+        feather: int = 8,
+    ) -> np.ndarray:
+        """Create a smooth feathered rounded-rectangle mask for VI text backing."""
+        x1, y1, x2, y2 = bbox
+        mask = np.zeros((height, width), dtype=np.uint8)
+        radius = max(1, min(radius, (x2 - x1) // 2, (y2 - y1) // 2))
+
+        cv2.rectangle(mask, (x1 + radius, y1), (x2 - radius, y2), 255, -1)
+        cv2.rectangle(mask, (x1, y1 + radius), (x2, y2 - radius), 255, -1)
+        cv2.circle(mask, (x1 + radius, y1 + radius), radius, 255, -1)
+        cv2.circle(mask, (x2 - radius, y1 + radius), radius, 255, -1)
+        cv2.circle(mask, (x1 + radius, y2 - radius), radius, 255, -1)
+        cv2.circle(mask, (x2 - radius, y2 - radius), radius, 255, -1)
+
+        if feather > 0:
+            k = max(1, feather * 2 + 1)
+            mask = cv2.GaussianBlur(mask, (k, k), feather)
+
+        return mask.astype(np.float32) / 255.0
+
     def apply_patch_cover(
         self,
         frame: np.ndarray,
-        alpha_mask: np.ndarray,
+        alpha_mask: np.ndarray | None = None,
+        vi_backing_mask: np.ndarray | None = None,
         donor_frame: np.ndarray | None = None,
     ) -> np.ndarray:
-        """Blend donor/blur patch over subtitle region according to feathered alpha mask."""
+        """Blend Chinese patch cover and VI subtitle backdrop blur over video frame."""
+        out = frame.copy()
         h, w = frame.shape[:2]
         opacity = self.config.patch_opacity
         sigma = self.config.blur_sigma
 
-        # Priority 1: Temporal donor if available
-        if donor_frame is not None and self.config.use_temporal_donor:
-            patch = donor_frame
-            if sigma > 0:
-                k_blur = max(1, int(sigma * 2 + 1))
+        # Step 1: Chinese Hard-Sub Patch Cover (tight glyph mask)
+        if alpha_mask is not None and np.any(alpha_mask > 0.001):
+            if donor_frame is not None and self.config.use_temporal_donor:
+                patch = donor_frame
+                if sigma > 0:
+                    k_blur = max(1, int(sigma * 2 + 1))
+                    if k_blur % 2 == 0:
+                        k_blur += 1
+                    patch = cv2.GaussianBlur(patch, (k_blur, k_blur), sigma)
+            else:
+                k_blur = max(1, int(sigma * 3 + 1))
                 if k_blur % 2 == 0:
                     k_blur += 1
-                patch = cv2.GaussianBlur(patch, (k_blur, k_blur), sigma)
-        # Priority 2/3: Local soft blur patch
-        k_blur = max(1, int(sigma * 3 + 1))
-        if k_blur % 2 == 0:
-            k_blur += 1
-        patch = cv2.GaussianBlur(frame, (k_blur, k_blur), sigma)
+                patch = cv2.GaussianBlur(out, (k_blur, k_blur), sigma)
 
-        # Apply subtle dark tint (e.g. 30%) to the blurred video backdrop patch
-        dark_tint = getattr(self.config, "dark_tint", 0.0)
-        if dark_tint > 0:
-            patch = (patch.astype(np.float32) * (1.0 - dark_tint)).astype(np.uint8)
+            dark_tint = getattr(self.config, "dark_tint", 0.48)
+            if dark_tint > 0:
+                patch = (patch.astype(np.float32) * (1.0 - dark_tint)).astype(np.uint8)
 
-        # 3-channel alpha
-        alpha_3d = np.repeat((alpha_mask * opacity)[:, :, np.newaxis], 3, axis=2)
+            alpha_3d = np.repeat((alpha_mask * opacity)[:, :, np.newaxis], 3, axis=2)
+            out = (1.0 - alpha_3d) * out.astype(np.float32) + alpha_3d * patch.astype(np.float32)
+            out = np.clip(out, 0, 255).astype(np.uint8)
 
-        # Composite: (1 - alpha) * frame + alpha * patch
-        out = (1.0 - alpha_3d) * frame.astype(np.float32) + alpha_3d * patch.astype(np.float32)
-        return np.clip(out, 0, 255).astype(np.uint8)
+        # Step 2: VI Subtitle Backing (consistent soft backdrop blur + subtle dark tint)
+        if vi_backing_mask is not None and np.any(vi_backing_mask > 0.001):
+            blur_sigma_bg = 6.0
+            k_bg = 19
+            blurred_bg = cv2.GaussianBlur(out, (k_bg, k_bg), blur_sigma_bg)
+            dark_tint_bg = 0.32  # subtle dark tint (~32%)
+            blurred_bg = (blurred_bg.astype(np.float32) * (1.0 - dark_tint_bg)).astype(np.uint8)
+            backing_opacity = 0.75  # soft semi-translucent blend
+            alpha_bg_3d = np.repeat((vi_backing_mask * backing_opacity)[:, :, np.newaxis], 3, axis=2)
+            out = (1.0 - alpha_bg_3d) * out.astype(np.float32) + alpha_bg_3d * blurred_bg.astype(np.float32)
+            out = np.clip(out, 0, 255).astype(np.uint8)
+
+        return out
 
     def clean_video(
         self,
@@ -222,6 +350,7 @@ class PatchCoverCleaner:
         total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
 
         intervals = self.extract_active_intervals(cues, fps)
+        vi_intervals = self.compute_vi_backing_intervals(cues, width, height)
 
         # Setup VideoWriter
         fourcc = cv2.VideoWriter_fourcc(*"mp4v")
@@ -235,9 +364,12 @@ class PatchCoverCleaner:
         frame_idx = 0
         patched_frames_count = 0
 
-        # Mask cache across frames
-        cached_interval_id = None
-        cached_mask = None
+        # Mask caches across frames
+        cached_cn_id = None
+        cached_cn_mask = None
+
+        cached_vi_id = None
+        cached_vi_mask = None
 
         while True:
             ret, frame = cap.read()
@@ -246,25 +378,46 @@ class PatchCoverCleaner:
 
             cur_time = frame_idx / fps
 
-            # Find active interval
-            active_item = None
+            # Find active Chinese interval
+            active_cn = None
             for item in intervals:
                 if item["start"] <= cur_time <= item["end"]:
-                    active_item = item
+                    active_cn = item
                     break
 
-            if active_item is not None:
+            # Find active VI backing interval
+            active_vi = None
+            for item in vi_intervals:
+                if item["start"] <= cur_time <= item["end"]:
+                    active_vi = item
+                    break
+
+            if active_cn is not None or active_vi is not None:
                 patched_frames_count += 1
-                item_key = (active_item["cue_id"], active_item["start"], active_item["end"])
 
-                if item_key == cached_interval_id and cached_mask is not None:
-                    alpha_mask = cached_mask
-                else:
-                    alpha_mask = self.create_feathered_mask(height, width, active_item["polygons"])
-                    cached_interval_id = item_key
-                    cached_mask = alpha_mask
+                # Chinese mask
+                alpha_cn_mask = None
+                if active_cn is not None:
+                    cn_key = (active_cn["cue_id"], active_cn["start"], active_cn["end"])
+                    if cn_key == cached_cn_id and cached_cn_mask is not None:
+                        alpha_cn_mask = cached_cn_mask
+                    else:
+                        alpha_cn_mask = self.create_feathered_mask(height, width, active_cn["polygons"])
+                        cached_cn_id = cn_key
+                        cached_cn_mask = alpha_cn_mask
 
-                covered_frame = self.apply_patch_cover(frame, alpha_mask)
+                # VI backing mask
+                alpha_vi_mask = None
+                if active_vi is not None:
+                    vi_key = (active_vi["cue_id"], active_vi["start"], active_vi["end"])
+                    if vi_key == cached_vi_id and cached_vi_mask is not None:
+                        alpha_vi_mask = cached_vi_mask
+                    else:
+                        alpha_vi_mask = self.create_rounded_rect_mask(height, width, active_vi["bbox"], radius=10, feather=8)
+                        cached_vi_id = vi_key
+                        cached_vi_mask = alpha_vi_mask
+
+                covered_frame = self.apply_patch_cover(frame, alpha_mask=alpha_cn_mask, vi_backing_mask=alpha_vi_mask)
                 writer.write(covered_frame)
             else:
                 # Fast path: 100% untouched frame
