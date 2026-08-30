@@ -164,11 +164,11 @@ class OverlayConfig(BaseModel):
 class SubtitleBackingConfig(BaseModel):
     enabled: bool = True
     color: str = "&H00000000"  # black
-    opacity: float = Field(default=0.60, ge=0.0, le=1.0)  # 0.45 - 0.70
-    padding_x: int = Field(default=18, ge=0, le=64)
-    padding_y: int = Field(default=8, ge=0, le=32)
+    opacity: float = Field(default=0.72, ge=0.0, le=1.0)  # slightly increased for bright scenes
+    padding_x: int = Field(default=20, ge=0, le=64)
+    padding_y: int = Field(default=10, ge=0, le=32)
     corner_radius: int = Field(default=10, ge=0, le=32)
-    blur_radius: int = Field(default=6, ge=0, le=32)
+    blur_radius: int = Field(default=8, ge=0, le=32)
 
 
 class VisualEditConfig(BaseModel):

@@ -323,7 +323,7 @@ export default function App() {
                           mode: 'patch_cover',
                           blur: project.visual_edit?.blur ?? { enabled: false, sigma: 18, padding_px: 8, feather_px: 6 },
                           patch_cover: project.visual_edit?.patch_cover ?? { enabled: true, patch_opacity: 0.92, padding_px: 6, feather_px: 8, blur_sigma: 6 },
-                          subtitle_backing: { enabled: true, opacity: 0.60, padding_x: 18, padding_y: 8, corner_radius: 10, blur_radius: 8 },
+                          subtitle_backing: { enabled: true, opacity: 0.72, padding_x: 20, padding_y: 10, corner_radius: 10, blur_radius: 8 },
                           overlays: project.visual_edit?.overlays ?? [],
                           preset: 'shortform_white_black_soft_bg',
                         }
@@ -340,7 +340,7 @@ export default function App() {
                           mode: 'patch_cover',
                           blur: project.visual_edit?.blur ?? { enabled: false, sigma: 18, padding_px: 8, feather_px: 6 },
                           patch_cover: project.visual_edit?.patch_cover ?? { enabled: true, patch_opacity: 0.92, padding_px: 6, feather_px: 8, blur_sigma: 6 },
-                          subtitle_backing: { enabled: true, opacity: 0.60, padding_x: 18, padding_y: 8, corner_radius: 10, blur_radius: 6 },
+                          subtitle_backing: { enabled: true, opacity: 0.72, padding_x: 20, padding_y: 10, corner_radius: 10, blur_radius: 6 },
                           overlays: project.visual_edit?.overlays ?? [],
                           preset: 'shortform_bold_yellow',
                         }
@@ -354,13 +354,13 @@ export default function App() {
                 {project.visual_edit?.subtitle_backing?.enabled && (
                   <div className="sliders-grid">
                     <div className="slider-item">
-                      <label>Backing Opacity ({Math.round((project.visual_edit?.subtitle_backing?.opacity ?? 0.60) * 100)}%)</label>
+                      <label>Backing Opacity ({Math.round((project.visual_edit?.subtitle_backing?.opacity ?? 0.72) * 100)}%)</label>
                       <input
                         type="range"
                         min="0.30"
                         max="0.95"
                         step="0.05"
-                        value={project.visual_edit?.subtitle_backing?.opacity ?? 0.60}
+                        value={project.visual_edit?.subtitle_backing?.opacity ?? 0.72}
                         onChange={(e) => {
                           const val = Number(e.target.value)
                           setProject({

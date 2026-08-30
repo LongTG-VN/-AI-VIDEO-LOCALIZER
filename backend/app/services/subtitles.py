@@ -149,8 +149,8 @@ def to_ass(
     styles_list = []
 
     if has_backing:
-        opacity = backing_cfg.opacity if backing_cfg else 0.60
-        pad_x = backing_cfg.padding_x if backing_cfg else 18
+        opacity = backing_cfg.opacity if backing_cfg else 0.72
+        pad_x = backing_cfg.padding_x if backing_cfg else 20
         # Calculate hex alpha: 0.0=solid (&H00), 1.0=transparent (&HFF)
         alpha_int = int(max(0, min(255, round((1.0 - opacity) * 255))))
         backing_color = f"&H{alpha_int:02X}000000"
