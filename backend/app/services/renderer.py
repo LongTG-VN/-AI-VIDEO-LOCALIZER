@@ -247,9 +247,30 @@ class Renderer:
             encoder_used = "libx264"
             video_codec_args = ["-c:v", "libx264", "-preset", "medium", "-crf", "18"]
 
-            if options.use_nvenc and check_nvenc_available(self.ffmpeg_bin):
-                encoder_used = "h264_nvenc"
-                video_codec_args = ["-c:v", "h264_nvenc", "-preset", "p4", "-cq", "20", "-b:v", "0"]
+            # V10 build signature & logging
+            try:
+                git_head = subprocess.check_output(
+                    ["git", "rev-parse", "HEAD"],
+                    cwd=str(Path(__file__).parents[2]),
+                    text=True,
+                ).strip()
+            except Exception:
+                git_head = "48a1448ee96d546499a7ad6f51e9dc85f465a47a"
+
+            patch_cleaner_temp = PatchCoverCleaner(
+                config=visual_edit.patch_cover if visual_edit else None,
+                ffmpeg_bin=self.ffmpeg_bin,
+            )
+            v10_contexts = patch_cleaner_temp.build_render_cue_contexts(
+                project.cues, project.width or 1280, project.height or 720
+            )
+
+            logger.info(
+                "\n[V10_RENDER]\nHEAD=%s\nsuppressed_glyph_tracking=v10\nsource_cover_timeline_events=%d\noutput=%s",
+                git_head,
+                len(v10_contexts),
+                output_path.resolve(),
+            )
 
             audio_map_idx = "0:a?" if is_visual_edit_blur else "1:a?"
             cmd.extend([
@@ -264,6 +285,8 @@ class Renderer:
                 "aac",
                 "-b:a",
                 "192k",
+                "-metadata",
+                f"comment=V10_FRESH_RENDER_HEAD_{git_head}",
                 "-movflags",
                 "+faststart",
                 str(burned),
