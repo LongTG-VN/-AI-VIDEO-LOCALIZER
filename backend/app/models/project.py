@@ -55,29 +55,42 @@ class SubtitleCue(BaseModel):
     ocr_regions: list[OCRRegion] = Field(default_factory=list)
     ocr_evidence: list[OCREvidence] = Field(default_factory=list)
     translation_confidence: float | None = Field(default=None, ge=0, le=1)
-    relationship_confidence: float | None = Field(default=None, ge=0, le=1)
     needs_review: bool = False
     review_notes: str | None = None
+    suppression_status: str | None = None
+    suppression_reason: str | None = None
     critic_score: float | None = None
     critic_flags: list[str] = Field(default_factory=list)
     original_source_cue_ids: list[str] = Field(default_factory=list)
-    source_integrity_status: str | None = None
+    source_integrity_status: Literal["PASS", "REPAIRED", "UNRESOLVED", "MANUAL_SPLIT"] = "PASS"
+    source_integrity_reason: str | None = None
     source_confidence: float | None = Field(default=None, ge=0, le=1)
     segmentation_method: str | None = None
     source_corrections: list[dict[str, Any]] = Field(default_factory=list)
     word_timestamps: list[dict[str, Any]] = Field(default_factory=list)
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 
 def get_final_vi_text(cue: SubtitleCue) -> str:
     """Canonical accessor for finalized Vietnamese subtitle translation.
 
     Contract:
+    - If cue has suppression_status in SUPPRESSED_FILLER or SUPPRESSED_NONSEMANTIC_DIALOGUE, returns ""
+    - If cue is non-speech noise (e.g. 'AL', '10:50'), returns ""
     - Returns final_translation if non-empty and valid Vietnamese
     - Otherwise returns repaired_translation if non-empty and valid Vietnamese
     - Otherwise returns translated_text if non-empty, not identical to source_text, and valid Vietnamese
     - Otherwise returns draft_translation if non-empty and valid Vietnamese
     - NEVER silently returns Chinese source when translated text is requested
     """
+    if getattr(cue, "suppression_status", None) in {"SUPPRESSED_FILLER", "SUPPRESSED_NONSEMANTIC_DIALOGUE"}:
+        return ""
+
+    raw_src = (getattr(cue, "source_text", "") or "").strip()
+    if raw_src in {"AL", "10:50", "..."}:
+        return ""
+
     for val in [
         getattr(cue, "final_translation", None),
         getattr(cue, "repaired_translation", None),

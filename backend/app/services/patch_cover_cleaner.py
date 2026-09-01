@@ -14,6 +14,7 @@ from app.models.project import (
     OCRRegion,
     PatchCoverConfig,
     SubtitleCue,
+    get_final_vi_text,
 )
 
 logger = logging.getLogger(__name__)
@@ -173,8 +174,6 @@ class PatchCoverCleaner:
 
         engine = UtteranceEngine()
         render_cues, _ = engine.process_cues(cues, translated=True)
-        if not render_cues and cues:
-            render_cues = cues
         cues_by_id = {
             (getattr(c, "id", None) or getattr(c, "render_id", None)): c
             for c in cues
@@ -232,6 +231,8 @@ class PatchCoverCleaner:
 
         contexts: list[dict[str, Any]] = []
         for idx, cue in enumerate(render_cues):
+            if getattr(cue, "suppression_status", None) in {"SUPPRESSED_FILLER", "SUPPRESSED_NONSEMANTIC_DIALOGUE"}:
+                continue
             text = getattr(cue, "render_text", None) or getattr(cue, "translated_text", None) or getattr(cue, "source_text", "")
             lines = [l.strip() for l in str(text).replace(r"\N", "\n").split("\n") if l.strip()]
             if not lines:
@@ -239,7 +240,7 @@ class PatchCoverCleaner:
             line_count = len(lines)
             max_line_chars = max(len(l) for l in lines)
             text_w = int(round(max_line_chars * (font_size * 0.54)))
-            text_h = int(round(line_count * (font_size * 1.25)))
+            text_h = int(round(line_count * (font_size * 1.15)))
 
             y_pos = cue_y_centers[idx] if idx < len(cue_y_centers) else default_y_center
             vi_x1 = max(0, int(center_x - text_w / 2 - pad_x))
@@ -265,8 +266,8 @@ class PatchCoverCleaner:
                                 chinese_polygons.append(pts)
 
             if chinese_polygons:
-                # Filter to bottom dialogue subtitle band polygons (y >= 0.82) to exclude shirt/badge text
-                sub_band_polys = [p for p in chinese_polygons if any(pt[1] >= 0.82 for pt in p)]
+                # Filter to bottom dialogue subtitle band polygons (y >= 0.80) to exclude shirt/badge text
+                sub_band_polys = [p for p in chinese_polygons if any(pt[1] >= 0.80 for pt in p)]
                 active_polys = sub_band_polys if sub_band_polys else chinese_polygons
 
                 zh_xs = [int(p[0] * width) for poly in active_polys for p in poly]
@@ -291,7 +292,7 @@ class PatchCoverCleaner:
                 cover_y1, cover_y2 = vi_y1, vi_y2
 
             is_two_line = line_count > 1 or (chinese_polygons and (zh_y2 - zh_y1) > 65)
-            max_plate_h = int(height * (0.165 if is_two_line else 0.115))
+            max_plate_h = int(height * (0.145 if is_two_line else 0.115))
             if (cover_y2 - cover_y1) > max_plate_h:
                 cover_y1 = max(int(height * 0.68), int(y_pos - max_plate_h / 2))
                 cover_y2 = min(int(height * 0.98), int(y_pos + max_plate_h / 2))
@@ -320,10 +321,6 @@ class PatchCoverCleaner:
 
         # 2. Process Suppressed Source Dialogue Cues (Fillers / Interjections without VI)
         covered_source_cids = set()
-        for rc in render_cues:
-            for cid in (getattr(rc, "source_cue_ids", []) or [getattr(rc, "id", None)]):
-                if cid:
-                    covered_source_cids.add(cid)
         for ctx in contexts:
             for cid in ctx.get("source_cue_ids", []):
                 if cid:
@@ -369,14 +366,24 @@ class PatchCoverCleaner:
                             chinese_polygons.append(pts)
 
             if chinese_polygons:
-                sub_band_polys = [p for p in chinese_polygons if any(pt[1] >= 0.82 for pt in p)]
+                sub_band_polys = [p for p in chinese_polygons if any(pt[1] >= 0.80 for pt in p)]
                 active_polys = sub_band_polys if sub_band_polys else chinese_polygons
                 zh_xs = [int(p[0] * width) for poly in active_polys for p in poly]
                 zh_ys = [int(p[1] * height) for poly in active_polys for p in poly]
-                cover_x1 = max(0, min(zh_xs) - 20)
-                cover_x2 = min(width, max(zh_xs) + 20)
-                cover_y1 = max(int(height * 0.68), min(zh_ys) - 10)
-                cover_y2 = min(int(height * 0.98), max(zh_ys) + 10)
+                raw_x1, raw_x2 = min(zh_xs), max(zh_xs)
+                raw_y1, raw_y2 = min(zh_ys), max(zh_ys)
+                center_glyph_x = (raw_x1 + raw_x2) // 2
+                center_glyph_y = (raw_y1 + raw_y2) // 2
+
+                min_w = max(int(font_size * 2.2), 90)
+                min_h = max(int(font_size * 1.2), 48)
+                glyph_w = max(min_w, (raw_x2 - raw_x1) + 48)
+                glyph_h = max(min_h, (raw_y2 - raw_y1) + 24)
+
+                cover_x1 = max(0, center_glyph_x - glyph_w // 2)
+                cover_x2 = min(width, center_glyph_x + glyph_w // 2)
+                cover_y1 = max(int(height * 0.68), center_glyph_y - glyph_h // 2)
+                cover_y2 = min(int(height * 0.98), center_glyph_y + glyph_h // 2)
             else:
                 est_zh_w = int(round(len(src_text) * (font_size * 0.90)))
                 cover_x1 = max(0, int(center_x - est_zh_w / 2 - pad_x))

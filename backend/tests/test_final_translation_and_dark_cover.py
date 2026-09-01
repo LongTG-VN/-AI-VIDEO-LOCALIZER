@@ -214,7 +214,7 @@ def test_16_cover_cannot_exceed_safety_height():
 def test_17_cover_lifecycle_matches_subtitle():
     cleaner = PatchCoverCleaner()
     cues = [
-        SubtitleCue(id="c1", start=2.0, end=4.0, source_text="一", translated_text="Một", original_source_cue_ids=["c1"])
+        SubtitleCue(id="c1", start=2.0, end=4.0, source_text="这是一个完整的句子", final_translation="Đây là một câu hoàn chỉnh", original_source_cue_ids=["c1"])
     ]
     contexts = cleaner.build_render_cue_contexts(cues, 1280, 720)
     assert len(contexts) == 1
