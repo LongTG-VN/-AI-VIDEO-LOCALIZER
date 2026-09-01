@@ -424,6 +424,7 @@ class PatchCoverCleaner:
                 prev["end"] = handoff_t
                 curr["start"] = handoff_t
 
+        contexts = [c for c in contexts if c["end"] > c["start"]]
         return contexts
 
     @staticmethod

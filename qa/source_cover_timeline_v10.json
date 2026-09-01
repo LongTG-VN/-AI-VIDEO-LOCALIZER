@@ -1,0 +1,4050 @@
+{
+  "total_dialogue_visual_events": 76,
+  "translated_cover_events": 74,
+  "suppressed_cover_events": 2,
+  "missing_cover_events": 0,
+  "duplicate_cover_events": 0,
+  "invalid_geometry_events": 0,
+  "uncovered_source_frames": 0,
+  "bbox_escape_frames": 0,
+  "handoff_gap_frames": 0,
+  "double_dark_frames": 0,
+  "status": "PASS",
+  "timeline": [
+    {
+      "start": 1.033,
+      "end": 1.99,
+      "vi_start": 1.19,
+      "vi_end": 1.99,
+      "source_start": 1.1,
+      "source_end": 1.99,
+      "cue_id": "sub_001",
+      "source_cue_ids": [
+        "e54d5576-e3ed-420e-9ecb-47b447f47f84"
+      ],
+      "bbox": [
+        210,
+        596,
+        1070,
+        699
+      ],
+      "chinese_polygons": [
+        [
+          [
+            0.2711,
+            0.875
+          ],
+          [
+            0.7273,
+            0.875
+          ],
+          [
+            0.7273,
+            0.9444
+          ],
+          [
+            0.2711,
+            0.9444
+          ]
+        ]
+      ],
+      "has_vi": true,
+      "reason": "TRANSLATED_DIALOGUE"
+    },
+    {
+      "start": 1.99,
+      "end": 3.59,
+      "vi_start": 2.33,
+      "vi_end": 3.56,
+      "source_start": 1.1,
+      "source_end": 5.1,
+      "cue_id": "sub_002",
+      "source_cue_ids": [
+        "66b4918f-64ff-43bc-8b81-102716889346"
+      ],
+      "bbox": [
+        200,
+        596,
+        1080,
+        699
+      ],
+      "chinese_polygons": [
+        [
+          [
+            0.2711,
+            0.875
+          ],
+          [
+            0.7273,
+            0.875
+          ],
+          [
+            0.7273,
+            0.9444
+          ],
+          [
+            0.2711,
+            0.9444
+          ]
+        ]
+      ],
+      "has_vi": true,
+      "reason": "TRANSLATED_DIALOGUE"
+    },
+    {
+      "start": 3.59,
+      "end": 5.59,
+      "vi_start": 3.59,
+      "vi_end": 5.59,
+      "source_start": 3.59,
+      "source_end": 6.6,
+      "cue_id": "sub_003",
+      "source_cue_ids": [
+        "c5d4d993-fd04-4829-b586-916105aba261"
+      ],
+      "bbox": [
+        200,
+        596,
+        1080,
+        699
+      ],
+      "chinese_polygons": [
+        [
+          [
+            0.2711,
+            0.875
+          ],
+          [
+            0.7273,
+            0.875
+          ],
+          [
+            0.7273,
+            0.9444
+          ],
+          [
+            0.2711,
+            0.9444
+          ]
+        ],
+        [
+          [
+            0.4148,
+            0.8667
+          ],
+          [
+            0.5813,
+            0.8667
+          ],
+          [
+            0.5813,
+            0.9514
+          ],
+          [
+            0.4148,
+            0.9514
+          ]
+        ],
+        [
+          [
+            0.3719,
+            0.8556
+          ],
+          [
+            0.6273,
+            0.8556
+          ],
+          [
+            0.6273,
+            0.9556
+          ],
+          [
+            0.3719,
+            0.9556
+          ]
+        ]
+      ],
+      "has_vi": true,
+      "reason": "TRANSLATED_DIALOGUE"
+    },
+    {
+      "start": 5.59,
+      "end": 8.0,
+      "vi_start": 5.89,
+      "vi_end": 7.27,
+      "source_start": 3.9,
+      "source_end": 8.1,
+      "cue_id": "sub_004",
+      "source_cue_ids": [
+        "d9e4c3aa-4f4c-468f-ad00-826e98b81404"
+      ],
+      "bbox": [
+        278,
+        606,
+        1002,
+        698
+      ],
+      "chinese_polygons": [
+        [
+          [
+            0.4148,
+            0.8667
+          ],
+          [
+            0.5813,
+            0.8667
+          ],
+          [
+            0.5813,
+            0.9514
+          ],
+          [
+            0.4148,
+            0.9514
+          ]
+        ],
+        [
+          [
+            0.3719,
+            0.8556
+          ],
+          [
+            0.6273,
+            0.8556
+          ],
+          [
+            0.6273,
+            0.9556
+          ],
+          [
+            0.3719,
+            0.9556
+          ]
+        ]
+      ],
+      "has_vi": true,
+      "reason": "TRANSLATED_DIALOGUE"
+    },
+    {
+      "start": 8.0,
+      "end": 9.22,
+      "vi_start": 8.39,
+      "vi_end": 9.19,
+      "source_start": 7.9,
+      "source_end": 10.81,
+      "cue_id": "sub_005",
+      "source_cue_ids": [
+        "6306912f-c98f-424e-b9bc-e80edc6db227"
+      ],
+      "bbox": [
+        404,
+        607,
+        876,
+        689
+      ],
+      "chinese_polygons": [
+        [
+          [
+            0.4047,
+            0.8667
+          ],
+          [
+            0.5922,
+            0.8667
+          ],
+          [
+            0.5922,
+            0.9542
+          ],
+          [
+            0.4047,
+            0.9542
+          ]
+        ]
+      ],
+      "has_vi": true,
+      "reason": "TRANSLATED_DIALOGUE"
+    },
+    {
+      "start": 9.22,
+      "end": 10.78,
+      "vi_start": 9.22,
+      "vi_end": 10.78,
+      "source_start": 7.9,
+      "source_end": 10.81,
+      "cue_id": "sub_006",
+      "source_cue_ids": [
+        "7cadef9d-9e74-468b-af8e-e618eb3de629"
+      ],
+      "bbox": [
+        307,
+        607,
+        973,
+        689
+      ],
+      "chinese_polygons": [
+        [
+          [
+            0.4047,
+            0.8667
+          ],
+          [
+            0.5922,
+            0.8667
+          ],
+          [
+            0.5922,
+            0.9542
+          ],
+          [
+            0.4047,
+            0.9542
+          ]
+        ],
+        [
+          [
+            0.3297,
+            0.875
+          ],
+          [
+            0.6687,
+            0.875
+          ],
+          [
+            0.6687,
+            0.9444
+          ],
+          [
+            0.3297,
+            0.9444
+          ]
+        ]
+      ],
+      "has_vi": true,
+      "reason": "TRANSLATED_DIALOGUE"
+    },
+    {
+      "start": 10.78,
+      "end": 11.63,
+      "vi_start": 10.81,
+      "vi_end": 11.6,
+      "source_start": 9.4,
+      "source_end": 13.1,
+      "cue_id": "sub_007",
+      "source_cue_ids": [
+        "f4091e40-861d-4335-b2ff-64701808f75c"
+      ],
+      "bbox": [
+        307,
+        617,
+        973,
+        689
+      ],
+      "chinese_polygons": [
+        [
+          [
+            0.3297,
+            0.875
+          ],
+          [
+            0.6687,
+            0.875
+          ],
+          [
+            0.6687,
+            0.9444
+          ],
+          [
+            0.3297,
+            0.9444
+          ]
+        ]
+      ],
+      "has_vi": true,
+      "reason": "TRANSLATED_DIALOGUE"
+    },
+    {
+      "start": 11.63,
+      "end": 12.52,
+      "vi_start": 11.63,
+      "vi_end": 12.52,
+      "source_start": 11.63,
+      "source_end": 13.1,
+      "cue_id": "sub_008",
+      "source_cue_ids": [
+        "6b53665e-dbd9-486e-907f-02f106dd850e"
+      ],
+      "bbox": [
+        278,
+        596,
+        1002,
+        699
+      ],
+      "chinese_polygons": [
+        [
+          [
+            0.3297,
+            0.875
+          ],
+          [
+            0.6687,
+            0.875
+          ],
+          [
+            0.6687,
+            0.9444
+          ],
+          [
+            0.3297,
+            0.9444
+          ]
+        ],
+        [
+          [
+            0.2523,
+            0.8722
+          ],
+          [
+            0.7453,
+            0.8722
+          ],
+          [
+            0.7453,
+            0.9472
+          ],
+          [
+            0.2523,
+            0.9472
+          ]
+        ]
+      ],
+      "has_vi": true,
+      "reason": "TRANSLATED_DIALOGUE"
+    },
+    {
+      "start": 12.52,
+      "end": 13.57,
+      "vi_start": 12.55,
+      "vi_end": 13.57,
+      "source_start": 11.9,
+      "source_end": 13.57,
+      "cue_id": "sub_009",
+      "source_cue_ids": [
+        "24909eda-d767-4189-afa9-007ba04edb67"
+      ],
+      "bbox": [
+        278,
+        596,
+        1002,
+        699
+      ],
+      "chinese_polygons": [
+        [
+          [
+            0.3297,
+            0.875
+          ],
+          [
+            0.6687,
+            0.875
+          ],
+          [
+            0.6687,
+            0.9444
+          ],
+          [
+            0.3297,
+            0.9444
+          ]
+        ],
+        [
+          [
+            0.2523,
+            0.8722
+          ],
+          [
+            0.7453,
+            0.8722
+          ],
+          [
+            0.7453,
+            0.9472
+          ],
+          [
+            0.2523,
+            0.9472
+          ]
+        ]
+      ],
+      "has_vi": true,
+      "reason": "TRANSLATED_DIALOGUE"
+    },
+    {
+      "start": 13.57,
+      "end": 16.26,
+      "vi_start": 13.73,
+      "vi_end": 16.26,
+      "source_start": 11.9,
+      "source_end": 18.1,
+      "cue_id": "sub_010",
+      "source_cue_ids": [
+        "9650ac10-4fd6-4f0c-94df-72c5f9e16c3d"
+      ],
+      "bbox": [
+        287,
+        616,
+        992,
+        691
+      ],
+      "chinese_polygons": [
+        [
+          [
+            0.2523,
+            0.8722
+          ],
+          [
+            0.7453,
+            0.8722
+          ],
+          [
+            0.7453,
+            0.9472
+          ],
+          [
+            0.2523,
+            0.9472
+          ]
+        ],
+        [
+          [
+            0.3203,
+            0.8708
+          ],
+          [
+            0.6766,
+            0.8708
+          ],
+          [
+            0.6766,
+            0.9472
+          ],
+          [
+            0.3203,
+            0.9472
+          ]
+        ]
+      ],
+      "has_vi": true,
+      "reason": "TRANSLATED_DIALOGUE"
+    },
+    {
+      "start": 16.26,
+      "end": 19.01,
+      "vi_start": 16.29,
+      "vi_end": 19.01,
+      "source_start": 14.4,
+      "source_end": 20.1,
+      "cue_id": "sub_011",
+      "source_cue_ids": [
+        "c087bf48-2004-48f6-8037-51bbb60bcd36"
+      ],
+      "bbox": [
+        336,
+        616,
+        944,
+        691
+      ],
+      "chinese_polygons": [
+        [
+          [
+            0.3203,
+            0.8708
+          ],
+          [
+            0.6766,
+            0.8708
+          ],
+          [
+            0.6766,
+            0.9472
+          ],
+          [
+            0.3203,
+            0.9472
+          ]
+        ],
+        [
+          [
+            0.3766,
+            0.875
+          ],
+          [
+            0.6227,
+            0.875
+          ],
+          [
+            0.6227,
+            0.9444
+          ],
+          [
+            0.3766,
+            0.9444
+          ]
+        ]
+      ],
+      "has_vi": true,
+      "reason": "TRANSLATED_DIALOGUE"
+    },
+    {
+      "start": 19.01,
+      "end": 20.1,
+      "vi_start": 19.29,
+      "vi_end": 20.1,
+      "source_start": 17.5,
+      "source_end": 20.2,
+      "cue_id": "sub_012",
+      "source_cue_ids": [
+        "463ee519-8023-4647-bc0b-ff69cc026f78_seg1"
+      ],
+      "bbox": [
+        462,
+        617,
+        817,
+        689
+      ],
+      "chinese_polygons": [
+        [
+          [
+            0.3766,
+            0.875
+          ],
+          [
+            0.6227,
+            0.875
+          ],
+          [
+            0.6227,
+            0.9444
+          ],
+          [
+            0.3766,
+            0.9444
+          ]
+        ]
+      ],
+      "has_vi": true,
+      "reason": "TRANSLATED_DIALOGUE"
+    },
+    {
+      "start": 20.1,
+      "end": 20.96,
+      "vi_start": 20.13,
+      "vi_end": 20.93,
+      "source_start": 18.9,
+      "source_end": 21.43,
+      "cue_id": "sub_013",
+      "source_cue_ids": [
+        "463ee519-8023-4647-bc0b-ff69cc026f78_seg2"
+      ],
+      "bbox": [
+        384,
+        615,
+        895,
+        695
+      ],
+      "chinese_polygons": [
+        [
+          [
+            0.4242,
+            0.8736
+          ],
+          [
+            0.5727,
+            0.8681
+          ],
+          [
+            0.5734,
+            0.9458
+          ],
+          [
+            0.425,
+            0.9514
+          ]
+        ]
+      ],
+      "has_vi": true,
+      "reason": "TRANSLATED_DIALOGUE"
+    },
+    {
+      "start": 20.96,
+      "end": 22.65,
+      "vi_start": 20.96,
+      "vi_end": 22.13,
+      "source_start": 20.6,
+      "source_end": 23.1,
+      "cue_id": "sub_014",
+      "source_cue_ids": [
+        "463ee519-8023-4647-bc0b-ff69cc026f78_seg3",
+        "2de23dee-209a-4a7f-bd9c-6870bf6eab27"
+      ],
+      "bbox": [
+        326,
+        596,
+        953,
+        699
+      ],
+      "chinese_polygons": [
+        [
+          [
+            0.3227,
+            0.8708
+          ],
+          [
+            0.675,
+            0.8708
+          ],
+          [
+            0.675,
+            0.9486
+          ],
+          [
+            0.3227,
+            0.9486
+          ]
+        ],
+        [
+          [
+            0.3227,
+            0.8708
+          ],
+          [
+            0.675,
+            0.8708
+          ],
+          [
+            0.675,
+            0.9486
+          ],
+          [
+            0.3227,
+            0.9486
+          ]
+        ]
+      ],
+      "has_vi": true,
+      "reason": "TRANSLATED_DIALOGUE"
+    },
+    {
+      "start": 22.65,
+      "end": 23.48,
+      "vi_start": 22.65,
+      "vi_end": 23.45,
+      "source_start": 22.4,
+      "source_end": 24.77,
+      "cue_id": "sub_015",
+      "source_cue_ids": [
+        "174c63c9-fa25-489b-96dd-d7a4d9872b79_seg1"
+      ],
+      "bbox": [
+        393,
+        616,
+        884,
+        692
+      ],
+      "chinese_polygons": [
+        [
+          [
+            0.3227,
+            0.8708
+          ],
+          [
+            0.675,
+            0.8708
+          ],
+          [
+            0.675,
+            0.9486
+          ],
+          [
+            0.3227,
+            0.9486
+          ]
+        ]
+      ],
+      "has_vi": true,
+      "reason": "TRANSLATED_DIALOGUE"
+    },
+    {
+      "start": 23.48,
+      "end": 24.6,
+      "vi_start": 23.48,
+      "vi_end": 24.6,
+      "source_start": 22.4,
+      "source_end": 25.6,
+      "cue_id": "sub_016",
+      "source_cue_ids": [
+        "174c63c9-fa25-489b-96dd-d7a4d9872b79_seg2"
+      ],
+      "bbox": [
+        423,
+        615,
+        856,
+        695
+      ],
+      "chinese_polygons": [
+        [
+          [
+            0.4078,
+            0.8694
+          ],
+          [
+            0.5906,
+            0.8694
+          ],
+          [
+            0.5906,
+            0.9514
+          ],
+          [
+            0.4078,
+            0.9514
+          ]
+        ]
+      ],
+      "has_vi": true,
+      "reason": "TRANSLATED_DIALOGUE"
+    },
+    {
+      "start": 24.6,
+      "end": 25.46,
+      "vi_start": 24.63,
+      "vi_end": 25.43,
+      "source_start": 23.4,
+      "source_end": 27.1,
+      "cue_id": "sub_017",
+      "source_cue_ids": [
+        "174c63c9-fa25-489b-96dd-d7a4d9872b79_seg3"
+      ],
+      "bbox": [
+        336,
+        616,
+        944,
+        691
+      ],
+      "chinese_polygons": [
+        [
+          [
+            0.3898,
+            0.8708
+          ],
+          [
+            0.607,
+            0.8708
+          ],
+          [
+            0.607,
+            0.9472
+          ],
+          [
+            0.3898,
+            0.9472
+          ]
+        ]
+      ],
+      "has_vi": true,
+      "reason": "TRANSLATED_DIALOGUE"
+    },
+    {
+      "start": 25.46,
+      "end": 27.167,
+      "vi_start": 25.46,
+      "vi_end": 26.45,
+      "source_start": 24.9,
+      "source_end": 27.1,
+      "cue_id": "sub_018",
+      "source_cue_ids": [
+        "c8db5220-8ec0-4b92-86ca-aa4d40c93793"
+      ],
+      "bbox": [
+        287,
+        616,
+        992,
+        692
+      ],
+      "chinese_polygons": [
+        [
+          [
+            0.3898,
+            0.8708
+          ],
+          [
+            0.607,
+            0.8708
+          ],
+          [
+            0.607,
+            0.9472
+          ],
+          [
+            0.3898,
+            0.9472
+          ]
+        ],
+        [
+          [
+            0.3727,
+            0.8708
+          ],
+          [
+            0.6242,
+            0.8708
+          ],
+          [
+            0.6242,
+            0.9486
+          ],
+          [
+            0.3727,
+            0.9486
+          ]
+        ]
+      ],
+      "has_vi": true,
+      "reason": "TRANSLATED_DIALOGUE"
+    },
+    {
+      "start": 27.833,
+      "end": 30.53,
+      "vi_start": 28.39,
+      "vi_end": 30.5,
+      "source_start": 27.9,
+      "source_end": 32.1,
+      "cue_id": "sub_019",
+      "source_cue_ids": [
+        "7db57a11-480f-4551-abec-c1fde41017b5",
+        "24a43d2f-605c-4e06-ba60-6be2f298a8c2"
+      ],
+      "bbox": [
+        229,
+        596,
+        1051,
+        699
+      ],
+      "chinese_polygons": [
+        [
+          [
+            0.3391,
+            0.8722
+          ],
+          [
+            0.6586,
+            0.8722
+          ],
+          [
+            0.6586,
+            0.9472
+          ],
+          [
+            0.3391,
+            0.9472
+          ]
+        ],
+        [
+          [
+            0.3391,
+            0.8722
+          ],
+          [
+            0.6586,
+            0.8722
+          ],
+          [
+            0.6586,
+            0.9472
+          ],
+          [
+            0.3391,
+            0.9472
+          ]
+        ],
+        [
+          [
+            0.3578,
+            0.8736
+          ],
+          [
+            0.6422,
+            0.8736
+          ],
+          [
+            0.6422,
+            0.9431
+          ],
+          [
+            0.3578,
+            0.9431
+          ]
+        ]
+      ],
+      "has_vi": true,
+      "reason": "TRANSLATED_DIALOGUE"
+    },
+    {
+      "start": 30.53,
+      "end": 31.41,
+      "vi_start": 30.53,
+      "vi_end": 31.41,
+      "source_start": 29.9,
+      "source_end": 32.1,
+      "cue_id": "sub_020",
+      "source_cue_ids": [
+        "cea90f64-2e95-4892-918f-c2fa6899a78d"
+      ],
+      "bbox": [
+        287,
+        615,
+        992,
+        694
+      ],
+      "chinese_polygons": [
+        [
+          [
+            0.3578,
+            0.8736
+          ],
+          [
+            0.6422,
+            0.8736
+          ],
+          [
+            0.6422,
+            0.9431
+          ],
+          [
+            0.3578,
+            0.9431
+          ]
+        ],
+        [
+          [
+            0.3727,
+            0.8694
+          ],
+          [
+            0.6227,
+            0.8694
+          ],
+          [
+            0.6227,
+            0.95
+          ],
+          [
+            0.3727,
+            0.95
+          ]
+        ]
+      ],
+      "has_vi": true,
+      "reason": "TRANSLATED_DIALOGUE"
+    },
+    {
+      "start": 31.41,
+      "end": 33.0,
+      "vi_start": 31.81,
+      "vi_end": 32.79,
+      "source_start": 29.9,
+      "source_end": 33.6,
+      "cue_id": "sub_021",
+      "source_cue_ids": [
+        "451a1005-a53a-4390-a649-43bcc9929c7f"
+      ],
+      "bbox": [
+        346,
+        615,
+        934,
+        694
+      ],
+      "chinese_polygons": [
+        [
+          [
+            0.3578,
+            0.8736
+          ],
+          [
+            0.6422,
+            0.8736
+          ],
+          [
+            0.6422,
+            0.9431
+          ],
+          [
+            0.3578,
+            0.9431
+          ]
+        ],
+        [
+          [
+            0.3727,
+            0.8694
+          ],
+          [
+            0.6227,
+            0.8694
+          ],
+          [
+            0.6227,
+            0.95
+          ],
+          [
+            0.3727,
+            0.95
+          ]
+        ],
+        [
+          [
+            0.3898,
+            0.8722
+          ],
+          [
+            0.6078,
+            0.8722
+          ],
+          [
+            0.6078,
+            0.9486
+          ],
+          [
+            0.3898,
+            0.9486
+          ]
+        ]
+      ],
+      "has_vi": true,
+      "reason": "TRANSLATED_DIALOGUE"
+    },
+    {
+      "start": 33.0,
+      "end": 33.87,
+      "vi_start": 33.03,
+      "vi_end": 33.87,
+      "source_start": 32.4,
+      "source_end": 35.1,
+      "cue_id": "sub_022",
+      "source_cue_ids": [
+        "daf6f79d-ebea-45cb-9e4a-d19fc0d84248"
+      ],
+      "bbox": [
+        346,
+        615,
+        934,
+        694
+      ],
+      "chinese_polygons": [
+        [
+          [
+            0.3727,
+            0.8694
+          ],
+          [
+            0.6227,
+            0.8694
+          ],
+          [
+            0.6227,
+            0.95
+          ],
+          [
+            0.3727,
+            0.95
+          ]
+        ],
+        [
+          [
+            0.3898,
+            0.8722
+          ],
+          [
+            0.6078,
+            0.8722
+          ],
+          [
+            0.6078,
+            0.9486
+          ],
+          [
+            0.3898,
+            0.9486
+          ]
+        ]
+      ],
+      "has_vi": true,
+      "reason": "TRANSLATED_DIALOGUE"
+    },
+    {
+      "start": 33.87,
+      "end": 35.09,
+      "vi_start": 34.29,
+      "vi_end": 35.06,
+      "source_start": 32.4,
+      "source_end": 36.6,
+      "cue_id": "sub_023",
+      "source_cue_ids": [
+        "3ea9c6d7-c4de-4ce0-a0a0-2e49f271c5c1"
+      ],
+      "bbox": [
+        478,
+        617,
+        797,
+        692
+      ],
+      "chinese_polygons": [
+        [
+          [
+            0.3898,
+            0.8722
+          ],
+          [
+            0.6078,
+            0.8722
+          ],
+          [
+            0.6078,
+            0.9486
+          ],
+          [
+            0.3898,
+            0.9486
+          ]
+        ],
+        [
+          [
+            0.4086,
+            0.8722
+          ],
+          [
+            0.5906,
+            0.8722
+          ],
+          [
+            0.5906,
+            0.9486
+          ],
+          [
+            0.4086,
+            0.9486
+          ]
+        ]
+      ],
+      "has_vi": true,
+      "reason": "TRANSLATED_DIALOGUE"
+    },
+    {
+      "start": 35.09,
+      "end": 39.4,
+      "vi_start": 35.09,
+      "vi_end": 38.85,
+      "source_start": 33.9,
+      "source_end": 39.6,
+      "cue_id": "sub_024",
+      "source_cue_ids": [
+        "621bfe99-76f5-492f-af33-75dd989e4a2e"
+      ],
+      "bbox": [
+        503,
+        612,
+        775,
+        699
+      ],
+      "chinese_polygons": [
+        [
+          [
+            0.4086,
+            0.8722
+          ],
+          [
+            0.5906,
+            0.8722
+          ],
+          [
+            0.5906,
+            0.9486
+          ],
+          [
+            0.4086,
+            0.9486
+          ]
+        ],
+        [
+          [
+            0.4555,
+            0.8639
+          ],
+          [
+            0.543,
+            0.8639
+          ],
+          [
+            0.543,
+            0.9583
+          ],
+          [
+            0.4555,
+            0.9583
+          ]
+        ]
+      ],
+      "has_vi": true,
+      "reason": "TRANSLATED_DIALOGUE"
+    },
+    {
+      "start": 39.4,
+      "end": 41.21,
+      "vi_start": 40.41,
+      "vi_end": 41.21,
+      "source_start": 39.2,
+      "source_end": 42.2,
+      "cue_id": "sub_026",
+      "source_cue_ids": [
+        "74b809fa-dea3-4421-b493-f34fd05d7a8c"
+      ],
+      "bbox": [
+        365,
+        596,
+        914,
+        699
+      ],
+      "chinese_polygons": [
+        [
+          [
+            0.357,
+            0.8736
+          ],
+          [
+            0.6359,
+            0.8736
+          ],
+          [
+            0.6359,
+            0.9431
+          ],
+          [
+            0.357,
+            0.9431
+          ]
+        ],
+        [
+          [
+            0.3063,
+            0.875
+          ],
+          [
+            0.6922,
+            0.875
+          ],
+          [
+            0.6922,
+            0.9431
+          ],
+          [
+            0.3063,
+            0.9431
+          ]
+        ]
+      ],
+      "has_vi": true,
+      "reason": "TRANSLATED_DIALOGUE"
+    },
+    {
+      "start": 41.05,
+      "end": 42.21,
+      "vi_start": 41.27,
+      "vi_end": 42.21,
+      "source_start": 39.9,
+      "source_end": 42.21,
+      "cue_id": "sub_027",
+      "source_cue_ids": [
+        "61bf80f8-cb59-4a97-902a-9fdb0ce6287b"
+      ],
+      "bbox": [
+        365,
+        596,
+        914,
+        699
+      ],
+      "chinese_polygons": [
+        [
+          [
+            0.3063,
+            0.875
+          ],
+          [
+            0.6922,
+            0.875
+          ],
+          [
+            0.6922,
+            0.9431
+          ],
+          [
+            0.3063,
+            0.9431
+          ]
+        ]
+      ],
+      "has_vi": true,
+      "reason": "TRANSLATED_DIALOGUE"
+    },
+    {
+      "start": 42.433,
+      "end": 44.367,
+      "vi_start": 42.51,
+      "vi_end": 44.25,
+      "source_start": 42.5,
+      "source_end": 44.3,
+      "cue_id": "sub_028",
+      "source_cue_ids": [
+        "3d989bbd-d6f7-447c-872a-a80fa3c8fbd9"
+      ],
+      "bbox": [
+        180,
+        596,
+        1099,
+        699
+      ],
+      "chinese_polygons": [
+        [
+          [
+            0.2883,
+            0.8736
+          ],
+          [
+            0.7055,
+            0.8736
+          ],
+          [
+            0.7055,
+            0.9431
+          ],
+          [
+            0.2883,
+            0.9431
+          ]
+        ]
+      ],
+      "has_vi": true,
+      "reason": "TRANSLATED_DIALOGUE"
+    },
+    {
+      "start": 45.35,
+      "end": 46.8,
+      "vi_start": 45.35,
+      "vi_end": 46.39,
+      "source_start": 45.35,
+      "source_end": 46.7,
+      "cue_id": "sub_029",
+      "source_cue_ids": [
+        "28def9ab-7108-4e74-a8fc-ea424519d4ca"
+      ],
+      "bbox": [
+        433,
+        596,
+        846,
+        699
+      ],
+      "chinese_polygons": [
+        [
+          [
+            0.3898,
+            0.8736
+          ],
+          [
+            0.6062,
+            0.8736
+          ],
+          [
+            0.6062,
+            0.9444
+          ],
+          [
+            0.3898,
+            0.9444
+          ]
+        ]
+      ],
+      "has_vi": true,
+      "reason": "TRANSLATED_DIALOGUE"
+    },
+    {
+      "start": 46.8,
+      "end": 48.82,
+      "vi_start": 47.01,
+      "vi_end": 48.82,
+      "source_start": 46.9,
+      "source_end": 49.6,
+      "cue_id": "sub_030",
+      "source_cue_ids": [
+        "c8d316fd-5b1a-4e38-91b6-cc686148195c"
+      ],
+      "bbox": [
+        326,
+        596,
+        953,
+        699
+      ],
+      "chinese_polygons": [
+        [
+          [
+            0.3211,
+            0.8694
+          ],
+          [
+            0.6773,
+            0.8694
+          ],
+          [
+            0.6773,
+            0.9486
+          ],
+          [
+            0.3211,
+            0.9486
+          ]
+        ],
+        [
+          [
+            0.3094,
+            0.8722
+          ],
+          [
+            0.6875,
+            0.8722
+          ],
+          [
+            0.6875,
+            0.9458
+          ],
+          [
+            0.3094,
+            0.9458
+          ]
+        ]
+      ],
+      "has_vi": true,
+      "reason": "TRANSLATED_DIALOGUE"
+    },
+    {
+      "start": 48.82,
+      "end": 52.667,
+      "vi_start": 48.85,
+      "vi_end": 51.61,
+      "source_start": 46.9,
+      "source_end": 52.6,
+      "cue_id": "sub_031",
+      "source_cue_ids": [
+        "33f619df-4ae2-496f-b563-a4ad6966dbe9"
+      ],
+      "bbox": [
+        326,
+        596,
+        953,
+        699
+      ],
+      "chinese_polygons": [
+        [
+          [
+            0.3211,
+            0.8694
+          ],
+          [
+            0.6773,
+            0.8694
+          ],
+          [
+            0.6773,
+            0.9486
+          ],
+          [
+            0.3211,
+            0.9486
+          ]
+        ],
+        [
+          [
+            0.3094,
+            0.8722
+          ],
+          [
+            0.6875,
+            0.8722
+          ],
+          [
+            0.6875,
+            0.9458
+          ],
+          [
+            0.3094,
+            0.9458
+          ]
+        ]
+      ],
+      "has_vi": true,
+      "reason": "TRANSLATED_DIALOGUE"
+    },
+    {
+      "start": 52.93,
+      "end": 53.83,
+      "vi_start": 52.93,
+      "vi_end": 53.8,
+      "source_start": 52.93,
+      "source_end": 55.0,
+      "cue_id": "sub_032",
+      "source_cue_ids": [
+        "f2473df3-4ce0-4aa4-b19a-5fe83ccc1e00"
+      ],
+      "bbox": [
+        423,
+        616,
+        856,
+        694
+      ],
+      "chinese_polygons": [
+        [
+          [
+            0.4094,
+            0.8708
+          ],
+          [
+            0.5906,
+            0.8708
+          ],
+          [
+            0.5906,
+            0.95
+          ],
+          [
+            0.4094,
+            0.95
+          ]
+        ],
+        [
+          [
+            0.3914,
+            0.8708
+          ],
+          [
+            0.607,
+            0.8708
+          ],
+          [
+            0.607,
+            0.95
+          ],
+          [
+            0.3914,
+            0.95
+          ]
+        ]
+      ],
+      "has_vi": true,
+      "reason": "TRANSLATED_DIALOGUE"
+    },
+    {
+      "start": 53.83,
+      "end": 55.067,
+      "vi_start": 53.83,
+      "vi_end": 54.85,
+      "source_start": 53.0,
+      "source_end": 55.0,
+      "cue_id": "sub_033",
+      "source_cue_ids": [
+        "9cd6db59-496e-49b1-a267-3d2d7a07322a"
+      ],
+      "bbox": [
+        414,
+        616,
+        866,
+        694
+      ],
+      "chinese_polygons": [
+        [
+          [
+            0.4094,
+            0.8708
+          ],
+          [
+            0.5906,
+            0.8708
+          ],
+          [
+            0.5906,
+            0.95
+          ],
+          [
+            0.4094,
+            0.95
+          ]
+        ],
+        [
+          [
+            0.3914,
+            0.8708
+          ],
+          [
+            0.607,
+            0.8708
+          ],
+          [
+            0.607,
+            0.95
+          ],
+          [
+            0.3914,
+            0.95
+          ]
+        ]
+      ],
+      "has_vi": true,
+      "reason": "TRANSLATED_DIALOGUE"
+    },
+    {
+      "start": 55.633,
+      "end": 57.87,
+      "vi_start": 55.75,
+      "vi_end": 57.87,
+      "source_start": 55.7,
+      "source_end": 58.6,
+      "cue_id": "sub_034",
+      "source_cue_ids": [
+        "90bb8c56-a710-45f1-8ddc-85cbf1be243b_seg1"
+      ],
+      "bbox": [
+        278,
+        617,
+        1002,
+        691
+      ],
+      "chinese_polygons": [
+        [
+          [
+            0.3063,
+            0.8736
+          ],
+          [
+            0.6906,
+            0.8736
+          ],
+          [
+            0.6906,
+            0.9472
+          ],
+          [
+            0.3063,
+            0.9472
+          ]
+        ]
+      ],
+      "has_vi": true,
+      "reason": "TRANSLATED_DIALOGUE"
+    },
+    {
+      "start": 57.87,
+      "end": 61.0,
+      "vi_start": 57.9,
+      "vi_end": 60.52,
+      "source_start": 55.75,
+      "source_end": 61.6,
+      "cue_id": "sub_035",
+      "source_cue_ids": [
+        "90bb8c56-a710-45f1-8ddc-85cbf1be243b_seg2"
+      ],
+      "bbox": [
+        372,
+        596,
+        906,
+        699
+      ],
+      "chinese_polygons": [
+        [
+          [
+            0.3063,
+            0.875
+          ],
+          [
+            0.6922,
+            0.875
+          ],
+          [
+            0.6922,
+            0.9431
+          ],
+          [
+            0.3063,
+            0.9431
+          ]
+        ]
+      ],
+      "has_vi": true,
+      "reason": "TRANSLATED_DIALOGUE"
+    },
+    {
+      "start": 61.0,
+      "end": 63.1,
+      "vi_start": 61.64,
+      "vi_end": 63.1,
+      "source_start": 60.4,
+      "source_end": 63.1,
+      "cue_id": "sub_036",
+      "source_cue_ids": [
+        "0b072dda-7361-4515-8baf-955ffa88638b_seg1"
+      ],
+      "bbox": [
+        394,
+        617,
+        885,
+        692
+      ],
+      "chinese_polygons": [
+        [
+          [
+            0.3914,
+            0.8722
+          ],
+          [
+            0.6086,
+            0.8722
+          ],
+          [
+            0.6086,
+            0.9486
+          ],
+          [
+            0.3914,
+            0.9486
+          ]
+        ]
+      ],
+      "has_vi": true,
+      "reason": "TRANSLATED_DIALOGUE"
+    },
+    {
+      "start": 67.733,
+      "end": 70.61,
+      "vi_start": 69.5,
+      "vi_end": 70.61,
+      "source_start": 67.8,
+      "source_end": 72.3,
+      "cue_id": "sub_038",
+      "source_cue_ids": [
+        "3c2c0c28-6a73-4866-ba6e-3aa7c043da0d"
+      ],
+      "bbox": [
+        307,
+        617,
+        973,
+        692
+      ],
+      "chinese_polygons": [
+        [
+          [
+            0.375,
+            0.875
+          ],
+          [
+            0.6242,
+            0.875
+          ],
+          [
+            0.6242,
+            0.9444
+          ],
+          [
+            0.375,
+            0.9444
+          ]
+        ],
+        [
+          [
+            0.3742,
+            0.8736
+          ],
+          [
+            0.6227,
+            0.8736
+          ],
+          [
+            0.6227,
+            0.9486
+          ],
+          [
+            0.3742,
+            0.9486
+          ]
+        ],
+        [
+          [
+            0.3922,
+            0.8722
+          ],
+          [
+            0.6047,
+            0.8722
+          ],
+          [
+            0.6047,
+            0.9472
+          ],
+          [
+            0.3922,
+            0.9472
+          ]
+        ]
+      ],
+      "has_vi": true,
+      "reason": "TRANSLATED_DIALOGUE"
+    },
+    {
+      "start": 70.333,
+      "end": 72.35,
+      "vi_start": 71.02,
+      "vi_end": 71.92,
+      "source_start": 70.4,
+      "source_end": 72.3,
+      "cue_id": "sub_039",
+      "source_cue_ids": [
+        "bd3bcc14-1bdb-43c6-acdc-226526441a92"
+      ],
+      "bbox": [
+        404,
+        617,
+        876,
+        692
+      ],
+      "chinese_polygons": [
+        [
+          [
+            0.3742,
+            0.8736
+          ],
+          [
+            0.6227,
+            0.8736
+          ],
+          [
+            0.6227,
+            0.9486
+          ],
+          [
+            0.3742,
+            0.9486
+          ]
+        ],
+        [
+          [
+            0.3922,
+            0.8722
+          ],
+          [
+            0.6047,
+            0.8722
+          ],
+          [
+            0.6047,
+            0.9472
+          ],
+          [
+            0.3922,
+            0.9472
+          ]
+        ]
+      ],
+      "has_vi": true,
+      "reason": "TRANSLATED_DIALOGUE"
+    },
+    {
+      "start": 72.35,
+      "end": 73.97,
+      "vi_start": 73.14,
+      "vi_end": 73.94,
+      "source_start": 72.4,
+      "source_end": 75.875,
+      "cue_id": "sub_040",
+      "source_cue_ids": [
+        "815b487a-2c7e-492d-ad93-696738bd7911"
+      ],
+      "bbox": [
+        64,
+        596,
+        1216,
+        699
+      ],
+      "chinese_polygons": [
+        [
+          [
+            0.2516,
+            0.8722
+          ],
+          [
+            0.7438,
+            0.8722
+          ],
+          [
+            0.7438,
+            0.9472
+          ],
+          [
+            0.2516,
+            0.9472
+          ]
+        ]
+      ],
+      "has_vi": true,
+      "reason": "TRANSLATED_DIALOGUE"
+    },
+    {
+      "start": 73.97,
+      "end": 76.5,
+      "vi_start": 73.97,
+      "vi_end": 75.88,
+      "source_start": 72.4,
+      "source_end": 76.6,
+      "cue_id": "sub_041",
+      "source_cue_ids": [
+        "4bc1a9c6-26e2-4712-adc7-7ef25dd3e201"
+      ],
+      "bbox": [
+        64,
+        596,
+        1216,
+        699
+      ],
+      "chinese_polygons": [
+        [
+          [
+            0.2516,
+            0.8722
+          ],
+          [
+            0.7438,
+            0.8722
+          ],
+          [
+            0.7438,
+            0.9472
+          ],
+          [
+            0.2516,
+            0.9472
+          ]
+        ]
+      ],
+      "has_vi": true,
+      "reason": "TRANSLATED_DIALOGUE"
+    },
+    {
+      "start": 76.5,
+      "end": 79.567,
+      "vi_start": 76.58,
+      "vi_end": 79.0,
+      "source_start": 76.4,
+      "source_end": 79.5,
+      "cue_id": "sub_042",
+      "source_cue_ids": [
+        "41b55f41-9904-4209-99ad-d492d72734d7"
+      ],
+      "bbox": [
+        316,
+        617,
+        963,
+        689
+      ],
+      "chinese_polygons": [
+        [
+          [
+            0.3063,
+            0.875
+          ],
+          [
+            0.6898,
+            0.875
+          ],
+          [
+            0.6898,
+            0.9444
+          ],
+          [
+            0.3063,
+            0.9444
+          ]
+        ]
+      ],
+      "has_vi": true,
+      "reason": "TRANSLATED_DIALOGUE"
+    },
+    {
+      "start": 80.36,
+      "end": 82.0,
+      "vi_start": 80.36,
+      "vi_end": 82.0,
+      "source_start": 80.36,
+      "source_end": 82.0,
+      "cue_id": "sub_043",
+      "source_cue_ids": [
+        "3bb0ec82-a8a8-45a7-8cca-a2eaf67ccaf8"
+      ],
+      "bbox": [
+        278,
+        565,
+        1002,
+        668
+      ],
+      "chinese_polygons": [],
+      "has_vi": true,
+      "reason": "TRANSLATED_DIALOGUE"
+    },
+    {
+      "start": 82.533,
+      "end": 83.71,
+      "vi_start": 82.91,
+      "vi_end": 83.71,
+      "source_start": 82.6,
+      "source_end": 84.6,
+      "cue_id": "sub_044",
+      "source_cue_ids": [
+        "5642f236-0d7a-4831-b45d-f02f0b800748"
+      ],
+      "bbox": [
+        340,
+        615,
+        935,
+        695
+      ],
+      "chinese_polygons": [
+        [
+          [
+            0.425,
+            0.8694
+          ],
+          [
+            0.5734,
+            0.8694
+          ],
+          [
+            0.5734,
+            0.9514
+          ],
+          [
+            0.425,
+            0.9514
+          ]
+        ],
+        [
+          [
+            0.282,
+            0.8694
+          ],
+          [
+            0.7156,
+            0.8694
+          ],
+          [
+            0.7156,
+            0.9472
+          ],
+          [
+            0.282,
+            0.9472
+          ]
+        ]
+      ],
+      "has_vi": true,
+      "reason": "TRANSLATED_DIALOGUE"
+    },
+    {
+      "start": 83.71,
+      "end": 84.82,
+      "vi_start": 83.99,
+      "vi_end": 84.79,
+      "source_start": 82.6,
+      "source_end": 86.5,
+      "cue_id": "sub_045",
+      "source_cue_ids": [
+        "52a2c3fa-d034-465d-a684-2c89c5dcef97_seg1"
+      ],
+      "bbox": [
+        316,
+        596,
+        963,
+        699
+      ],
+      "chinese_polygons": [
+        [
+          [
+            0.425,
+            0.8694
+          ],
+          [
+            0.5734,
+            0.8694
+          ],
+          [
+            0.5734,
+            0.9514
+          ],
+          [
+            0.425,
+            0.9514
+          ]
+        ]
+      ],
+      "has_vi": true,
+      "reason": "TRANSLATED_DIALOGUE"
+    },
+    {
+      "start": 84.82,
+      "end": 86.5,
+      "vi_start": 84.82,
+      "vi_end": 86.5,
+      "source_start": 83.4,
+      "source_end": 86.5,
+      "cue_id": "sub_046",
+      "source_cue_ids": [
+        "52a2c3fa-d034-465d-a684-2c89c5dcef97_seg2"
+      ],
+      "bbox": [
+        210,
+        596,
+        1070,
+        699
+      ],
+      "chinese_polygons": [
+        [
+          [
+            0.282,
+            0.8694
+          ],
+          [
+            0.7156,
+            0.8694
+          ],
+          [
+            0.7156,
+            0.9472
+          ],
+          [
+            0.282,
+            0.9472
+          ]
+        ]
+      ],
+      "has_vi": true,
+      "reason": "TRANSLATED_DIALOGUE"
+    },
+    {
+      "start": 86.6,
+      "end": 89.25,
+      "vi_start": 86.6,
+      "vi_end": 88.95,
+      "source_start": 86.6,
+      "source_end": 89.6,
+      "cue_id": "sub_047",
+      "source_cue_ids": [
+        "52a2c3fa-d034-465d-a684-2c89c5dcef97_seg3"
+      ],
+      "bbox": [
+        190,
+        596,
+        1089,
+        699
+      ],
+      "chinese_polygons": [
+        [
+          [
+            0.5359,
+            0.7194
+          ],
+          [
+            0.5906,
+            0.7306
+          ],
+          [
+            0.5891,
+            0.7556
+          ],
+          [
+            0.5344,
+            0.7444
+          ]
+        ],
+        [
+          [
+            0.5367,
+            0.7792
+          ],
+          [
+            0.55,
+            0.7792
+          ],
+          [
+            0.55,
+            0.7889
+          ],
+          [
+            0.5367,
+            0.7889
+          ]
+        ],
+        [
+          [
+            0.2875,
+            0.8736
+          ],
+          [
+            0.7078,
+            0.8736
+          ],
+          [
+            0.7078,
+            0.9417
+          ],
+          [
+            0.2875,
+            0.9417
+          ]
+        ]
+      ],
+      "has_vi": true,
+      "reason": "TRANSLATED_DIALOGUE"
+    },
+    {
+      "start": 89.25,
+      "end": 93.75,
+      "vi_start": 89.28,
+      "vi_end": 93.27,
+      "source_start": 88.9,
+      "source_end": 94.1,
+      "cue_id": "sub_048",
+      "source_cue_ids": [
+        "30ea7e5c-ffe2-4cb2-9098-06ff45be115e"
+      ],
+      "bbox": [
+        286,
+        596,
+        993,
+        700
+      ],
+      "chinese_polygons": [
+        [
+          [
+            0.5359,
+            0.7194
+          ],
+          [
+            0.5906,
+            0.7306
+          ],
+          [
+            0.5891,
+            0.7556
+          ],
+          [
+            0.5344,
+            0.7444
+          ]
+        ],
+        [
+          [
+            0.5367,
+            0.7792
+          ],
+          [
+            0.55,
+            0.7792
+          ],
+          [
+            0.55,
+            0.7889
+          ],
+          [
+            0.5367,
+            0.7889
+          ]
+        ],
+        [
+          [
+            0.2875,
+            0.8736
+          ],
+          [
+            0.7078,
+            0.8736
+          ],
+          [
+            0.7078,
+            0.9417
+          ],
+          [
+            0.2875,
+            0.9417
+          ]
+        ],
+        [
+          [
+            0.5984,
+            0.7153
+          ],
+          [
+            0.6687,
+            0.7153
+          ],
+          [
+            0.6687,
+            0.7528
+          ],
+          [
+            0.5984,
+            0.7528
+          ]
+        ],
+        [
+          [
+            0.318,
+            0.8292
+          ],
+          [
+            0.3516,
+            0.8292
+          ],
+          [
+            0.3516,
+            0.8639
+          ],
+          [
+            0.318,
+            0.8639
+          ]
+        ],
+        [
+          [
+            0.2391,
+            0.8681
+          ],
+          [
+            0.7602,
+            0.8681
+          ],
+          [
+            0.7602,
+            0.9472
+          ],
+          [
+            0.2391,
+            0.9472
+          ]
+        ],
+        [
+          [
+            0.5977,
+            0.7222
+          ],
+          [
+            0.6687,
+            0.7222
+          ],
+          [
+            0.6687,
+            0.7528
+          ],
+          [
+            0.5977,
+            0.7528
+          ]
+        ],
+        [
+          [
+            0.3172,
+            0.8292
+          ],
+          [
+            0.3508,
+            0.8292
+          ],
+          [
+            0.3508,
+            0.8639
+          ],
+          [
+            0.3172,
+            0.8639
+          ]
+        ],
+        [
+          [
+            0.3563,
+            0.875
+          ],
+          [
+            0.6414,
+            0.875
+          ],
+          [
+            0.6414,
+            0.9444
+          ],
+          [
+            0.3563,
+            0.9444
+          ]
+        ],
+        [
+          [
+            0.2242,
+            0.7111
+          ],
+          [
+            0.3391,
+            0.7111
+          ],
+          [
+            0.3391,
+            0.7222
+          ],
+          [
+            0.2242,
+            0.7222
+          ]
+        ]
+      ],
+      "has_vi": true,
+      "reason": "TRANSLATED_DIALOGUE"
+    },
+    {
+      "start": 93.75,
+      "end": 95.69,
+      "vi_start": 93.91,
+      "vi_end": 95.69,
+      "source_start": 93.4,
+      "source_end": 95.695,
+      "cue_id": "sub_049",
+      "source_cue_ids": [
+        "76c8cf07-335e-471c-b4ab-c173458126dc"
+      ],
+      "bbox": [
+        278,
+        596,
+        1002,
+        700
+      ],
+      "chinese_polygons": [
+        [
+          [
+            0.2242,
+            0.7111
+          ],
+          [
+            0.3391,
+            0.7111
+          ],
+          [
+            0.3391,
+            0.7222
+          ],
+          [
+            0.2242,
+            0.7222
+          ]
+        ],
+        [
+          [
+            0.5984,
+            0.7222
+          ],
+          [
+            0.6687,
+            0.7222
+          ],
+          [
+            0.6687,
+            0.7528
+          ],
+          [
+            0.5984,
+            0.7528
+          ]
+        ],
+        [
+          [
+            0.3172,
+            0.8292
+          ],
+          [
+            0.3508,
+            0.8292
+          ],
+          [
+            0.3508,
+            0.8639
+          ],
+          [
+            0.3172,
+            0.8639
+          ]
+        ],
+        [
+          [
+            0.3563,
+            0.875
+          ],
+          [
+            0.6414,
+            0.875
+          ],
+          [
+            0.6414,
+            0.9444
+          ],
+          [
+            0.3563,
+            0.9444
+          ]
+        ],
+        [
+          [
+            0.3906,
+            0.8736
+          ],
+          [
+            0.6078,
+            0.8736
+          ],
+          [
+            0.6078,
+            0.95
+          ],
+          [
+            0.3906,
+            0.95
+          ]
+        ],
+        [
+          [
+            0.3375,
+            0.8708
+          ],
+          [
+            0.6578,
+            0.8708
+          ],
+          [
+            0.6578,
+            0.95
+          ],
+          [
+            0.3375,
+            0.95
+          ]
+        ]
+      ],
+      "has_vi": true,
+      "reason": "TRANSLATED_DIALOGUE"
+    },
+    {
+      "start": 95.69,
+      "end": 98.0,
+      "vi_start": 96.13,
+      "vi_end": 97.14,
+      "source_start": 94.9,
+      "source_end": 98.1,
+      "cue_id": "sub_050",
+      "source_cue_ids": [
+        "f40e80b2-c50e-4c6b-b97a-d4de60140886"
+      ],
+      "bbox": [
+        268,
+        596,
+        1012,
+        699
+      ],
+      "chinese_polygons": [
+        [
+          [
+            0.3375,
+            0.8708
+          ],
+          [
+            0.6578,
+            0.8708
+          ],
+          [
+            0.6578,
+            0.95
+          ],
+          [
+            0.3375,
+            0.95
+          ]
+        ]
+      ],
+      "has_vi": true,
+      "reason": "TRANSLATED_DIALOGUE"
+    },
+    {
+      "start": 98.0,
+      "end": 100.13,
+      "vi_start": 98.33,
+      "vi_end": 100.1,
+      "source_start": 97.9,
+      "source_end": 101.6,
+      "cue_id": "sub_051",
+      "source_cue_ids": [
+        "4752a988-6717-4e9a-8271-65bf72cc6969_seg1"
+      ],
+      "bbox": [
+        394,
+        596,
+        885,
+        699
+      ],
+      "chinese_polygons": [
+        [
+          [
+            0.3742,
+            0.8722
+          ],
+          [
+            0.6234,
+            0.8722
+          ],
+          [
+            0.6234,
+            0.9472
+          ],
+          [
+            0.3742,
+            0.9472
+          ]
+        ]
+      ],
+      "has_vi": true,
+      "reason": "TRANSLATED_DIALOGUE"
+    },
+    {
+      "start": 100.13,
+      "end": 101.63,
+      "vi_start": 100.13,
+      "vi_end": 101.6,
+      "source_start": 98.9,
+      "source_end": 103.6,
+      "cue_id": "sub_052",
+      "source_cue_ids": [
+        "4752a988-6717-4e9a-8271-65bf72cc6969_seg2"
+      ],
+      "bbox": [
+        391,
+        617,
+        884,
+        692
+      ],
+      "chinese_polygons": [
+        [
+          [
+            0.3211,
+            0.8736
+          ],
+          [
+            0.675,
+            0.8736
+          ],
+          [
+            0.675,
+            0.9486
+          ],
+          [
+            0.3211,
+            0.9486
+          ]
+        ]
+      ],
+      "has_vi": true,
+      "reason": "TRANSLATED_DIALOGUE"
+    },
+    {
+      "start": 101.63,
+      "end": 103.667,
+      "vi_start": 101.63,
+      "vi_end": 103.11,
+      "source_start": 100.4,
+      "source_end": 103.6,
+      "cue_id": "sub_053",
+      "source_cue_ids": [
+        "4752a988-6717-4e9a-8271-65bf72cc6969_seg3"
+      ],
+      "bbox": [
+        370,
+        596,
+        904,
+        699
+      ],
+      "chinese_polygons": [
+        [
+          [
+            0.3047,
+            0.875
+          ],
+          [
+            0.6914,
+            0.875
+          ],
+          [
+            0.6914,
+            0.9444
+          ],
+          [
+            0.3047,
+            0.9444
+          ]
+        ]
+      ],
+      "has_vi": true,
+      "reason": "TRANSLATED_DIALOGUE"
+    },
+    {
+      "start": 103.833,
+      "end": 104.612,
+      "vi_start": 104.5,
+      "vi_end": 105.0,
+      "source_start": 103.9,
+      "source_end": 105.6,
+      "cue_id": "suppressed_4716213f",
+      "source_cue_ids": [
+        "4716213f-9e18-4b42-bc94-ab8b0e253a97"
+      ],
+      "bbox": [
+        587,
+        618,
+        689,
+        692
+      ],
+      "chinese_polygons": [
+        [
+          [
+            0.4781,
+            0.875
+          ],
+          [
+            0.5203,
+            0.875
+          ],
+          [
+            0.5203,
+            0.9472
+          ],
+          [
+            0.4781,
+            0.9472
+          ]
+        ]
+      ],
+      "has_vi": false,
+      "reason": "SUPPRESSED_FILLER"
+    },
+    {
+      "start": 104.933,
+      "end": 107.267,
+      "vi_start": 105.07,
+      "vi_end": 107.08,
+      "source_start": 105.0,
+      "source_end": 107.2,
+      "cue_id": "sub_054",
+      "source_cue_ids": [
+        "7fedace1-e344-46da-8fbc-e48516cc699f"
+      ],
+      "bbox": [
+        287,
+        596,
+        992,
+        699
+      ],
+      "chinese_polygons": [
+        [
+          [
+            0.325,
+            0.875
+          ],
+          [
+            0.675,
+            0.875
+          ],
+          [
+            0.675,
+            0.9444
+          ],
+          [
+            0.325,
+            0.9444
+          ]
+        ]
+      ],
+      "has_vi": true,
+      "reason": "TRANSLATED_DIALOGUE"
+    },
+    {
+      "start": 110.833,
+      "end": 112.06,
+      "vi_start": 111.26,
+      "vi_end": 112.06,
+      "source_start": 110.9,
+      "source_end": 112.6,
+      "cue_id": "sub_055",
+      "source_cue_ids": [
+        "371d2df2-592f-4fb6-8df8-af76b9f8fd63"
+      ],
+      "bbox": [
+        472,
+        617,
+        808,
+        695
+      ],
+      "chinese_polygons": [
+        [
+          [
+            0.425,
+            0.8736
+          ],
+          [
+            0.5727,
+            0.8736
+          ],
+          [
+            0.5727,
+            0.9514
+          ],
+          [
+            0.425,
+            0.9514
+          ]
+        ]
+      ],
+      "has_vi": true,
+      "reason": "TRANSLATED_DIALOGUE"
+    },
+    {
+      "start": 112.06,
+      "end": 113.63,
+      "vi_start": 112.1,
+      "vi_end": 113.6,
+      "source_start": 110.9,
+      "source_end": 115.1,
+      "cue_id": "sub_056",
+      "source_cue_ids": [
+        "4e922104-0c6e-452e-9f8a-ff7b23468a6b_seg1",
+        "4e922104-0c6e-452e-9f8a-ff7b23468a6b_seg2"
+      ],
+      "bbox": [
+        316,
+        617,
+        963,
+        695
+      ],
+      "chinese_polygons": [
+        [
+          [
+            0.425,
+            0.8736
+          ],
+          [
+            0.5727,
+            0.8736
+          ],
+          [
+            0.5727,
+            0.9514
+          ],
+          [
+            0.425,
+            0.9514
+          ]
+        ],
+        [
+          [
+            0.4242,
+            0.8722
+          ],
+          [
+            0.5734,
+            0.8722
+          ],
+          [
+            0.5734,
+            0.95
+          ],
+          [
+            0.4242,
+            0.95
+          ]
+        ]
+      ],
+      "has_vi": true,
+      "reason": "TRANSLATED_DIALOGUE"
+    },
+    {
+      "start": 113.63,
+      "end": 114.75,
+      "vi_start": 113.63,
+      "vi_end": 114.43,
+      "source_start": 112.4,
+      "source_end": 115.1,
+      "cue_id": "sub_057",
+      "source_cue_ids": [
+        "4e922104-0c6e-452e-9f8a-ff7b23468a6b_seg3"
+      ],
+      "bbox": [
+        394,
+        596,
+        885,
+        699
+      ],
+      "chinese_polygons": [
+        [
+          [
+            0.3242,
+            0.875
+          ],
+          [
+            0.6758,
+            0.875
+          ],
+          [
+            0.6758,
+            0.9444
+          ],
+          [
+            0.3242,
+            0.9444
+          ]
+        ]
+      ],
+      "has_vi": true,
+      "reason": "TRANSLATED_DIALOGUE"
+    },
+    {
+      "start": 114.75,
+      "end": 115.6,
+      "vi_start": 114.8,
+      "vi_end": 115.6,
+      "source_start": 114.4,
+      "source_end": 115.6,
+      "cue_id": "sub_058",
+      "source_cue_ids": [
+        "66f296df-298d-42d5-8618-3bc7b06ef36d"
+      ],
+      "bbox": [
+        394,
+        615,
+        885,
+        696
+      ],
+      "chinese_polygons": [
+        [
+          [
+            0.3242,
+            0.875
+          ],
+          [
+            0.6758,
+            0.875
+          ],
+          [
+            0.6758,
+            0.9444
+          ],
+          [
+            0.3242,
+            0.9444
+          ]
+        ],
+        [
+          [
+            0.4406,
+            0.8681
+          ],
+          [
+            0.5578,
+            0.8681
+          ],
+          [
+            0.5578,
+            0.9528
+          ],
+          [
+            0.4406,
+            0.9528
+          ]
+        ]
+      ],
+      "has_vi": true,
+      "reason": "TRANSLATED_DIALOGUE"
+    },
+    {
+      "start": 121.533,
+      "end": 123.5,
+      "vi_start": 121.85,
+      "vi_end": 122.99,
+      "source_start": 121.6,
+      "source_end": 123.4,
+      "cue_id": "sub_059",
+      "source_cue_ids": [
+        "84a673be-490e-469d-933c-f700962519db"
+      ],
+      "bbox": [
+        384,
+        617,
+        895,
+        692
+      ],
+      "chinese_polygons": [
+        [
+          [
+            0.3742,
+            0.8736
+          ],
+          [
+            0.6242,
+            0.8736
+          ],
+          [
+            0.6242,
+            0.9486
+          ],
+          [
+            0.3742,
+            0.9486
+          ]
+        ]
+      ],
+      "has_vi": true,
+      "reason": "TRANSLATED_DIALOGUE"
+    },
+    {
+      "start": 123.5,
+      "end": 125.742,
+      "vi_start": 123.67,
+      "vi_end": 125.67,
+      "source_start": 123.6,
+      "source_end": 125.675,
+      "cue_id": "sub_060",
+      "source_cue_ids": [
+        "4d2d0858-498e-4a06-ae5d-a4c6907fe79e"
+      ],
+      "bbox": [
+        329,
+        596,
+        949,
+        699
+      ],
+      "chinese_polygons": [
+        [
+          [
+            0.2727,
+            0.8778
+          ],
+          [
+            0.7258,
+            0.8778
+          ],
+          [
+            0.7258,
+            0.9417
+          ],
+          [
+            0.2727,
+            0.9417
+          ]
+        ]
+      ],
+      "has_vi": true,
+      "reason": "TRANSLATED_DIALOGUE"
+    },
+    {
+      "start": 129.333,
+      "end": 131.75,
+      "vi_start": 129.71,
+      "vi_end": 131.35,
+      "source_start": 129.4,
+      "source_end": 132.1,
+      "cue_id": "sub_061",
+      "source_cue_ids": [
+        "434f5d1e-6981-4eb9-be44-2f97a11a5afc"
+      ],
+      "bbox": [
+        268,
+        617,
+        1012,
+        689
+      ],
+      "chinese_polygons": [
+        [
+          [
+            0.3563,
+            0.875
+          ],
+          [
+            0.6414,
+            0.875
+          ],
+          [
+            0.6414,
+            0.9444
+          ],
+          [
+            0.3563,
+            0.9444
+          ]
+        ]
+      ],
+      "has_vi": true,
+      "reason": "TRANSLATED_DIALOGUE"
+    },
+    {
+      "start": 131.75,
+      "end": 133.69,
+      "vi_start": 132.15,
+      "vi_end": 133.33,
+      "source_start": 131.4,
+      "source_end": 134.1,
+      "cue_id": "sub_062",
+      "source_cue_ids": [
+        "d2c4c40f-0688-47eb-8a19-b03b9fe54816"
+      ],
+      "bbox": [
+        423,
+        596,
+        856,
+        699
+      ],
+      "chinese_polygons": [
+        [
+          [
+            0.3742,
+            0.8722
+          ],
+          [
+            0.6234,
+            0.8722
+          ],
+          [
+            0.6234,
+            0.9472
+          ],
+          [
+            0.3742,
+            0.9472
+          ]
+        ]
+      ],
+      "has_vi": true,
+      "reason": "TRANSLATED_DIALOGUE"
+    },
+    {
+      "start": 133.69,
+      "end": 134.87,
+      "vi_start": 133.69,
+      "vi_end": 134.83,
+      "source_start": 133.4,
+      "source_end": 136.6,
+      "cue_id": "sub_063",
+      "source_cue_ids": [
+        "23fdfc13-f1c6-442f-913c-5e58f3e92902"
+      ],
+      "bbox": [
+        375,
+        617,
+        905,
+        694
+      ],
+      "chinese_polygons": [
+        [
+          [
+            0.3742,
+            0.8722
+          ],
+          [
+            0.6234,
+            0.8722
+          ],
+          [
+            0.6234,
+            0.9472
+          ],
+          [
+            0.3742,
+            0.9472
+          ]
+        ],
+        [
+          [
+            0.375,
+            0.8722
+          ],
+          [
+            0.6258,
+            0.8722
+          ],
+          [
+            0.6258,
+            0.9472
+          ],
+          [
+            0.375,
+            0.9472
+          ]
+        ],
+        [
+          [
+            0.4094,
+            0.8722
+          ],
+          [
+            0.5906,
+            0.8722
+          ],
+          [
+            0.5906,
+            0.95
+          ],
+          [
+            0.4094,
+            0.95
+          ]
+        ]
+      ],
+      "has_vi": true,
+      "reason": "TRANSLATED_DIALOGUE"
+    },
+    {
+      "start": 134.87,
+      "end": 136.63,
+      "vi_start": 134.87,
+      "vi_end": 136.6,
+      "source_start": 133.4,
+      "source_end": 138.1,
+      "cue_id": "sub_064",
+      "source_cue_ids": [
+        "3759809e-b962-4a0f-b2ff-1ac922b31781_seg1",
+        "3759809e-b962-4a0f-b2ff-1ac922b31781_seg2"
+      ],
+      "bbox": [
+        404,
+        596,
+        876,
+        699
+      ],
+      "chinese_polygons": [
+        [
+          [
+            0.375,
+            0.8722
+          ],
+          [
+            0.6258,
+            0.8722
+          ],
+          [
+            0.6258,
+            0.9472
+          ],
+          [
+            0.375,
+            0.9472
+          ]
+        ],
+        [
+          [
+            0.4094,
+            0.8722
+          ],
+          [
+            0.5906,
+            0.8722
+          ],
+          [
+            0.5906,
+            0.95
+          ],
+          [
+            0.4094,
+            0.95
+          ]
+        ]
+      ],
+      "has_vi": true,
+      "reason": "TRANSLATED_DIALOGUE"
+    },
+    {
+      "start": 136.63,
+      "end": 138.19,
+      "vi_start": 136.63,
+      "vi_end": 138.19,
+      "source_start": 135.4,
+      "source_end": 139.1,
+      "cue_id": "sub_065",
+      "source_cue_ids": [
+        "3759809e-b962-4a0f-b2ff-1ac922b31781_seg3",
+        "9c2b7126-dc81-4dde-aba8-f78576c47711"
+      ],
+      "bbox": [
+        394,
+        596,
+        885,
+        699
+      ],
+      "chinese_polygons": [
+        [
+          [
+            0.3742,
+            0.8736
+          ],
+          [
+            0.6234,
+            0.8736
+          ],
+          [
+            0.6234,
+            0.9486
+          ],
+          [
+            0.3742,
+            0.9486
+          ]
+        ],
+        [
+          [
+            0.3742,
+            0.8736
+          ],
+          [
+            0.6234,
+            0.8736
+          ],
+          [
+            0.6234,
+            0.9486
+          ],
+          [
+            0.3742,
+            0.9486
+          ]
+        ],
+        [
+          [
+            0.3922,
+            0.8736
+          ],
+          [
+            0.607,
+            0.8736
+          ],
+          [
+            0.607,
+            0.9486
+          ],
+          [
+            0.3922,
+            0.9486
+          ]
+        ]
+      ],
+      "has_vi": true,
+      "reason": "TRANSLATED_DIALOGUE"
+    },
+    {
+      "start": 138.19,
+      "end": 141.19,
+      "vi_start": 138.79,
+      "vi_end": 140.77,
+      "source_start": 136.9,
+      "source_end": 141.6,
+      "cue_id": "sub_066",
+      "source_cue_ids": [
+        "8f024d8b-74da-45aa-90c3-bf974f43eb01"
+      ],
+      "bbox": [
+        414,
+        596,
+        866,
+        699
+      ],
+      "chinese_polygons": [
+        [
+          [
+            0.3922,
+            0.8736
+          ],
+          [
+            0.607,
+            0.8736
+          ],
+          [
+            0.607,
+            0.9486
+          ],
+          [
+            0.3922,
+            0.9486
+          ]
+        ],
+        [
+          [
+            0.3391,
+            0.875
+          ],
+          [
+            0.6578,
+            0.875
+          ],
+          [
+            0.6578,
+            0.9444
+          ],
+          [
+            0.3391,
+            0.9444
+          ]
+        ]
+      ],
+      "has_vi": true,
+      "reason": "TRANSLATED_DIALOGUE"
+    },
+    {
+      "start": 141.19,
+      "end": 143.1,
+      "vi_start": 141.19,
+      "vi_end": 143.1,
+      "source_start": 140.9,
+      "source_end": 143.1,
+      "cue_id": "sub_067",
+      "source_cue_ids": [
+        "8de598c3-5fe0-4d32-9f1b-d95cec7c8667_seg1",
+        "8de598c3-5fe0-4d32-9f1b-d95cec7c8667_seg2"
+      ],
+      "bbox": [
+        287,
+        596,
+        992,
+        699
+      ],
+      "chinese_polygons": [
+        [
+          [
+            0.3391,
+            0.875
+          ],
+          [
+            0.6578,
+            0.875
+          ],
+          [
+            0.6578,
+            0.9444
+          ],
+          [
+            0.3391,
+            0.9444
+          ]
+        ],
+        [
+          [
+            0.4078,
+            0.8708
+          ],
+          [
+            0.5898,
+            0.8708
+          ],
+          [
+            0.5898,
+            0.9486
+          ],
+          [
+            0.4078,
+            0.9486
+          ]
+        ]
+      ],
+      "has_vi": true,
+      "reason": "TRANSLATED_DIALOGUE"
+    },
+    {
+      "start": 147.333,
+      "end": 151.667,
+      "vi_start": 148.06,
+      "vi_end": 150.82,
+      "source_start": 147.4,
+      "source_end": 151.6,
+      "cue_id": "sub_068",
+      "source_cue_ids": [
+        "a3fb8d1d-f8ad-42db-8225-da4a39f56ecd"
+      ],
+      "bbox": [
+        329,
+        596,
+        950,
+        699
+      ],
+      "chinese_polygons": [
+        [
+          [
+            0.2727,
+            0.875
+          ],
+          [
+            0.7266,
+            0.875
+          ],
+          [
+            0.7266,
+            0.9431
+          ],
+          [
+            0.2727,
+            0.9431
+          ]
+        ]
+      ],
+      "has_vi": true,
+      "reason": "TRANSLATED_DIALOGUE"
+    },
+    {
+      "start": 151.833,
+      "end": 153.08,
+      "vi_start": 152.28,
+      "vi_end": 153.08,
+      "source_start": 151.9,
+      "source_end": 154.1,
+      "cue_id": "sub_069",
+      "source_cue_ids": [
+        "2da9c669-7d59-4e86-8409-faea0bf28535"
+      ],
+      "bbox": [
+        453,
+        617,
+        827,
+        694
+      ],
+      "chinese_polygons": [
+        [
+          [
+            0.4086,
+            0.8722
+          ],
+          [
+            0.5898,
+            0.8722
+          ],
+          [
+            0.5898,
+            0.95
+          ],
+          [
+            0.4086,
+            0.95
+          ]
+        ]
+      ],
+      "has_vi": true,
+      "reason": "TRANSLATED_DIALOGUE"
+    },
+    {
+      "start": 153.08,
+      "end": 157.25,
+      "vi_start": 153.76,
+      "vi_end": 156.72,
+      "source_start": 151.9,
+      "source_end": 158.1,
+      "cue_id": "sub_070",
+      "source_cue_ids": [
+        "4ab3697f-3a5d-4013-bf88-3b5bd78b536a"
+      ],
+      "bbox": [
+        503,
+        607,
+        774,
+        689
+      ],
+      "chinese_polygons": [
+        [
+          [
+            0.4086,
+            0.8722
+          ],
+          [
+            0.5898,
+            0.8722
+          ],
+          [
+            0.5898,
+            0.95
+          ],
+          [
+            0.4086,
+            0.95
+          ]
+        ],
+        [
+          [
+            0.4586,
+            0.8653
+          ],
+          [
+            0.5367,
+            0.8694
+          ],
+          [
+            0.5352,
+            0.9556
+          ],
+          [
+            0.457,
+            0.9514
+          ]
+        ],
+        [
+          [
+            0.457,
+            0.8653
+          ],
+          [
+            0.5422,
+            0.8653
+          ],
+          [
+            0.5422,
+            0.9542
+          ],
+          [
+            0.457,
+            0.9542
+          ]
+        ]
+      ],
+      "has_vi": true,
+      "reason": "TRANSLATED_DIALOGUE"
+    },
+    {
+      "start": 157.25,
+      "end": 158.167,
+      "vi_start": 156.5,
+      "vi_end": 157.5,
+      "source_start": 156.4,
+      "source_end": 158.1,
+      "cue_id": "suppressed_09ffee62",
+      "source_cue_ids": [
+        "09ffee62-3387-4d7f-9c52-6b3119f83589"
+      ],
+      "bbox": [
+        586,
+        613,
+        692,
+        697
+      ],
+      "chinese_polygons": [
+        [
+          [
+            0.4766,
+            0.8722
+          ],
+          [
+            0.5211,
+            0.8694
+          ],
+          [
+            0.5227,
+            0.9486
+          ],
+          [
+            0.4781,
+            0.9514
+          ]
+        ]
+      ],
+      "has_vi": false,
+      "reason": "SUPPRESSED_FILLER"
+    },
+    {
+      "start": 161.16,
+      "end": 162.667,
+      "vi_start": 161.16,
+      "vi_end": 162.5,
+      "source_start": 161.16,
+      "source_end": 162.6,
+      "cue_id": "sub_071",
+      "source_cue_ids": [
+        "b77253b6-0ff9-4227-bc37-1fac1597d28e"
+      ],
+      "bbox": [
+        457,
+        617,
+        817,
+        692
+      ],
+      "chinese_polygons": [
+        [
+          [
+            0.3727,
+            0.8736
+          ],
+          [
+            0.6234,
+            0.8736
+          ],
+          [
+            0.6234,
+            0.9486
+          ],
+          [
+            0.3727,
+            0.9486
+          ]
+        ]
+      ],
+      "has_vi": true,
+      "reason": "TRANSLATED_DIALOGUE"
+    },
+    {
+      "start": 162.833,
+      "end": 164.967,
+      "vi_start": 163.16,
+      "vi_end": 164.7,
+      "source_start": 162.9,
+      "source_end": 164.9,
+      "cue_id": "sub_072",
+      "source_cue_ids": [
+        "1a267f02-1421-4bcb-95dc-9d4419483610"
+      ],
+      "bbox": [
+        326,
+        596,
+        953,
+        699
+      ],
+      "chinese_polygons": [
+        [
+          [
+            0.3227,
+            0.875
+          ],
+          [
+            0.6766,
+            0.875
+          ],
+          [
+            0.6766,
+            0.9444
+          ],
+          [
+            0.3227,
+            0.9444
+          ]
+        ]
+      ],
+      "has_vi": true,
+      "reason": "TRANSLATED_DIALOGUE"
+    },
+    {
+      "start": 165.733,
+      "end": 168.9,
+      "vi_start": 165.88,
+      "vi_end": 167.86,
+      "source_start": 165.8,
+      "source_end": 169.1,
+      "cue_id": "sub_073",
+      "source_cue_ids": [
+        "91162b49-1637-420c-854d-8c1b0fdfc3cb"
+      ],
+      "bbox": [
+        348,
+        596,
+        924,
+        699
+      ],
+      "chinese_polygons": [
+        [
+          [
+            0.2875,
+            0.8722
+          ],
+          [
+            0.7063,
+            0.8722
+          ],
+          [
+            0.7063,
+            0.9472
+          ],
+          [
+            0.2875,
+            0.9472
+          ]
+        ]
+      ],
+      "has_vi": true,
+      "reason": "TRANSLATED_DIALOGUE"
+    },
+    {
+      "start": 168.9,
+      "end": 171.95,
+      "vi_start": 168.9,
+      "vi_end": 171.95,
+      "source_start": 168.9,
+      "source_end": 173.1,
+      "cue_id": "sub_074",
+      "source_cue_ids": [
+        "49e68708-c8ec-4ca0-a117-3da6854540f2"
+      ],
+      "bbox": [
+        348,
+        596,
+        924,
+        699
+      ],
+      "chinese_polygons": [
+        [
+          [
+            0.2875,
+            0.8722
+          ],
+          [
+            0.7063,
+            0.8722
+          ],
+          [
+            0.7063,
+            0.9472
+          ],
+          [
+            0.2875,
+            0.9472
+          ]
+        ],
+        [
+          [
+            0.3398,
+            0.8722
+          ],
+          [
+            0.6578,
+            0.8722
+          ],
+          [
+            0.6578,
+            0.9458
+          ],
+          [
+            0.3398,
+            0.9458
+          ]
+        ],
+        [
+          [
+            0.3414,
+            0.875
+          ],
+          [
+            0.657,
+            0.875
+          ],
+          [
+            0.657,
+            0.9444
+          ],
+          [
+            0.3414,
+            0.9444
+          ]
+        ]
+      ],
+      "has_vi": true,
+      "reason": "TRANSLATED_DIALOGUE"
+    },
+    {
+      "start": 171.95,
+      "end": 173.1,
+      "vi_start": 171.98,
+      "vi_end": 173.1,
+      "source_start": 170.4,
+      "source_end": 173.1,
+      "cue_id": "sub_075",
+      "source_cue_ids": [
+        "28073272-c188-45e3-b222-5ef2e27bf4e3_seg1"
+      ],
+      "bbox": [
+        394,
+        596,
+        885,
+        699
+      ],
+      "chinese_polygons": [
+        [
+          [
+            0.3414,
+            0.875
+          ],
+          [
+            0.657,
+            0.875
+          ],
+          [
+            0.657,
+            0.9444
+          ],
+          [
+            0.3414,
+            0.9444
+          ]
+        ]
+      ],
+      "has_vi": true,
+      "reason": "TRANSLATED_DIALOGUE"
+    },
+    {
+      "start": 178.333,
+      "end": 180.26,
+      "vi_start": 179.46,
+      "vi_end": 180.26,
+      "source_start": 178.4,
+      "source_end": 180.26,
+      "cue_id": "sub_077",
+      "source_cue_ids": [
+        "6d240e9e-db99-49aa-beb0-e6e6fafa89dd"
+      ],
+      "bbox": [
+        326,
+        596,
+        953,
+        699
+      ],
+      "chinese_polygons": [
+        [
+          [
+            0.3063,
+            0.8736
+          ],
+          [
+            0.6922,
+            0.8736
+          ],
+          [
+            0.6922,
+            0.9472
+          ],
+          [
+            0.3063,
+            0.9472
+          ]
+        ]
+      ],
+      "has_vi": true,
+      "reason": "TRANSLATED_DIALOGUE"
+    }
+  ]
+}
