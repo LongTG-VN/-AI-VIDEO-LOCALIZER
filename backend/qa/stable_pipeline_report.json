@@ -1,0 +1,43 @@
+{
+  "pipeline_version": "stable-v1",
+  "git_head": "aef006450f0f1a863b5b44633af6d96316629e8c",
+  "config_hash": "4db38d8bdc52ccd6",
+  "version_manifest": {
+    "pipeline_version": "stable-v1",
+    "source_integrity_version": "v1",
+    "semantic_translation_group_version": "v1",
+    "translation_quality_version": "v2",
+    "source_cover_version": "v11",
+    "subtitle_layout_version": "v12",
+    "renderer_version": "v12"
+  },
+  "status": "PASS",
+  "metrics": {
+    "source_cues_total": 87,
+    "translated_cues": 83,
+    "suppressed_cues": 3,
+    "cover_events_count": 77,
+    "render_cues_count": 77,
+    "invariants": {
+      "unexplained_missing_source_cues": 0,
+      "duplicate_source_mappings": 0,
+      "pass_cue_without_final_vi": 0,
+      "suppressed_cue_with_vi": 0,
+      "visible_dialogue_without_cover": 0,
+      "invalid_cover_geometry": 0,
+      "critical_failures": 0
+    }
+  },
+  "artifacts": {
+    "golden_90s": {
+      "path": "D:\\codex\\STABLE_V1_GOLDEN_90S.mp4",
+      "size_bytes": 24581888,
+      "sha256": "4ebf250dd55d95e930d49d111b275ff8249a890348327128b0eda44c81f482a6"
+    },
+    "unseen_180s": {
+      "path": "D:\\codex\\STABLE_V1_UNSEEN_180S.mp4",
+      "size_bytes": 70547535,
+      "sha256": "2b4af935a5dabdda98e5a8fccf415e17b3125b6e6defdfa14e2241c4ac7a1960"
+    }
+  }
+}
