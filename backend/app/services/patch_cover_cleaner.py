@@ -295,13 +295,56 @@ class PatchCoverCleaner:
                 cover_y1 = max(int(height * 0.68), int(y_pos - max_plate_h / 2))
                 cover_y2 = min(int(height * 0.98), int(y_pos + max_plate_h / 2))
 
+            # Compute reliable source Chinese dialogue timing
+            source_cids = getattr(cue, "source_cue_ids", []) or [getattr(cue, "id", None)]
+            mapped_origs = [cues_by_id.get(cid) for cid in source_cids if cid and cues_by_id.get(cid)]
+
+            source_start = cue.start
+            source_end = cue.end
+            for orig in mapped_origs:
+                if getattr(orig, "ocr_start", None) is not None and 0.0 < orig.ocr_start:
+                    if 0.0 < (cue.start - orig.ocr_start) <= 0.25:
+                        source_start = min(source_start, orig.ocr_start)
+                if getattr(orig, "ocr_end", None) is not None and 0.0 < orig.ocr_end:
+                    if 0.0 < (orig.ocr_end - cue.end) <= 0.25:
+                        source_end = max(source_end, orig.ocr_end)
+
+            pre_roll_s = 2.0 / 30.0   # ~0.067s (2 frames at 30fps)
+            post_roll_s = 2.0 / 30.0  # ~0.067s (2 frames at 30fps)
+            if source_start < cue.start:
+                cover_start = max(0.0, source_start - pre_roll_s)
+            else:
+                cover_start = cue.start
+
+            if source_end > cue.end:
+                cover_end = source_end + post_roll_s
+            else:
+                cover_end = cue.end
+
             contexts.append({
-                "start": cue.start,
-                "end": cue.end,
+                "start": round(cover_start, 3),
+                "end": round(cover_end, 3),
+                "vi_start": round(cue.start, 3),
+                "vi_end": round(cue.end, 3),
+                "source_start": round(source_start, 3),
+                "source_end": round(source_end, 3),
                 "cue_id": getattr(cue, "render_id", str(idx)),
                 "bbox": (cover_x1, cover_y1, cover_x2, cover_y2),
                 "chinese_polygons": chinese_polygons,
             })
+
+        # Clean handoffs between consecutive covers
+        for i in range(1, len(contexts)):
+            prev = contexts[i - 1]
+            curr = contexts[i]
+            if prev["end"] > curr["start"]:
+                handoff_t = round(max(prev["vi_end"], min(curr["vi_start"], curr["start"])), 3)
+                prev["end"] = handoff_t
+                curr["start"] = max(handoff_t, curr["start"])
+            elif 0.0 < (curr["start"] - prev["end"]) <= 0.08:
+                handoff_t = round((prev["end"] + curr["start"]) / 2.0, 3)
+                prev["end"] = handoff_t
+                curr["start"] = handoff_t
 
         return contexts
 
