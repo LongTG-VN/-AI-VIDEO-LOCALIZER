@@ -76,6 +76,11 @@ def clean_text_for_comparison(text: str) -> str:
 def clean_vietnamese_typography(text: str) -> str:
     """Apply domain-generic Vietnamese subtitle typography cleanup only."""
     result = (text or "").strip()
+    has_n = "\n" in result or r"\N" in result
+    if has_n:
+        result = result.replace(r"\N", "\n")
+        lines = [clean_vietnamese_typography(l) for l in result.split("\n")]
+        return r"\N".join(l for l in lines if l)
 
     for pattern in NOISE_REPLACE_PATTERNS:
         result = re.sub(pattern, "", result, flags=re.IGNORECASE)
@@ -172,8 +177,8 @@ def validate_render_cue_entity_ownership(
     return violations
 
 
-def semantic_line_break(text: str, max_line_chars: int = 36) -> str:
-    """Balance a subtitle across at most two semantic lines."""
+def semantic_line_break(text: str, max_line_chars: int = 34) -> str:
+    """Balance a subtitle across at most two semantic lines at natural Vietnamese boundaries."""
     if "\n" in text or r"\N" in text:
         return text.replace("\n", r"\N")
 
@@ -183,34 +188,52 @@ def semantic_line_break(text: str, max_line_chars: int = 36) -> str:
 
     mid = len(clean) // 2
     best_pos = -1
-    min_dist = float("inf")
+    min_penalty = float("inf")
 
+    # 1. Punctuation boundary (highest priority)
     for match in re.finditer(r"[,.!?;:—–-]\s+", clean):
         pos = match.end()
-        distance = abs(pos - mid)
-        if distance < min_dist:
-            min_dist = distance
-            best_pos = pos
+        line1_len = pos
+        line2_len = len(clean) - pos
+        if line1_len >= 6 and line2_len >= 6:
+            dist = abs(pos - mid)
+            penalty = dist * 1.0
+            if penalty < min_penalty:
+                min_penalty = penalty
+                best_pos = pos
 
-    if best_pos == -1 or min_dist > max_line_chars // 2:
+    # 2. Conjunction / clause boundary
+    if best_pos == -1 or min_penalty > 10:
         for pattern in [
-            r"\s+nhưng\s+", r"\s+mà\s+", r"\s+và\s+", r"\s+hoặc\s+",
-            r"\s+thì\s+", r"\s+để\s+", r"\s+trong\s+",
+            r"\s+thì\s+", r"\s+nhưng\s+", r"\s+mà\s+", r"\s+và\s+", r"\s+hoặc\s+",
+            r"\s+nếu\s+", r"\s+để\s+", r"\s+trong\s+", r"\s+khi\s+", r"\s+vì\s+",
+            r"\s+cho\s+nên\s+", r"\s+bởi\s+vì\s+", r"\s+rằng\s+",
         ]:
             for match in re.finditer(pattern, clean, flags=re.IGNORECASE):
                 pos = match.start()
-                distance = abs(pos - mid)
-                if distance < min_dist:
-                    min_dist = distance
-                    best_pos = pos
+                line1_len = pos
+                line2_len = len(clean) - pos
+                if line1_len >= 6 and line2_len >= 6:
+                    dist = abs(pos - mid)
+                    penalty = dist * 1.2
+                    if penalty < min_penalty:
+                        min_penalty = penalty
+                        best_pos = pos
 
-    if best_pos == -1 or min_dist > max_line_chars // 2:
+    # 3. Word space boundary near middle (avoiding dangling particles)
+    if best_pos == -1 or min_penalty > 15:
         for match in re.finditer(r"\s+", clean):
             pos = match.start()
-            distance = abs(pos - mid)
-            if distance < min_dist:
-                min_dist = distance
-                best_pos = pos
+            line1_len = pos
+            line2_len = len(clean) - pos
+            if line1_len >= 6 and line2_len >= 6:
+                word_before = clean[:pos].rsplit(" ", 1)[-1].lower()
+                dangling_penalty = 10 if word_before in {"của", "là", "và", "thì", "mà", "cho", "với"} else 0
+                dist = abs(pos - mid)
+                penalty = dist * 1.5 + dangling_penalty
+                if penalty < min_penalty:
+                    min_penalty = penalty
+                    best_pos = pos
 
     if 0 < best_pos < len(clean):
         first = clean[:best_pos].strip()
@@ -351,7 +374,7 @@ class UtteranceEngine:
         max_utterance_gap: float = 0.35,
         min_display_duration: float = 0.80,
         safe_gap: float = 0.03,
-        max_line_chars: int = 36,
+        max_line_chars: int = 34,
         merge_score_threshold: float = 3.5,
         max_source_cues_per_group: int = 2,
     ) -> None:

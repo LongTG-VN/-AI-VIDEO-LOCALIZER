@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import logging
 import math
+import re
 import subprocess
 import time
 from pathlib import Path
@@ -227,28 +228,33 @@ class PatchCoverCleaner:
             cue_y_centers = smoothed_y_centers
 
         center_x = width // 2
-        font_size = max(18, int(round(height * 0.050)))
-        pad_x = 22
-        pad_y = 10
+        font_size = max(18, int(round(height * 0.046)))
+        pad_x = 12
+        pad_y = 8
 
         contexts: list[dict[str, Any]] = []
         for idx, cue in enumerate(render_cues):
             if getattr(cue, "suppression_status", None) in {"SUPPRESSED_FILLER", "SUPPRESSED_NONSEMANTIC_DIALOGUE"}:
                 continue
             text = getattr(cue, "render_text", None) or getattr(cue, "translated_text", None) or getattr(cue, "source_text", "")
+            if not "\n" in str(text) and not r"\N" in str(text):
+                orig_trs = [get_final_vi_text(cues_by_id[cid]) for cid in getattr(cue, "source_cue_ids", []) if cid in cues_by_id]
+                orig_tr = " ".join(t for t in orig_trs if t)
+                if "\n" in orig_tr or r"\N" in orig_tr:
+                    text = orig_tr
             lines = [l.strip() for l in str(text).replace(r"\N", "\n").split("\n") if l.strip()]
             if not lines:
                 continue
             line_count = len(lines)
             max_line_chars = max(len(l) for l in lines)
-            text_w = int(round(max_line_chars * (font_size * 0.54)))
-            text_h = int(round(line_count * (font_size * 1.15)))
+            vi_text_w = int(round(max_line_chars * (font_size * 0.50)))
+            vi_text_h = int(round(line_count * (font_size * 1.15)))
 
             y_pos = cue_y_centers[idx] if idx < len(cue_y_centers) else default_y_center
-            vi_x1 = max(0, int(center_x - text_w / 2 - pad_x))
-            vi_x2 = min(width, int(center_x + text_w / 2 + pad_x))
-            vi_y1 = max(int(height * 0.68), int(y_pos - text_h / 2 - pad_y))
-            vi_y2 = min(int(height * 0.98), int(y_pos + text_h / 2 + pad_y))
+            vi_x1 = max(0, int(center_x - vi_text_w / 2 - pad_x))
+            vi_x2 = min(width, int(center_x + vi_text_w / 2 + pad_x))
+            vi_y1 = max(int(height * 0.70), int(y_pos - vi_text_h / 2 - pad_y))
+            vi_y2 = min(int(height * 0.96), int(y_pos + vi_text_h / 2 + pad_y))
 
             chinese_polygons: list[list[list[float]]] = []
             source_cids = getattr(cue, "source_cue_ids", []) or [getattr(cue, "id", None)]
@@ -274,30 +280,29 @@ class PatchCoverCleaner:
 
                 zh_xs = [int(p[0] * width) for poly in active_polys for p in poly]
                 zh_ys = [int(p[1] * height) for poly in active_polys for p in poly]
-                zh_x1, zh_x2 = min(zh_xs), max(zh_xs)
-                zh_y1, zh_y2 = min(zh_ys), max(zh_ys)
+                raw_zh_x1, raw_zh_x2 = min(zh_xs), max(zh_xs)
+                raw_zh_y1, raw_zh_y2 = min(zh_ys), max(zh_ys)
 
-                cover_x1 = max(0, min(vi_x1, zh_x1 - 20))
-                cover_x2 = min(width, max(vi_x2, zh_x2 + 20))
-                cover_y1 = max(int(height * 0.68), min(vi_y1, zh_y1 - 10))
-                cover_y2 = min(int(height * 0.98), max(vi_y2, zh_y2 + 10))
-            else:
-                src_cues = [cues_by_id.get(cid) for cid in getattr(cue, "source_cue_ids", [])]
-                src_texts = [getattr(c, "source_text", "") for c in src_cues if c]
-                src_chars = max([len(t) for t in src_texts] + [len(getattr(cue, "source_text", ""))])
-                est_zh_w = int(round(src_chars * (font_size * 0.90)))
-                zh_x1 = max(0, int(center_x - est_zh_w / 2 - pad_x))
-                zh_x2 = min(width, int(center_x + est_zh_w / 2 + pad_x))
+                zh_x1 = max(0, raw_zh_x1 - pad_x)
+                zh_x2 = min(width, raw_zh_x2 + pad_x)
+                zh_y1 = max(int(height * 0.70), raw_zh_y1 - pad_y)
+                zh_y2 = min(int(height * 0.96), raw_zh_y2 + pad_y)
 
                 cover_x1 = max(0, min(vi_x1, zh_x1))
                 cover_x2 = min(width, max(vi_x2, zh_x2))
+                cover_y1 = max(int(height * 0.70), min(vi_y1, zh_y1))
+                cover_y2 = min(int(height * 0.96), max(vi_y2, zh_y2))
+            else:
+                cover_x1, cover_x2 = vi_x1, vi_x2
                 cover_y1, cover_y2 = vi_y1, vi_y2
 
-            is_two_line = line_count > 1 or (chinese_polygons and (zh_y2 - zh_y1) > 65)
-            max_plate_h = int(height * (0.145 if is_two_line else 0.115))
+            max_plate_h = int(height * (0.120 if line_count > 1 else 0.080))
             if (cover_y2 - cover_y1) > max_plate_h:
-                cover_y1 = max(int(height * 0.68), int(y_pos - max_plate_h / 2))
-                cover_y2 = min(int(height * 0.98), int(y_pos + max_plate_h / 2))
+                cover_y1 = max(int(height * 0.70), int(y_pos - max_plate_h / 2))
+                cover_y2 = min(int(height * 0.96), int(y_pos + max_plate_h / 2))
+                if chinese_polygons:
+                    cover_y1 = min(cover_y1, zh_y1)
+                    cover_y2 = max(cover_y2, zh_y2)
 
             # Canonical OCR-aware cover interval calculation
             cover_start, cover_end, source_start, source_end = self.get_cover_interval(cue, cues)

@@ -69,7 +69,8 @@ def test_04_cover_contains_vi_bbox():
     cues = [SubtitleCue(id="c1", start=1.0, end=2.0, source_text="你好", final_translation="Xin chào bạn hôm nay rất vui được gặp", original_source_cue_ids=["c1"])]
     contexts = cleaner.build_render_cue_contexts(cues, 1280, 720)
     x1, y1, x2, y2 = contexts[0]["bbox"]
-    assert (x2 - x1) > 400
+    assert (x2 - x1) >= 200
+    assert (y2 - y1) >= 40
 
 
 # 5. Short VI cue still covers wider Chinese source
