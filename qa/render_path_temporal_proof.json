@@ -1,0 +1,59 @@
+{
+  "proofs": [
+    {
+      "case": "Case A (~60-62s)",
+      "source_cue_id": "0b072dda-7361-4515-8baf-955ffa88638b_seg1",
+      "render_cue_id": "sub_036",
+      "source_interval_start": 60.4,
+      "vi_start": 61.64,
+      "computed_cover_start": 60.333,
+      "compositor_cover_start": 60.333,
+      "clip": "RENDER_PATH_59_63.mp4",
+      "segment_start": 59.0,
+      "source_first_visible_frame": 42,
+      "cover_first_visible_frame": 40,
+      "vi_first_visible_frame": 79,
+      "pre_roll_exposure_frames": 0,
+      "pre_roll_exposure_ms": 0.0,
+      "fps": 30.0,
+      "first_bad_stage": "NONE (PASS)"
+    },
+    {
+      "case": "Case B (~103-106s)",
+      "source_cue_id": "4d1ff225-9363-4076-bd63-7b2d0b4a2f83",
+      "render_cue_id": "sub_054",
+      "source_interval_start": 103.9,
+      "vi_start": 104.2,
+      "computed_cover_start": 103.833,
+      "compositor_cover_start": 103.833,
+      "clip": "RENDER_PATH_103_107.mp4",
+      "segment_start": 103.0,
+      "source_first_visible_frame": 27,
+      "cover_first_visible_frame": 25,
+      "vi_first_visible_frame": 36,
+      "pre_roll_exposure_frames": 0,
+      "pre_roll_exposure_ms": 0.0,
+      "fps": 30.0,
+      "first_bad_stage": "NONE (PASS)"
+    },
+    {
+      "case": "Case C (~131-133s)",
+      "source_cue_id": "d2c4c40f-0688-47eb-8a19-b03b9fe54816",
+      "render_cue_id": "sub_063",
+      "source_interval_start": 131.4,
+      "vi_start": 132.15,
+      "computed_cover_start": 131.333,
+      "compositor_cover_start": 131.333,
+      "clip": "RENDER_PATH_130_134.mp4",
+      "segment_start": 130.0,
+      "source_first_visible_frame": 42,
+      "cover_first_visible_frame": 40,
+      "vi_first_visible_frame": 65,
+      "pre_roll_exposure_frames": 0,
+      "pre_roll_exposure_ms": 0.0,
+      "fps": 30.0,
+      "first_bad_stage": "NONE (PASS)"
+    }
+  ],
+  "all_cases_pass": true
+}

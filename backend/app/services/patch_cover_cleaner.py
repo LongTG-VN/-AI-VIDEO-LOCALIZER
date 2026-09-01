@@ -295,39 +295,16 @@ class PatchCoverCleaner:
                 cover_y1 = max(int(height * 0.68), int(y_pos - max_plate_h / 2))
                 cover_y2 = min(int(height * 0.98), int(y_pos + max_plate_h / 2))
 
-            # Compute reliable source Chinese dialogue timing
-            source_cids = getattr(cue, "source_cue_ids", []) or [getattr(cue, "id", None)]
-            mapped_origs = [cues_by_id.get(cid) for cid in source_cids if cid and cues_by_id.get(cid)]
-
-            source_start = cue.start
-            source_end = cue.end
-            for orig in mapped_origs:
-                if getattr(orig, "ocr_start", None) is not None and 0.0 < orig.ocr_start:
-                    if 0.0 < (cue.start - orig.ocr_start) <= 0.25:
-                        source_start = min(source_start, orig.ocr_start)
-                if getattr(orig, "ocr_end", None) is not None and 0.0 < orig.ocr_end:
-                    if 0.0 < (orig.ocr_end - cue.end) <= 0.25:
-                        source_end = max(source_end, orig.ocr_end)
-
-            pre_roll_s = 2.0 / 30.0   # ~0.067s (2 frames at 30fps)
-            post_roll_s = 2.0 / 30.0  # ~0.067s (2 frames at 30fps)
-            if source_start < cue.start:
-                cover_start = max(0.0, source_start - pre_roll_s)
-            else:
-                cover_start = cue.start
-
-            if source_end > cue.end:
-                cover_end = source_end + post_roll_s
-            else:
-                cover_end = cue.end
+            # Canonical OCR-aware cover interval calculation
+            cover_start, cover_end, source_start, source_end = self.get_cover_interval(cue, cues)
 
             contexts.append({
-                "start": round(cover_start, 3),
-                "end": round(cover_end, 3),
+                "start": cover_start,
+                "end": cover_end,
                 "vi_start": round(cue.start, 3),
                 "vi_end": round(cue.end, 3),
-                "source_start": round(source_start, 3),
-                "source_end": round(source_end, 3),
+                "source_start": source_start,
+                "source_end": source_end,
                 "cue_id": getattr(cue, "render_id", str(idx)),
                 "bbox": (cover_x1, cover_y1, cover_x2, cover_y2),
                 "chinese_polygons": chinese_polygons,
@@ -347,6 +324,59 @@ class PatchCoverCleaner:
                 curr["start"] = handoff_t
 
         return contexts
+
+    @staticmethod
+    def get_cover_interval(
+        cue: SubtitleCue,
+        all_cues: list[SubtitleCue],
+        pre_roll_s: float = 2.0 / 30.0,
+        post_roll_s: float = 2.0 / 30.0,
+    ) -> tuple[float, float, float, float]:
+        """Canonical accessor: returns (cover_start, cover_end, source_start, source_end)."""
+        source_cids = set(getattr(cue, "source_cue_ids", []) or [getattr(cue, "id", None)])
+        mapped_origs = []
+        for orig in all_cues:
+            if orig.id in source_cids or (orig.start < cue.end and orig.end > cue.start):
+                mapped_origs.append(orig)
+
+        s_starts = [cue.start]
+        s_ends = [cue.end]
+
+        for orig in mapped_origs:
+            s_starts.append(orig.start)
+            s_ends.append(orig.end)
+
+            if getattr(orig, "ocr_start", None) is not None and 0.0 < orig.ocr_start:
+                if 0.0 < (cue.start - orig.ocr_start) <= 2.0:
+                    s_starts.append(orig.ocr_start)
+            if getattr(orig, "ocr_end", None) is not None and 0.0 < orig.ocr_end:
+                if 0.0 < (orig.ocr_end - cue.end) <= 2.0:
+                    s_ends.append(orig.ocr_end)
+
+            for ev in getattr(orig, "ocr_evidence", []) or []:
+                ev_text = (getattr(ev, "text", "") or "").strip()
+                if ev_text:
+                    if getattr(ev, "start", None) is not None and 0.0 < ev.start:
+                        if 0.0 < (cue.start - ev.start) <= 2.0:
+                            s_starts.append(ev.start)
+                    if getattr(ev, "end", None) is not None and 0.0 < ev.end:
+                        if 0.0 < (ev.end - cue.end) <= 2.0:
+                            s_ends.append(ev.end)
+
+        source_start = min(s_starts)
+        source_end = max(s_ends)
+
+        if source_start < cue.start:
+            cover_start = max(0.0, source_start - pre_roll_s)
+        else:
+            cover_start = cue.start
+
+        if source_end > cue.end:
+            cover_end = source_end + post_roll_s
+        else:
+            cover_end = cue.end
+
+        return round(cover_start, 3), round(cover_end, 3), round(source_start, 3), round(source_end, 3)
 
     def compute_vi_backing_intervals(
         self,
