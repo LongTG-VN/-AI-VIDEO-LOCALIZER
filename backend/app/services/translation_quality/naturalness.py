@@ -42,6 +42,8 @@ UNNATURAL_CHINESE_SYNTAX_PATTERNS = [
     r"\bcô\s+chú\s+hiện\s+diện\b",
     # 11. Two predicates accidentally fused (e.g. "... chính là tôi là anh ...", "... tôi là anh ...")
     r"\b(tôi|mình|em|anh|cô)\s+là\s+(anh|em|cô|bạn|tôi|chú|bác)\s+(nấu|làm|ăn|đi|đến)\b",
+    # 12. Duplicated kinship phrase or nonsense "X là X của..." (e.g. "dì là dì của cháu", "cô là cô của...")
+    r"\b(dì|cô|chú|bác|anh|chị|mẹ|bố)\s+là\s+(dì|cô|chú|bác|anh|chị|mẹ|bố)\s+của\b",
 ]
 
 

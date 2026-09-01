@@ -142,10 +142,13 @@ class Renderer:
                 or visual_edit.preset in {"shortform_white_black_soft_bg", "shortform_soft_bg"}
             )
 
-            # 1. Chinese Hard-Sub Cleanup / Dynamic Blur Mask / Patch Cover Preparation
-            if is_patch_cover:
-                logger.info("Starting feathered PatchCover cleanup (mode: patch_cover)...")
-                patch_cleaner = PatchCoverCleaner(config=visual_edit.patch_cover, ffmpeg_bin=self.ffmpeg_bin)
+            # 1. Unified Single Dark Soft-Rect Subtitle Cover (SourceSubtitleCoverPlate)
+            if not is_visual_edit_blur and options.hardsub_removal_mode not in {"none", "off"}:
+                logger.info("Starting unified SourceSubtitleCoverPlate backing...")
+                patch_cleaner = PatchCoverCleaner(
+                    config=visual_edit.patch_cover if visual_edit else None,
+                    ffmpeg_bin=self.ffmpeg_bin,
+                )
                 intermediate_clean = work_dir / (
                     "patched_video.mkv" if options.hardsub_lossless_intermediate else "patched_video.mp4"
                 )
@@ -153,20 +156,6 @@ class Renderer:
                     source_path=source,
                     output_path=intermediate_clean,
                     cues=project.cues,
-                    lossless_intermediate=options.hardsub_lossless_intermediate,
-                )
-                cleaned_video_path = intermediate_clean
-            elif not is_visual_edit_blur and options.hardsub_removal_mode not in {"none", "off"}:
-                logger.info("Starting Chinese hard-sub cleanup (mode: %s)...", options.hardsub_removal_mode)
-                cleaner = self._create_cleaner(options)
-                intermediate_clean = work_dir / (
-                    "cleaned_video.mkv" if options.hardsub_lossless_intermediate else "cleaned_video.mp4"
-                )
-                cleanup_metrics = cleaner.clean_video(
-                    source_path=source,
-                    output_path=intermediate_clean,
-                    cues=project.cues,
-                    mode=options.hardsub_removal_mode,
                     lossless_intermediate=options.hardsub_lossless_intermediate,
                 )
                 cleaned_video_path = intermediate_clean

@@ -1,0 +1,2043 @@
+{
+  "summary": {
+    "total_render_cues": 78,
+    "chinese_source_coverage_average": 1.0,
+    "minimum_reliable_coverage": 1.0,
+    "cues_below_95pct_threshold": 0,
+    "duplicate_visible_covers": 0,
+    "oversized_covers": 0,
+    "glyph_shaped_artifacts": false,
+    "visible_covers_per_render_cue": 1,
+    "geometry_gate": "PASS"
+  },
+  "cues": [
+    {
+      "render_cue_id": "sub_001",
+      "start": 1.19,
+      "end": 1.99,
+      "source_bbox": [
+        347,
+        630,
+        930,
+        679
+      ],
+      "cover_bbox": [
+        210,
+        593,
+        1070,
+        703
+      ],
+      "source_coverage_ratio": 1.0,
+      "cover_width_px": 860,
+      "cover_height_px": 110,
+      "cover_width_ratio": 0.672,
+      "cover_height_ratio": 0.153,
+      "fallback_used": false,
+      "fallback_reason": null,
+      "is_single_cover_object": true,
+      "glyph_shaped_artifacts": false
+    },
+    {
+      "render_cue_id": "sub_002",
+      "start": 2.33,
+      "end": 3.56,
+      "source_bbox": [
+        347,
+        630,
+        930,
+        679
+      ],
+      "cover_bbox": [
+        200,
+        593,
+        1080,
+        703
+      ],
+      "source_coverage_ratio": 1.0,
+      "cover_width_px": 880,
+      "cover_height_px": 110,
+      "cover_width_ratio": 0.688,
+      "cover_height_ratio": 0.153,
+      "fallback_used": false,
+      "fallback_reason": null,
+      "is_single_cover_object": true,
+      "glyph_shaped_artifacts": false
+    },
+    {
+      "render_cue_id": "sub_003",
+      "start": 3.59,
+      "end": 5.59,
+      "source_bbox": [
+        347,
+        616,
+        930,
+        688
+      ],
+      "cover_bbox": [
+        200,
+        593,
+        1080,
+        703
+      ],
+      "source_coverage_ratio": 1.0,
+      "cover_width_px": 880,
+      "cover_height_px": 110,
+      "cover_width_ratio": 0.688,
+      "cover_height_ratio": 0.153,
+      "fallback_used": false,
+      "fallback_reason": null,
+      "is_single_cover_object": true,
+      "glyph_shaped_artifacts": false
+    },
+    {
+      "render_cue_id": "sub_004",
+      "start": 5.89,
+      "end": 7.27,
+      "source_bbox": [
+        476,
+        616,
+        802,
+        688
+      ],
+      "cover_bbox": [
+        278,
+        606,
+        1002,
+        698
+      ],
+      "source_coverage_ratio": 1.0,
+      "cover_width_px": 724,
+      "cover_height_px": 92,
+      "cover_width_ratio": 0.566,
+      "cover_height_ratio": 0.128,
+      "fallback_used": false,
+      "fallback_reason": null,
+      "is_single_cover_object": true,
+      "glyph_shaped_artifacts": false
+    },
+    {
+      "render_cue_id": "sub_005",
+      "start": 8.39,
+      "end": 9.19,
+      "source_bbox": [
+        518,
+        624,
+        758,
+        687
+      ],
+      "cover_bbox": [
+        404,
+        607,
+        876,
+        689
+      ],
+      "source_coverage_ratio": 1.0,
+      "cover_width_px": 472,
+      "cover_height_px": 82,
+      "cover_width_ratio": 0.369,
+      "cover_height_ratio": 0.114,
+      "fallback_used": false,
+      "fallback_reason": null,
+      "is_single_cover_object": true,
+      "glyph_shaped_artifacts": false
+    },
+    {
+      "render_cue_id": "sub_006",
+      "start": 9.22,
+      "end": 10.78,
+      "source_bbox": [
+        422,
+        624,
+        855,
+        687
+      ],
+      "cover_bbox": [
+        307,
+        607,
+        973,
+        689
+      ],
+      "source_coverage_ratio": 1.0,
+      "cover_width_px": 666,
+      "cover_height_px": 82,
+      "cover_width_ratio": 0.52,
+      "cover_height_ratio": 0.114,
+      "fallback_used": false,
+      "fallback_reason": null,
+      "is_single_cover_object": true,
+      "glyph_shaped_artifacts": false
+    },
+    {
+      "render_cue_id": "sub_007",
+      "start": 10.81,
+      "end": 11.6,
+      "source_bbox": [
+        422,
+        630,
+        855,
+        679
+      ],
+      "cover_bbox": [
+        307,
+        615,
+        973,
+        689
+      ],
+      "source_coverage_ratio": 1.0,
+      "cover_width_px": 666,
+      "cover_height_px": 74,
+      "cover_width_ratio": 0.52,
+      "cover_height_ratio": 0.103,
+      "fallback_used": false,
+      "fallback_reason": null,
+      "is_single_cover_object": true,
+      "glyph_shaped_artifacts": false
+    },
+    {
+      "render_cue_id": "sub_008",
+      "start": 11.63,
+      "end": 12.52,
+      "source_bbox": [
+        322,
+        627,
+        953,
+        681
+      ],
+      "cover_bbox": [
+        278,
+        593,
+        1002,
+        703
+      ],
+      "source_coverage_ratio": 1.0,
+      "cover_width_px": 724,
+      "cover_height_px": 110,
+      "cover_width_ratio": 0.566,
+      "cover_height_ratio": 0.153,
+      "fallback_used": false,
+      "fallback_reason": null,
+      "is_single_cover_object": true,
+      "glyph_shaped_artifacts": false
+    },
+    {
+      "render_cue_id": "sub_009",
+      "start": 12.55,
+      "end": 13.57,
+      "source_bbox": [
+        322,
+        627,
+        953,
+        681
+      ],
+      "cover_bbox": [
+        278,
+        593,
+        1002,
+        703
+      ],
+      "source_coverage_ratio": 1.0,
+      "cover_width_px": 724,
+      "cover_height_px": 110,
+      "cover_width_ratio": 0.566,
+      "cover_height_ratio": 0.153,
+      "fallback_used": false,
+      "fallback_reason": null,
+      "is_single_cover_object": true,
+      "glyph_shaped_artifacts": false
+    },
+    {
+      "render_cue_id": "sub_010",
+      "start": 13.73,
+      "end": 16.26,
+      "source_bbox": [
+        322,
+        626,
+        953,
+        681
+      ],
+      "cover_bbox": [
+        287,
+        615,
+        992,
+        691
+      ],
+      "source_coverage_ratio": 1.0,
+      "cover_width_px": 705,
+      "cover_height_px": 76,
+      "cover_width_ratio": 0.551,
+      "cover_height_ratio": 0.106,
+      "fallback_used": false,
+      "fallback_reason": null,
+      "is_single_cover_object": true,
+      "glyph_shaped_artifacts": false
+    },
+    {
+      "render_cue_id": "sub_011",
+      "start": 16.29,
+      "end": 19.01,
+      "source_bbox": [
+        409,
+        626,
+        866,
+        681
+      ],
+      "cover_bbox": [
+        336,
+        615,
+        944,
+        691
+      ],
+      "source_coverage_ratio": 1.0,
+      "cover_width_px": 608,
+      "cover_height_px": 76,
+      "cover_width_ratio": 0.475,
+      "cover_height_ratio": 0.106,
+      "fallback_used": false,
+      "fallback_reason": null,
+      "is_single_cover_object": true,
+      "glyph_shaped_artifacts": false
+    },
+    {
+      "render_cue_id": "sub_012",
+      "start": 19.29,
+      "end": 20.1,
+      "source_bbox": [
+        482,
+        630,
+        797,
+        679
+      ],
+      "cover_bbox": [
+        462,
+        615,
+        817,
+        689
+      ],
+      "source_coverage_ratio": 1.0,
+      "cover_width_px": 355,
+      "cover_height_px": 74,
+      "cover_width_ratio": 0.277,
+      "cover_height_ratio": 0.103,
+      "fallback_used": false,
+      "fallback_reason": null,
+      "is_single_cover_object": true,
+      "glyph_shaped_artifacts": false
+    },
+    {
+      "render_cue_id": "sub_013",
+      "start": 20.13,
+      "end": 20.93,
+      "source_bbox": [
+        542,
+        625,
+        733,
+        685
+      ],
+      "cover_bbox": [
+        384,
+        615,
+        895,
+        695
+      ],
+      "source_coverage_ratio": 1.0,
+      "cover_width_px": 511,
+      "cover_height_px": 80,
+      "cover_width_ratio": 0.399,
+      "cover_height_ratio": 0.111,
+      "fallback_used": false,
+      "fallback_reason": null,
+      "is_single_cover_object": true,
+      "glyph_shaped_artifacts": false
+    },
+    {
+      "render_cue_id": "sub_014",
+      "start": 20.96,
+      "end": 22.13,
+      "source_bbox": [
+        413,
+        626,
+        864,
+        682
+      ],
+      "cover_bbox": [
+        326,
+        593,
+        953,
+        703
+      ],
+      "source_coverage_ratio": 1.0,
+      "cover_width_px": 627,
+      "cover_height_px": 110,
+      "cover_width_ratio": 0.49,
+      "cover_height_ratio": 0.153,
+      "fallback_used": false,
+      "fallback_reason": null,
+      "is_single_cover_object": true,
+      "glyph_shaped_artifacts": false
+    },
+    {
+      "render_cue_id": "sub_015",
+      "start": 22.65,
+      "end": 23.45,
+      "source_bbox": [
+        413,
+        626,
+        864,
+        682
+      ],
+      "cover_bbox": [
+        393,
+        615,
+        884,
+        692
+      ],
+      "source_coverage_ratio": 1.0,
+      "cover_width_px": 491,
+      "cover_height_px": 77,
+      "cover_width_ratio": 0.384,
+      "cover_height_ratio": 0.107,
+      "fallback_used": false,
+      "fallback_reason": null,
+      "is_single_cover_object": true,
+      "glyph_shaped_artifacts": false
+    },
+    {
+      "render_cue_id": "sub_016",
+      "start": 23.48,
+      "end": 24.6,
+      "source_bbox": [
+        521,
+        625,
+        755,
+        685
+      ],
+      "cover_bbox": [
+        423,
+        615,
+        856,
+        695
+      ],
+      "source_coverage_ratio": 1.0,
+      "cover_width_px": 433,
+      "cover_height_px": 80,
+      "cover_width_ratio": 0.338,
+      "cover_height_ratio": 0.111,
+      "fallback_used": false,
+      "fallback_reason": null,
+      "is_single_cover_object": true,
+      "glyph_shaped_artifacts": false
+    },
+    {
+      "render_cue_id": "sub_017",
+      "start": 24.63,
+      "end": 25.43,
+      "source_bbox": [
+        498,
+        626,
+        776,
+        681
+      ],
+      "cover_bbox": [
+        336,
+        615,
+        944,
+        691
+      ],
+      "source_coverage_ratio": 1.0,
+      "cover_width_px": 608,
+      "cover_height_px": 76,
+      "cover_width_ratio": 0.475,
+      "cover_height_ratio": 0.106,
+      "fallback_used": false,
+      "fallback_reason": null,
+      "is_single_cover_object": true,
+      "glyph_shaped_artifacts": false
+    },
+    {
+      "render_cue_id": "sub_018",
+      "start": 25.46,
+      "end": 26.45,
+      "source_bbox": [
+        477,
+        626,
+        798,
+        682
+      ],
+      "cover_bbox": [
+        287,
+        615,
+        992,
+        692
+      ],
+      "source_coverage_ratio": 1.0,
+      "cover_width_px": 705,
+      "cover_height_px": 77,
+      "cover_width_ratio": 0.551,
+      "cover_height_ratio": 0.107,
+      "fallback_used": false,
+      "fallback_reason": null,
+      "is_single_cover_object": true,
+      "glyph_shaped_artifacts": false
+    },
+    {
+      "render_cue_id": "sub_019",
+      "start": 28.39,
+      "end": 30.5,
+      "source_bbox": [
+        434,
+        627,
+        843,
+        681
+      ],
+      "cover_bbox": [
+        229,
+        593,
+        1051,
+        703
+      ],
+      "source_coverage_ratio": 1.0,
+      "cover_width_px": 822,
+      "cover_height_px": 110,
+      "cover_width_ratio": 0.642,
+      "cover_height_ratio": 0.153,
+      "fallback_used": false,
+      "fallback_reason": null,
+      "is_single_cover_object": true,
+      "glyph_shaped_artifacts": false
+    },
+    {
+      "render_cue_id": "sub_020",
+      "start": 30.53,
+      "end": 31.41,
+      "source_bbox": [
+        457,
+        625,
+        822,
+        684
+      ],
+      "cover_bbox": [
+        287,
+        615,
+        992,
+        694
+      ],
+      "source_coverage_ratio": 1.0,
+      "cover_width_px": 705,
+      "cover_height_px": 79,
+      "cover_width_ratio": 0.551,
+      "cover_height_ratio": 0.11,
+      "fallback_used": false,
+      "fallback_reason": null,
+      "is_single_cover_object": true,
+      "glyph_shaped_artifacts": false
+    },
+    {
+      "render_cue_id": "sub_021",
+      "start": 31.81,
+      "end": 32.79,
+      "source_bbox": [
+        457,
+        625,
+        822,
+        684
+      ],
+      "cover_bbox": [
+        346,
+        615,
+        934,
+        694
+      ],
+      "source_coverage_ratio": 1.0,
+      "cover_width_px": 588,
+      "cover_height_px": 79,
+      "cover_width_ratio": 0.459,
+      "cover_height_ratio": 0.11,
+      "fallback_used": false,
+      "fallback_reason": null,
+      "is_single_cover_object": true,
+      "glyph_shaped_artifacts": false
+    },
+    {
+      "render_cue_id": "sub_022",
+      "start": 33.03,
+      "end": 33.87,
+      "source_bbox": [
+        477,
+        625,
+        797,
+        684
+      ],
+      "cover_bbox": [
+        346,
+        615,
+        934,
+        694
+      ],
+      "source_coverage_ratio": 1.0,
+      "cover_width_px": 588,
+      "cover_height_px": 79,
+      "cover_width_ratio": 0.459,
+      "cover_height_ratio": 0.11,
+      "fallback_used": false,
+      "fallback_reason": null,
+      "is_single_cover_object": true,
+      "glyph_shaped_artifacts": false
+    },
+    {
+      "render_cue_id": "sub_023",
+      "start": 34.29,
+      "end": 35.06,
+      "source_bbox": [
+        498,
+        627,
+        777,
+        682
+      ],
+      "cover_bbox": [
+        478,
+        615,
+        797,
+        692
+      ],
+      "source_coverage_ratio": 1.0,
+      "cover_width_px": 319,
+      "cover_height_px": 77,
+      "cover_width_ratio": 0.249,
+      "cover_height_ratio": 0.107,
+      "fallback_used": false,
+      "fallback_reason": null,
+      "is_single_cover_object": true,
+      "glyph_shaped_artifacts": false
+    },
+    {
+      "render_cue_id": "sub_024",
+      "start": 35.09,
+      "end": 38.85,
+      "source_bbox": [
+        523,
+        622,
+        755,
+        689
+      ],
+      "cover_bbox": [
+        503,
+        612,
+        775,
+        699
+      ],
+      "source_coverage_ratio": 1.0,
+      "cover_width_px": 272,
+      "cover_height_px": 87,
+      "cover_width_ratio": 0.212,
+      "cover_height_ratio": 0.121,
+      "fallback_used": false,
+      "fallback_reason": null,
+      "is_single_cover_object": true,
+      "glyph_shaped_artifacts": false
+    },
+    {
+      "render_cue_id": "sub_025",
+      "start": 39.15,
+      "end": 40.35,
+      "source_bbox": [
+        392,
+        622,
+        886,
+        689
+      ],
+      "cover_bbox": [
+        365,
+        593,
+        914,
+        703
+      ],
+      "source_coverage_ratio": 1.0,
+      "cover_width_px": 549,
+      "cover_height_px": 110,
+      "cover_width_ratio": 0.429,
+      "cover_height_ratio": 0.153,
+      "fallback_used": false,
+      "fallback_reason": null,
+      "is_single_cover_object": true,
+      "glyph_shaped_artifacts": false
+    },
+    {
+      "render_cue_id": "sub_026",
+      "start": 40.41,
+      "end": 41.21,
+      "source_bbox": [
+        392,
+        628,
+        886,
+        679
+      ],
+      "cover_bbox": [
+        365,
+        593,
+        914,
+        703
+      ],
+      "source_coverage_ratio": 1.0,
+      "cover_width_px": 549,
+      "cover_height_px": 110,
+      "cover_width_ratio": 0.429,
+      "cover_height_ratio": 0.153,
+      "fallback_used": false,
+      "fallback_reason": null,
+      "is_single_cover_object": true,
+      "glyph_shaped_artifacts": false
+    },
+    {
+      "render_cue_id": "sub_027",
+      "start": 41.27,
+      "end": 42.21,
+      "source_bbox": [
+        392,
+        630,
+        886,
+        679
+      ],
+      "cover_bbox": [
+        365,
+        593,
+        914,
+        703
+      ],
+      "source_coverage_ratio": 1.0,
+      "cover_width_px": 549,
+      "cover_height_px": 110,
+      "cover_width_ratio": 0.429,
+      "cover_height_ratio": 0.153,
+      "fallback_used": false,
+      "fallback_reason": null,
+      "is_single_cover_object": true,
+      "glyph_shaped_artifacts": false
+    },
+    {
+      "render_cue_id": "sub_028",
+      "start": 42.51,
+      "end": 44.25,
+      "source_bbox": [
+        369,
+        628,
+        903,
+        679
+      ],
+      "cover_bbox": [
+        180,
+        593,
+        1099,
+        703
+      ],
+      "source_coverage_ratio": 1.0,
+      "cover_width_px": 919,
+      "cover_height_px": 110,
+      "cover_width_ratio": 0.718,
+      "cover_height_ratio": 0.153,
+      "fallback_used": false,
+      "fallback_reason": null,
+      "is_single_cover_object": true,
+      "glyph_shaped_artifacts": false
+    },
+    {
+      "render_cue_id": "sub_029",
+      "start": 45.35,
+      "end": 46.39,
+      "source_bbox": [
+        498,
+        628,
+        775,
+        679
+      ],
+      "cover_bbox": [
+        433,
+        593,
+        846,
+        703
+      ],
+      "source_coverage_ratio": 1.0,
+      "cover_width_px": 413,
+      "cover_height_px": 110,
+      "cover_width_ratio": 0.323,
+      "cover_height_ratio": 0.153,
+      "fallback_used": false,
+      "fallback_reason": null,
+      "is_single_cover_object": true,
+      "glyph_shaped_artifacts": false
+    },
+    {
+      "render_cue_id": "sub_030",
+      "start": 47.01,
+      "end": 48.82,
+      "source_bbox": [
+        396,
+        625,
+        880,
+        682
+      ],
+      "cover_bbox": [
+        326,
+        593,
+        953,
+        703
+      ],
+      "source_coverage_ratio": 1.0,
+      "cover_width_px": 627,
+      "cover_height_px": 110,
+      "cover_width_ratio": 0.49,
+      "cover_height_ratio": 0.153,
+      "fallback_used": false,
+      "fallback_reason": null,
+      "is_single_cover_object": true,
+      "glyph_shaped_artifacts": false
+    },
+    {
+      "render_cue_id": "sub_031",
+      "start": 48.85,
+      "end": 51.61,
+      "source_bbox": [
+        396,
+        625,
+        880,
+        682
+      ],
+      "cover_bbox": [
+        326,
+        593,
+        953,
+        703
+      ],
+      "source_coverage_ratio": 1.0,
+      "cover_width_px": 627,
+      "cover_height_px": 110,
+      "cover_width_ratio": 0.49,
+      "cover_height_ratio": 0.153,
+      "fallback_used": false,
+      "fallback_reason": null,
+      "is_single_cover_object": true,
+      "glyph_shaped_artifacts": false
+    },
+    {
+      "render_cue_id": "sub_032",
+      "start": 52.93,
+      "end": 53.8,
+      "source_bbox": [
+        500,
+        626,
+        776,
+        684
+      ],
+      "cover_bbox": [
+        423,
+        615,
+        856,
+        694
+      ],
+      "source_coverage_ratio": 1.0,
+      "cover_width_px": 433,
+      "cover_height_px": 79,
+      "cover_width_ratio": 0.338,
+      "cover_height_ratio": 0.11,
+      "fallback_used": false,
+      "fallback_reason": null,
+      "is_single_cover_object": true,
+      "glyph_shaped_artifacts": false
+    },
+    {
+      "render_cue_id": "sub_033",
+      "start": 53.83,
+      "end": 54.85,
+      "source_bbox": [
+        500,
+        626,
+        776,
+        684
+      ],
+      "cover_bbox": [
+        414,
+        615,
+        866,
+        694
+      ],
+      "source_coverage_ratio": 1.0,
+      "cover_width_px": 452,
+      "cover_height_px": 79,
+      "cover_width_ratio": 0.353,
+      "cover_height_ratio": 0.11,
+      "fallback_used": false,
+      "fallback_reason": null,
+      "is_single_cover_object": true,
+      "glyph_shaped_artifacts": false
+    },
+    {
+      "render_cue_id": "sub_034",
+      "start": 55.75,
+      "end": 57.87,
+      "source_bbox": [
+        392,
+        628,
+        883,
+        681
+      ],
+      "cover_bbox": [
+        278,
+        615,
+        1002,
+        691
+      ],
+      "source_coverage_ratio": 1.0,
+      "cover_width_px": 724,
+      "cover_height_px": 76,
+      "cover_width_ratio": 0.566,
+      "cover_height_ratio": 0.106,
+      "fallback_used": false,
+      "fallback_reason": null,
+      "is_single_cover_object": true,
+      "glyph_shaped_artifacts": false
+    },
+    {
+      "render_cue_id": "sub_035",
+      "start": 57.9,
+      "end": 60.52,
+      "source_bbox": [
+        392,
+        630,
+        886,
+        679
+      ],
+      "cover_bbox": [
+        372,
+        593,
+        906,
+        703
+      ],
+      "source_coverage_ratio": 1.0,
+      "cover_width_px": 534,
+      "cover_height_px": 110,
+      "cover_width_ratio": 0.417,
+      "cover_height_ratio": 0.153,
+      "fallback_used": false,
+      "fallback_reason": null,
+      "is_single_cover_object": true,
+      "glyph_shaped_artifacts": false
+    },
+    {
+      "render_cue_id": "sub_036",
+      "start": 61.64,
+      "end": 63.1,
+      "source_bbox": [
+        500,
+        627,
+        779,
+        682
+      ],
+      "cover_bbox": [
+        394,
+        615,
+        885,
+        692
+      ],
+      "source_coverage_ratio": 1.0,
+      "cover_width_px": 491,
+      "cover_height_px": 77,
+      "cover_width_ratio": 0.384,
+      "cover_height_ratio": 0.107,
+      "fallback_used": false,
+      "fallback_reason": null,
+      "is_single_cover_object": true,
+      "glyph_shaped_artifacts": false
+    },
+    {
+      "render_cue_id": "sub_037",
+      "start": 67.8,
+      "end": 69.09,
+      "source_bbox": [
+        480,
+        630,
+        798,
+        679
+      ],
+      "cover_bbox": [
+        336,
+        615,
+        944,
+        689
+      ],
+      "source_coverage_ratio": 1.0,
+      "cover_width_px": 608,
+      "cover_height_px": 74,
+      "cover_width_ratio": 0.475,
+      "cover_height_ratio": 0.103,
+      "fallback_used": false,
+      "fallback_reason": null,
+      "is_single_cover_object": true,
+      "glyph_shaped_artifacts": false
+    },
+    {
+      "render_cue_id": "sub_038",
+      "start": 69.5,
+      "end": 70.61,
+      "source_bbox": [
+        478,
+        627,
+        798,
+        682
+      ],
+      "cover_bbox": [
+        307,
+        615,
+        973,
+        692
+      ],
+      "source_coverage_ratio": 1.0,
+      "cover_width_px": 666,
+      "cover_height_px": 77,
+      "cover_width_ratio": 0.52,
+      "cover_height_ratio": 0.107,
+      "fallback_used": false,
+      "fallback_reason": null,
+      "is_single_cover_object": true,
+      "glyph_shaped_artifacts": false
+    },
+    {
+      "render_cue_id": "sub_039",
+      "start": 71.02,
+      "end": 71.92,
+      "source_bbox": [
+        478,
+        627,
+        797,
+        682
+      ],
+      "cover_bbox": [
+        404,
+        615,
+        876,
+        692
+      ],
+      "source_coverage_ratio": 1.0,
+      "cover_width_px": 472,
+      "cover_height_px": 77,
+      "cover_width_ratio": 0.369,
+      "cover_height_ratio": 0.107,
+      "fallback_used": false,
+      "fallback_reason": null,
+      "is_single_cover_object": true,
+      "glyph_shaped_artifacts": false
+    },
+    {
+      "render_cue_id": "sub_040",
+      "start": 73.14,
+      "end": 73.94,
+      "source_bbox": [
+        322,
+        627,
+        952,
+        681
+      ],
+      "cover_bbox": [
+        64,
+        593,
+        1216,
+        703
+      ],
+      "source_coverage_ratio": 1.0,
+      "cover_width_px": 1152,
+      "cover_height_px": 110,
+      "cover_width_ratio": 0.9,
+      "cover_height_ratio": 0.153,
+      "fallback_used": false,
+      "fallback_reason": null,
+      "is_single_cover_object": true,
+      "glyph_shaped_artifacts": false
+    },
+    {
+      "render_cue_id": "sub_041",
+      "start": 73.97,
+      "end": 75.88,
+      "source_bbox": [
+        322,
+        627,
+        952,
+        681
+      ],
+      "cover_bbox": [
+        64,
+        593,
+        1216,
+        703
+      ],
+      "source_coverage_ratio": 1.0,
+      "cover_width_px": 1152,
+      "cover_height_px": 110,
+      "cover_width_ratio": 0.9,
+      "cover_height_ratio": 0.153,
+      "fallback_used": false,
+      "fallback_reason": null,
+      "is_single_cover_object": true,
+      "glyph_shaped_artifacts": false
+    },
+    {
+      "render_cue_id": "sub_042",
+      "start": 76.58,
+      "end": 79.0,
+      "source_bbox": [
+        392,
+        630,
+        882,
+        679
+      ],
+      "cover_bbox": [
+        316,
+        615,
+        963,
+        689
+      ],
+      "source_coverage_ratio": 1.0,
+      "cover_width_px": 647,
+      "cover_height_px": 74,
+      "cover_width_ratio": 0.505,
+      "cover_height_ratio": 0.103,
+      "fallback_used": false,
+      "fallback_reason": null,
+      "is_single_cover_object": true,
+      "glyph_shaped_artifacts": false
+    },
+    {
+      "render_cue_id": "sub_043",
+      "start": 80.36,
+      "end": 82.0,
+      "source_bbox": [
+        278,
+        562,
+        1002,
+        672
+      ],
+      "cover_bbox": [
+        278,
+        562,
+        1002,
+        672
+      ],
+      "source_coverage_ratio": 1.0,
+      "cover_width_px": 724,
+      "cover_height_px": 110,
+      "cover_width_ratio": 0.566,
+      "cover_height_ratio": 0.153,
+      "fallback_used": true,
+      "fallback_reason": "No reliable OCR polygon; used text length heuristic",
+      "is_single_cover_object": true,
+      "glyph_shaped_artifacts": false
+    },
+    {
+      "render_cue_id": "sub_044",
+      "start": 82.91,
+      "end": 83.71,
+      "source_bbox": [
+        360,
+        625,
+        915,
+        685
+      ],
+      "cover_bbox": [
+        340,
+        615,
+        935,
+        695
+      ],
+      "source_coverage_ratio": 1.0,
+      "cover_width_px": 595,
+      "cover_height_px": 80,
+      "cover_width_ratio": 0.465,
+      "cover_height_ratio": 0.111,
+      "fallback_used": false,
+      "fallback_reason": null,
+      "is_single_cover_object": true,
+      "glyph_shaped_artifacts": false
+    },
+    {
+      "render_cue_id": "sub_045",
+      "start": 83.99,
+      "end": 84.79,
+      "source_bbox": [
+        544,
+        625,
+        733,
+        685
+      ],
+      "cover_bbox": [
+        316,
+        593,
+        963,
+        703
+      ],
+      "source_coverage_ratio": 1.0,
+      "cover_width_px": 647,
+      "cover_height_px": 110,
+      "cover_width_ratio": 0.505,
+      "cover_height_ratio": 0.153,
+      "fallback_used": false,
+      "fallback_reason": null,
+      "is_single_cover_object": true,
+      "glyph_shaped_artifacts": false
+    },
+    {
+      "render_cue_id": "sub_046",
+      "start": 84.82,
+      "end": 86.5,
+      "source_bbox": [
+        360,
+        625,
+        915,
+        681
+      ],
+      "cover_bbox": [
+        210,
+        593,
+        1070,
+        703
+      ],
+      "source_coverage_ratio": 1.0,
+      "cover_width_px": 860,
+      "cover_height_px": 110,
+      "cover_width_ratio": 0.672,
+      "cover_height_ratio": 0.153,
+      "fallback_used": false,
+      "fallback_reason": null,
+      "is_single_cover_object": true,
+      "glyph_shaped_artifacts": false
+    },
+    {
+      "render_cue_id": "sub_047",
+      "start": 86.6,
+      "end": 88.95,
+      "source_bbox": [
+        368,
+        628,
+        905,
+        678
+      ],
+      "cover_bbox": [
+        190,
+        593,
+        1089,
+        703
+      ],
+      "source_coverage_ratio": 1.0,
+      "cover_width_px": 899,
+      "cover_height_px": 110,
+      "cover_width_ratio": 0.702,
+      "cover_height_ratio": 0.153,
+      "fallback_used": false,
+      "fallback_reason": null,
+      "is_single_cover_object": true,
+      "glyph_shaped_artifacts": false
+    },
+    {
+      "render_cue_id": "sub_048",
+      "start": 89.28,
+      "end": 93.27,
+      "source_bbox": [
+        306,
+        597,
+        973,
+        681
+      ],
+      "cover_bbox": [
+        286,
+        587,
+        993,
+        703
+      ],
+      "source_coverage_ratio": 1.0,
+      "cover_width_px": 707,
+      "cover_height_px": 116,
+      "cover_width_ratio": 0.552,
+      "cover_height_ratio": 0.161,
+      "fallback_used": false,
+      "fallback_reason": null,
+      "is_single_cover_object": true,
+      "glyph_shaped_artifacts": false
+    },
+    {
+      "render_cue_id": "sub_049",
+      "start": 93.91,
+      "end": 95.69,
+      "source_bbox": [
+        406,
+        597,
+        841,
+        684
+      ],
+      "cover_bbox": [
+        278,
+        587,
+        1002,
+        694
+      ],
+      "source_coverage_ratio": 1.0,
+      "cover_width_px": 724,
+      "cover_height_px": 107,
+      "cover_width_ratio": 0.566,
+      "cover_height_ratio": 0.149,
+      "fallback_used": false,
+      "fallback_reason": null,
+      "is_single_cover_object": true,
+      "glyph_shaped_artifacts": false
+    },
+    {
+      "render_cue_id": "sub_050",
+      "start": 96.13,
+      "end": 97.14,
+      "source_bbox": [
+        432,
+        626,
+        841,
+        684
+      ],
+      "cover_bbox": [
+        268,
+        593,
+        1012,
+        703
+      ],
+      "source_coverage_ratio": 1.0,
+      "cover_width_px": 744,
+      "cover_height_px": 110,
+      "cover_width_ratio": 0.581,
+      "cover_height_ratio": 0.153,
+      "fallback_used": false,
+      "fallback_reason": null,
+      "is_single_cover_object": true,
+      "glyph_shaped_artifacts": false
+    },
+    {
+      "render_cue_id": "sub_051",
+      "start": 98.33,
+      "end": 100.1,
+      "source_bbox": [
+        478,
+        627,
+        797,
+        681
+      ],
+      "cover_bbox": [
+        394,
+        593,
+        885,
+        703
+      ],
+      "source_coverage_ratio": 1.0,
+      "cover_width_px": 491,
+      "cover_height_px": 110,
+      "cover_width_ratio": 0.384,
+      "cover_height_ratio": 0.153,
+      "fallback_used": false,
+      "fallback_reason": null,
+      "is_single_cover_object": true,
+      "glyph_shaped_artifacts": false
+    },
+    {
+      "render_cue_id": "sub_052",
+      "start": 100.13,
+      "end": 101.6,
+      "source_bbox": [
+        411,
+        628,
+        864,
+        682
+      ],
+      "cover_bbox": [
+        391,
+        615,
+        884,
+        692
+      ],
+      "source_coverage_ratio": 1.0,
+      "cover_width_px": 493,
+      "cover_height_px": 77,
+      "cover_width_ratio": 0.385,
+      "cover_height_ratio": 0.107,
+      "fallback_used": false,
+      "fallback_reason": null,
+      "is_single_cover_object": true,
+      "glyph_shaped_artifacts": false
+    },
+    {
+      "render_cue_id": "sub_053",
+      "start": 101.63,
+      "end": 103.11,
+      "source_bbox": [
+        390,
+        630,
+        884,
+        679
+      ],
+      "cover_bbox": [
+        370,
+        593,
+        904,
+        703
+      ],
+      "source_coverage_ratio": 1.0,
+      "cover_width_px": 534,
+      "cover_height_px": 110,
+      "cover_width_ratio": 0.417,
+      "cover_height_ratio": 0.153,
+      "fallback_used": false,
+      "fallback_reason": null,
+      "is_single_cover_object": true,
+      "glyph_shaped_artifacts": false
+    },
+    {
+      "render_cue_id": "sub_054",
+      "start": 104.2,
+      "end": 105.0,
+      "source_bbox": [
+        585,
+        584,
+        694,
+        649
+      ],
+      "cover_bbox": [
+        585,
+        584,
+        694,
+        649
+      ],
+      "source_coverage_ratio": 1.0,
+      "cover_width_px": 109,
+      "cover_height_px": 65,
+      "cover_width_ratio": 0.085,
+      "cover_height_ratio": 0.09,
+      "fallback_used": true,
+      "fallback_reason": "No reliable OCR polygon; used text length heuristic",
+      "is_single_cover_object": true,
+      "glyph_shaped_artifacts": false
+    },
+    {
+      "render_cue_id": "sub_055",
+      "start": 105.07,
+      "end": 107.08,
+      "source_bbox": [
+        416,
+        630,
+        864,
+        679
+      ],
+      "cover_bbox": [
+        287,
+        593,
+        992,
+        703
+      ],
+      "source_coverage_ratio": 1.0,
+      "cover_width_px": 705,
+      "cover_height_px": 110,
+      "cover_width_ratio": 0.551,
+      "cover_height_ratio": 0.153,
+      "fallback_used": false,
+      "fallback_reason": null,
+      "is_single_cover_object": true,
+      "glyph_shaped_artifacts": false
+    },
+    {
+      "render_cue_id": "sub_056",
+      "start": 111.26,
+      "end": 112.06,
+      "source_bbox": [
+        544,
+        628,
+        733,
+        685
+      ],
+      "cover_bbox": [
+        472,
+        615,
+        808,
+        695
+      ],
+      "source_coverage_ratio": 1.0,
+      "cover_width_px": 336,
+      "cover_height_px": 80,
+      "cover_width_ratio": 0.263,
+      "cover_height_ratio": 0.111,
+      "fallback_used": false,
+      "fallback_reason": null,
+      "is_single_cover_object": true,
+      "glyph_shaped_artifacts": false
+    },
+    {
+      "render_cue_id": "sub_057",
+      "start": 112.1,
+      "end": 113.6,
+      "source_bbox": [
+        542,
+        627,
+        733,
+        685
+      ],
+      "cover_bbox": [
+        316,
+        615,
+        963,
+        695
+      ],
+      "source_coverage_ratio": 1.0,
+      "cover_width_px": 647,
+      "cover_height_px": 80,
+      "cover_width_ratio": 0.505,
+      "cover_height_ratio": 0.111,
+      "fallback_used": false,
+      "fallback_reason": null,
+      "is_single_cover_object": true,
+      "glyph_shaped_artifacts": false
+    },
+    {
+      "render_cue_id": "sub_058",
+      "start": 113.63,
+      "end": 114.43,
+      "source_bbox": [
+        414,
+        630,
+        865,
+        679
+      ],
+      "cover_bbox": [
+        394,
+        593,
+        885,
+        703
+      ],
+      "source_coverage_ratio": 1.0,
+      "cover_width_px": 491,
+      "cover_height_px": 110,
+      "cover_width_ratio": 0.384,
+      "cover_height_ratio": 0.153,
+      "fallback_used": false,
+      "fallback_reason": null,
+      "is_single_cover_object": true,
+      "glyph_shaped_artifacts": false
+    },
+    {
+      "render_cue_id": "sub_059",
+      "start": 114.8,
+      "end": 115.6,
+      "source_bbox": [
+        414,
+        625,
+        865,
+        686
+      ],
+      "cover_bbox": [
+        394,
+        615,
+        885,
+        696
+      ],
+      "source_coverage_ratio": 1.0,
+      "cover_width_px": 491,
+      "cover_height_px": 81,
+      "cover_width_ratio": 0.384,
+      "cover_height_ratio": 0.113,
+      "fallback_used": false,
+      "fallback_reason": null,
+      "is_single_cover_object": true,
+      "glyph_shaped_artifacts": false
+    },
+    {
+      "render_cue_id": "sub_060",
+      "start": 121.85,
+      "end": 122.99,
+      "source_bbox": [
+        478,
+        628,
+        798,
+        682
+      ],
+      "cover_bbox": [
+        384,
+        615,
+        895,
+        692
+      ],
+      "source_coverage_ratio": 1.0,
+      "cover_width_px": 511,
+      "cover_height_px": 77,
+      "cover_width_ratio": 0.399,
+      "cover_height_ratio": 0.107,
+      "fallback_used": false,
+      "fallback_reason": null,
+      "is_single_cover_object": true,
+      "glyph_shaped_artifacts": false
+    },
+    {
+      "render_cue_id": "sub_061",
+      "start": 123.67,
+      "end": 125.67,
+      "source_bbox": [
+        349,
+        632,
+        929,
+        678
+      ],
+      "cover_bbox": [
+        329,
+        593,
+        949,
+        703
+      ],
+      "source_coverage_ratio": 1.0,
+      "cover_width_px": 620,
+      "cover_height_px": 110,
+      "cover_width_ratio": 0.484,
+      "cover_height_ratio": 0.153,
+      "fallback_used": false,
+      "fallback_reason": null,
+      "is_single_cover_object": true,
+      "glyph_shaped_artifacts": false
+    },
+    {
+      "render_cue_id": "sub_062",
+      "start": 129.71,
+      "end": 131.35,
+      "source_bbox": [
+        456,
+        630,
+        820,
+        679
+      ],
+      "cover_bbox": [
+        268,
+        615,
+        1012,
+        689
+      ],
+      "source_coverage_ratio": 1.0,
+      "cover_width_px": 744,
+      "cover_height_px": 74,
+      "cover_width_ratio": 0.581,
+      "cover_height_ratio": 0.103,
+      "fallback_used": false,
+      "fallback_reason": null,
+      "is_single_cover_object": true,
+      "glyph_shaped_artifacts": false
+    },
+    {
+      "render_cue_id": "sub_063",
+      "start": 132.15,
+      "end": 133.33,
+      "source_bbox": [
+        478,
+        627,
+        797,
+        681
+      ],
+      "cover_bbox": [
+        423,
+        593,
+        856,
+        703
+      ],
+      "source_coverage_ratio": 1.0,
+      "cover_width_px": 433,
+      "cover_height_px": 110,
+      "cover_width_ratio": 0.338,
+      "cover_height_ratio": 0.153,
+      "fallback_used": false,
+      "fallback_reason": null,
+      "is_single_cover_object": true,
+      "glyph_shaped_artifacts": false
+    },
+    {
+      "render_cue_id": "sub_064",
+      "start": 133.69,
+      "end": 134.83,
+      "source_bbox": [
+        478,
+        627,
+        801,
+        684
+      ],
+      "cover_bbox": [
+        375,
+        615,
+        905,
+        694
+      ],
+      "source_coverage_ratio": 1.0,
+      "cover_width_px": 530,
+      "cover_height_px": 79,
+      "cover_width_ratio": 0.414,
+      "cover_height_ratio": 0.11,
+      "fallback_used": false,
+      "fallback_reason": null,
+      "is_single_cover_object": true,
+      "glyph_shaped_artifacts": false
+    },
+    {
+      "render_cue_id": "sub_065",
+      "start": 134.87,
+      "end": 136.6,
+      "source_bbox": [
+        480,
+        627,
+        801,
+        684
+      ],
+      "cover_bbox": [
+        404,
+        593,
+        876,
+        703
+      ],
+      "source_coverage_ratio": 1.0,
+      "cover_width_px": 472,
+      "cover_height_px": 110,
+      "cover_width_ratio": 0.369,
+      "cover_height_ratio": 0.153,
+      "fallback_used": false,
+      "fallback_reason": null,
+      "is_single_cover_object": true,
+      "glyph_shaped_artifacts": false
+    },
+    {
+      "render_cue_id": "sub_066",
+      "start": 136.63,
+      "end": 138.19,
+      "source_bbox": [
+        478,
+        628,
+        797,
+        682
+      ],
+      "cover_bbox": [
+        394,
+        593,
+        885,
+        703
+      ],
+      "source_coverage_ratio": 1.0,
+      "cover_width_px": 491,
+      "cover_height_px": 110,
+      "cover_width_ratio": 0.384,
+      "cover_height_ratio": 0.153,
+      "fallback_used": false,
+      "fallback_reason": null,
+      "is_single_cover_object": true,
+      "glyph_shaped_artifacts": false
+    },
+    {
+      "render_cue_id": "sub_067",
+      "start": 138.79,
+      "end": 140.77,
+      "source_bbox": [
+        434,
+        628,
+        841,
+        682
+      ],
+      "cover_bbox": [
+        414,
+        593,
+        866,
+        703
+      ],
+      "source_coverage_ratio": 1.0,
+      "cover_width_px": 452,
+      "cover_height_px": 110,
+      "cover_width_ratio": 0.353,
+      "cover_height_ratio": 0.153,
+      "fallback_used": false,
+      "fallback_reason": null,
+      "is_single_cover_object": true,
+      "glyph_shaped_artifacts": false
+    },
+    {
+      "render_cue_id": "sub_068",
+      "start": 141.19,
+      "end": 143.1,
+      "source_bbox": [
+        434,
+        626,
+        841,
+        682
+      ],
+      "cover_bbox": [
+        287,
+        593,
+        992,
+        703
+      ],
+      "source_coverage_ratio": 1.0,
+      "cover_width_px": 705,
+      "cover_height_px": 110,
+      "cover_width_ratio": 0.551,
+      "cover_height_ratio": 0.153,
+      "fallback_used": false,
+      "fallback_reason": null,
+      "is_single_cover_object": true,
+      "glyph_shaped_artifacts": false
+    },
+    {
+      "render_cue_id": "sub_069",
+      "start": 148.06,
+      "end": 150.82,
+      "source_bbox": [
+        349,
+        630,
+        930,
+        679
+      ],
+      "cover_bbox": [
+        329,
+        593,
+        950,
+        703
+      ],
+      "source_coverage_ratio": 1.0,
+      "cover_width_px": 621,
+      "cover_height_px": 110,
+      "cover_width_ratio": 0.485,
+      "cover_height_ratio": 0.153,
+      "fallback_used": false,
+      "fallback_reason": null,
+      "is_single_cover_object": true,
+      "glyph_shaped_artifacts": false
+    },
+    {
+      "render_cue_id": "sub_070",
+      "start": 152.28,
+      "end": 153.08,
+      "source_bbox": [
+        523,
+        627,
+        754,
+        684
+      ],
+      "cover_bbox": [
+        453,
+        615,
+        827,
+        694
+      ],
+      "source_coverage_ratio": 1.0,
+      "cover_width_px": 374,
+      "cover_height_px": 79,
+      "cover_width_ratio": 0.292,
+      "cover_height_ratio": 0.11,
+      "fallback_used": false,
+      "fallback_reason": null,
+      "is_single_cover_object": true,
+      "glyph_shaped_artifacts": false
+    },
+    {
+      "render_cue_id": "sub_071",
+      "start": 153.76,
+      "end": 156.72,
+      "source_bbox": [
+        523,
+        623,
+        754,
+        688
+      ],
+      "cover_bbox": [
+        503,
+        607,
+        774,
+        689
+      ],
+      "source_coverage_ratio": 1.0,
+      "cover_width_px": 271,
+      "cover_height_px": 82,
+      "cover_width_ratio": 0.212,
+      "cover_height_ratio": 0.114,
+      "fallback_used": false,
+      "fallback_reason": null,
+      "is_single_cover_object": true,
+      "glyph_shaped_artifacts": false
+    },
+    {
+      "render_cue_id": "sub_072",
+      "start": 161.16,
+      "end": 162.5,
+      "source_bbox": [
+        477,
+        628,
+        797,
+        682
+      ],
+      "cover_bbox": [
+        457,
+        615,
+        817,
+        692
+      ],
+      "source_coverage_ratio": 1.0,
+      "cover_width_px": 360,
+      "cover_height_px": 77,
+      "cover_width_ratio": 0.281,
+      "cover_height_ratio": 0.107,
+      "fallback_used": false,
+      "fallback_reason": null,
+      "is_single_cover_object": true,
+      "glyph_shaped_artifacts": false
+    },
+    {
+      "render_cue_id": "sub_073",
+      "start": 163.16,
+      "end": 164.7,
+      "source_bbox": [
+        413,
+        630,
+        866,
+        679
+      ],
+      "cover_bbox": [
+        326,
+        593,
+        953,
+        703
+      ],
+      "source_coverage_ratio": 1.0,
+      "cover_width_px": 627,
+      "cover_height_px": 110,
+      "cover_width_ratio": 0.49,
+      "cover_height_ratio": 0.153,
+      "fallback_used": false,
+      "fallback_reason": null,
+      "is_single_cover_object": true,
+      "glyph_shaped_artifacts": false
+    },
+    {
+      "render_cue_id": "sub_074",
+      "start": 165.88,
+      "end": 167.86,
+      "source_bbox": [
+        368,
+        627,
+        904,
+        681
+      ],
+      "cover_bbox": [
+        348,
+        593,
+        924,
+        703
+      ],
+      "source_coverage_ratio": 1.0,
+      "cover_width_px": 576,
+      "cover_height_px": 110,
+      "cover_width_ratio": 0.45,
+      "cover_height_ratio": 0.153,
+      "fallback_used": false,
+      "fallback_reason": null,
+      "is_single_cover_object": true,
+      "glyph_shaped_artifacts": false
+    },
+    {
+      "render_cue_id": "sub_075",
+      "start": 168.9,
+      "end": 171.95,
+      "source_bbox": [
+        368,
+        627,
+        904,
+        681
+      ],
+      "cover_bbox": [
+        348,
+        593,
+        924,
+        703
+      ],
+      "source_coverage_ratio": 1.0,
+      "cover_width_px": 576,
+      "cover_height_px": 110,
+      "cover_width_ratio": 0.45,
+      "cover_height_ratio": 0.153,
+      "fallback_used": false,
+      "fallback_reason": null,
+      "is_single_cover_object": true,
+      "glyph_shaped_artifacts": false
+    },
+    {
+      "render_cue_id": "sub_076",
+      "start": 171.98,
+      "end": 173.1,
+      "source_bbox": [
+        436,
+        630,
+        840,
+        679
+      ],
+      "cover_bbox": [
+        394,
+        593,
+        885,
+        703
+      ],
+      "source_coverage_ratio": 1.0,
+      "cover_width_px": 491,
+      "cover_height_px": 110,
+      "cover_width_ratio": 0.384,
+      "cover_height_ratio": 0.153,
+      "fallback_used": false,
+      "fallback_reason": null,
+      "is_single_cover_object": true,
+      "glyph_shaped_artifacts": false
+    },
+    {
+      "render_cue_id": "sub_077",
+      "start": 178.4,
+      "end": 179.26,
+      "source_bbox": [
+        392,
+        628,
+        886,
+        681
+      ],
+      "cover_bbox": [
+        326,
+        593,
+        953,
+        703
+      ],
+      "source_coverage_ratio": 1.0,
+      "cover_width_px": 627,
+      "cover_height_px": 110,
+      "cover_width_ratio": 0.49,
+      "cover_height_ratio": 0.153,
+      "fallback_used": false,
+      "fallback_reason": null,
+      "is_single_cover_object": true,
+      "glyph_shaped_artifacts": false
+    },
+    {
+      "render_cue_id": "sub_078",
+      "start": 179.46,
+      "end": 180.26,
+      "source_bbox": [
+        392,
+        628,
+        886,
+        681
+      ],
+      "cover_bbox": [
+        326,
+        593,
+        953,
+        703
+      ],
+      "source_coverage_ratio": 1.0,
+      "cover_width_px": 627,
+      "cover_height_px": 110,
+      "cover_width_ratio": 0.49,
+      "cover_height_ratio": 0.153,
+      "fallback_used": false,
+      "fallback_reason": null,
+      "is_single_cover_object": true,
+      "glyph_shaped_artifacts": false
+    }
+  ]
+}

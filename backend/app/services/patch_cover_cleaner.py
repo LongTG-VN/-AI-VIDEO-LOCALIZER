@@ -196,14 +196,14 @@ class PatchCoverCleaner:
                     pts = getattr(r, "points", []) or []
                     if len(pts) >= 3:
                         ys = [p[1] for p in pts if len(p) >= 2]
-                        if ys and min(ys) >= 0.70 and max(ys) <= 0.98 and (max(ys) - min(ys)) <= 0.14:
+                        if ys and min(ys) >= 0.80 and max(ys) <= 0.98 and (max(ys) - min(ys)) <= 0.14:
                             y_pts.extend(ys)
                 for ev in getattr(orig, "ocr_evidence", []) or []:
                     for r in getattr(ev, "regions", []) or []:
                         pts = getattr(r, "points", []) or []
                         if len(pts) >= 3:
                             ys = [p[1] for p in pts if len(p) >= 2]
-                            if ys and min(ys) >= 0.70 and max(ys) <= 0.98 and (max(ys) - min(ys)) <= 0.14:
+                            if ys and min(ys) >= 0.80 and max(ys) <= 0.98 and (max(ys) - min(ys)) <= 0.14:
                                 y_pts.extend(ys)
 
             if y_pts:
@@ -264,19 +264,33 @@ class PatchCoverCleaner:
                                 chinese_polygons.append(pts)
 
             if chinese_polygons:
-                zh_xs = [int(p[0] * width) for poly in chinese_polygons for p in poly]
-                zh_ys = [int(p[1] * height) for poly in chinese_polygons for p in poly]
+                # Filter to bottom dialogue subtitle band polygons (y >= 0.82) to exclude shirt/badge text
+                sub_band_polys = [p for p in chinese_polygons if any(pt[1] >= 0.82 for pt in p)]
+                active_polys = sub_band_polys if sub_band_polys else chinese_polygons
+
+                zh_xs = [int(p[0] * width) for poly in active_polys for p in poly]
+                zh_ys = [int(p[1] * height) for poly in active_polys for p in poly]
                 zh_x1, zh_x2 = min(zh_xs), max(zh_xs)
                 zh_y1, zh_y2 = min(zh_ys), max(zh_ys)
 
-                cover_x1 = max(0, min(vi_x1, zh_x1 - 18))
-                cover_x2 = min(width, max(vi_x2, zh_x2 + 18))
+                cover_x1 = max(0, min(vi_x1, zh_x1 - 20))
+                cover_x2 = min(width, max(vi_x2, zh_x2 + 20))
                 cover_y1 = max(int(height * 0.68), min(vi_y1, zh_y1 - 10))
                 cover_y2 = min(int(height * 0.98), max(vi_y2, zh_y2 + 10))
             else:
-                cover_x1, cover_y1, cover_x2, cover_y2 = vi_x1, vi_y1, vi_x2, vi_y2
+                src_cues = [cues_by_id.get(cid) for cid in getattr(cue, "source_cue_ids", [])]
+                src_texts = [getattr(c, "source_text", "") for c in src_cues if c]
+                src_chars = max([len(t) for t in src_texts] + [len(getattr(cue, "source_text", ""))])
+                est_zh_w = int(round(src_chars * (font_size * 0.90)))
+                zh_x1 = max(0, int(center_x - est_zh_w / 2 - pad_x))
+                zh_x2 = min(width, int(center_x + est_zh_w / 2 + pad_x))
 
-            max_plate_h = int(height * (0.095 if line_count == 1 else 0.145))
+                cover_x1 = max(0, min(vi_x1, zh_x1))
+                cover_x2 = min(width, max(vi_x2, zh_x2))
+                cover_y1, cover_y2 = vi_y1, vi_y2
+
+            is_two_line = line_count > 1 or (chinese_polygons and (zh_y2 - zh_y1) > 65)
+            max_plate_h = int(height * (0.165 if is_two_line else 0.115))
             if (cover_y2 - cover_y1) > max_plate_h:
                 cover_y1 = max(int(height * 0.68), int(y_pos - max_plate_h / 2))
                 cover_y2 = min(int(height * 0.98), int(y_pos + max_plate_h / 2))

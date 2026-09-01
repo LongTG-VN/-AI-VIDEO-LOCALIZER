@@ -1,0 +1,1655 @@
+{
+  "summary": {
+    "expected_dialogue_cues": 84,
+    "visible_translated_cues": 84,
+    "explicit_suppressions": 3,
+    "unexplained_missing": 0,
+    "duplicate_mappings": 0,
+    "orphan_render_cues": 0,
+    "orphan_ass_events": 0,
+    "coverage_gate": "PASS"
+  },
+  "cues": [
+    {
+      "source_cue_id": "e54d5576-e3ed-420e-9ecb-47b447f47f84",
+      "start": 1.19,
+      "end": 1.83,
+      "source_text": "小伙子我闺女那张无限额黑卡",
+      "source_integrity_status": "REPAIRED",
+      "semantic_group_id": "grp_e54d5576",
+      "quality_status": "PASS",
+      "final_vi": "Thằng nhóc, cái thẻ đen không giới hạn của con gái tao",
+      "canonical_vi": "Thằng nhóc, cái thẻ đen không giới hạn của con gái tao",
+      "render_cue_ids": [
+        "sub_001"
+      ],
+      "ass_event_ids": [
+        "ass_event_1"
+      ],
+      "suppression_reason": null,
+      "coverage_status": "VISIBLE_TRANSLATION"
+    },
+    {
+      "source_cue_id": "66b4918f-64ff-43bc-8b81-102716889346",
+      "start": 2.33,
+      "end": 3.59,
+      "source_text": "小伙子我闺女那张无限额黑卡",
+      "source_integrity_status": "REPAIRED",
+      "semantic_group_id": "grp_66b4918f",
+      "quality_status": "PASS",
+      "final_vi": "Này anh, thẻ đen không giới hạn của con gái tôi đấy.",
+      "canonical_vi": "Này anh, thẻ đen không giới hạn của con gái tôi đấy.",
+      "render_cue_ids": [
+        "sub_002"
+      ],
+      "ass_event_ids": [
+        "ass_event_2"
+      ],
+      "suppression_reason": null,
+      "coverage_status": "VISIBLE_TRANSLATION"
+    },
+    {
+      "source_cue_id": "c5d4d993-fd04-4829-b586-916105aba261",
+      "start": 3.59,
+      "end": 5.59,
+      "source_text": "小伙子我闺女那张无限额黑卡",
+      "source_integrity_status": "REPAIRED",
+      "semantic_group_id": "grp_c5d4d993",
+      "quality_status": "PASS",
+      "final_vi": "Này anh, thẻ đen không giới hạn của con gái tôi đấy.",
+      "canonical_vi": "Này anh, thẻ đen không giới hạn của con gái tôi đấy.",
+      "render_cue_ids": [
+        "sub_003"
+      ],
+      "ass_event_ids": [
+        "ass_event_3"
+      ],
+      "suppression_reason": null,
+      "coverage_status": "VISIBLE_TRANSLATION"
+    },
+    {
+      "source_cue_id": "d9e4c3aa-4f4c-468f-ad00-826e98b81404",
+      "start": 5.89,
+      "end": 7.27,
+      "source_text": "一分钱都没花过",
+      "source_integrity_status": "REPAIRED",
+      "semantic_group_id": "grp_d9e4c3aa",
+      "quality_status": "PASS",
+      "final_vi": "Tôi chưa bao giờ tiêu một đồng nào.",
+      "canonical_vi": "Tôi chưa bao giờ tiêu một đồng nào.",
+      "render_cue_ids": [
+        "sub_004"
+      ],
+      "ass_event_ids": [
+        "ass_event_4"
+      ],
+      "suppression_reason": null,
+      "coverage_status": "VISIBLE_TRANSLATION"
+    },
+    {
+      "source_cue_id": "6306912f-c98f-424e-b9bc-e80edc6db227",
+      "start": 8.39,
+      "end": 9.03,
+      "source_text": "无限额黑卡",
+      "source_integrity_status": "REPAIRED",
+      "semantic_group_id": "grp_6306912f",
+      "quality_status": "PASS",
+      "final_vi": "Thẻ đen không giới hạn",
+      "canonical_vi": "Thẻ đen không giới hạn",
+      "render_cue_ids": [
+        "sub_005"
+      ],
+      "ass_event_ids": [
+        "ass_event_5"
+      ],
+      "suppression_reason": null,
+      "coverage_status": "VISIBLE_TRANSLATION"
+    },
+    {
+      "source_cue_id": "7cadef9d-9e74-468b-af8e-e618eb3de629",
+      "start": 9.03,
+      "end": 10.81,
+      "source_text": "整整8个月没动过等等",
+      "source_integrity_status": "REPAIRED",
+      "semantic_group_id": "grp_7cadef9d",
+      "quality_status": "PASS",
+      "final_vi": "Đã trọn 8 tháng không di chuyển.",
+      "canonical_vi": "Đã trọn 8 tháng không di chuyển.",
+      "render_cue_ids": [
+        "sub_006"
+      ],
+      "ass_event_ids": [
+        "ass_event_6"
+      ],
+      "suppression_reason": null,
+      "coverage_status": "VISIBLE_TRANSLATION"
+    },
+    {
+      "source_cue_id": "f4091e40-861d-4335-b2ff-64701808f75c",
+      "start": 10.81,
+      "end": 11.29,
+      "source_text": "整整8个月没动过等等",
+      "source_integrity_status": "REPAIRED",
+      "semantic_group_id": "grp_f4091e40",
+      "quality_status": "PASS",
+      "final_vi": "Đã trọn 8 tháng không di chuyển.",
+      "canonical_vi": "Đã trọn 8 tháng không di chuyển.",
+      "render_cue_ids": [
+        "sub_007"
+      ],
+      "ass_event_ids": [
+        "ass_event_7"
+      ],
+      "suppression_reason": null,
+      "coverage_status": "VISIBLE_TRANSLATION"
+    },
+    {
+      "source_cue_id": "6b53665e-dbd9-486e-907f-02f106dd850e",
+      "start": 11.63,
+      "end": 12.55,
+      "source_text": "我这大半年来养的到底是流浪猫",
+      "source_integrity_status": "REPAIRED",
+      "semantic_group_id": "grp_6b53665e",
+      "quality_status": "PASS",
+      "final_vi": "Con tôi nuôi suốt hơn nửa năm nay, cuối cùng lại là một con mèo hoang.",
+      "canonical_vi": "Con tôi nuôi suốt hơn nửa năm nay, cuối cùng lại là một con mèo hoang.",
+      "render_cue_ids": [
+        "sub_008"
+      ],
+      "ass_event_ids": [
+        "ass_event_8"
+      ],
+      "suppression_reason": null,
+      "coverage_status": "VISIBLE_TRANSLATION"
+    },
+    {
+      "source_cue_id": "24909eda-d767-4189-afa9-007ba04edb67",
+      "start": 12.55,
+      "end": 13.57,
+      "source_text": "我这大半年来养的到底是流浪猫",
+      "source_integrity_status": "REPAIRED",
+      "semantic_group_id": "grp_24909eda",
+      "quality_status": "PASS",
+      "final_vi": "Con tôi nuôi suốt hơn nửa năm nay, cuối cùng lại là một con mèo hoang.",
+      "canonical_vi": "Con tôi nuôi suốt hơn nửa năm nay, cuối cùng lại là một con mèo hoang.",
+      "render_cue_ids": [
+        "sub_009"
+      ],
+      "ass_event_ids": [
+        "ass_event_9"
+      ],
+      "suppression_reason": null,
+      "coverage_status": "VISIBLE_TRANSLATION"
+    },
+    {
+      "source_cue_id": "9650ac10-4fd6-4f0c-94df-72c5f9e16c3d",
+      "start": 13.73,
+      "end": 16.29,
+      "source_text": "还是个顶级富婆女朋友",
+      "source_integrity_status": "REPAIRED",
+      "semantic_group_id": "grp_9650ac10",
+      "quality_status": "PASS",
+      "final_vi": "Lại còn là bạn gái đại gia cấp cao",
+      "canonical_vi": "Lại còn là bạn gái đại gia cấp cao",
+      "render_cue_ids": [
+        "sub_010"
+      ],
+      "ass_event_ids": [
+        "ass_event_10"
+      ],
+      "suppression_reason": null,
+      "coverage_status": "VISIBLE_TRANSLATION"
+    },
+    {
+      "source_cue_id": "c087bf48-2004-48f6-8037-51bbb60bcd36",
+      "start": 16.29,
+      "end": 19.01,
+      "source_text": "公司来了个新人",
+      "source_integrity_status": "REPAIRED",
+      "semantic_group_id": "grp_c087bf48",
+      "quality_status": "PASS",
+      "final_vi": "Công ty có nhân viên mới đến.",
+      "canonical_vi": "Công ty có nhân viên mới đến.",
+      "render_cue_ids": [
+        "sub_011"
+      ],
+      "ass_event_ids": [
+        "ass_event_11"
+      ],
+      "suppression_reason": null,
+      "coverage_status": "VISIBLE_TRANSLATION"
+    },
+    {
+      "source_cue_id": "463ee519-8023-4647-bc0b-ff69cc026f78_seg1",
+      "start": 19.29,
+      "end": 20.1,
+      "source_text": "公司来了个新人",
+      "source_integrity_status": "REPAIRED",
+      "semantic_group_id": "grp_463ee519",
+      "quality_status": "PASS",
+      "final_vi": "Ăn cỏ mỗi ngày",
+      "canonical_vi": "Ăn cỏ mỗi ngày",
+      "render_cue_ids": [
+        "sub_012"
+      ],
+      "ass_event_ids": [
+        "ass_event_12"
+      ],
+      "suppression_reason": null,
+      "coverage_status": "VISIBLE_TRANSLATION"
+    },
+    {
+      "source_cue_id": "463ee519-8023-4647-bc0b-ff69cc026f78_seg2",
+      "start": 19.29,
+      "end": 20.2,
+      "source_text": "天天吃草",
+      "source_integrity_status": "REPAIRED",
+      "semantic_group_id": "grp_463ee519",
+      "quality_status": "PASS",
+      "final_vi": "Mà ngày nào cũng ăn chay",
+      "canonical_vi": "Mà ngày nào cũng ăn chay",
+      "render_cue_ids": [
+        "sub_013"
+      ],
+      "ass_event_ids": [
+        "ass_event_13"
+      ],
+      "suppression_reason": null,
+      "coverage_status": "VISIBLE_TRANSLATION"
+    },
+    {
+      "source_cue_id": "463ee519-8023-4647-bc0b-ff69cc026f78_seg3",
+      "start": 20.6,
+      "end": 21.43,
+      "source_text": "盯着我的饭盒眼神拉丝",
+      "source_integrity_status": "REPAIRED",
+      "semantic_group_id": "grp_463ee519",
+      "quality_status": "PASS",
+      "final_vi": "Chằm chằm nhìn hộp cơm của tôi",
+      "canonical_vi": "Chằm chằm nhìn hộp cơm của tôi",
+      "render_cue_ids": [
+        "sub_014"
+      ],
+      "ass_event_ids": [
+        "ass_event_14"
+      ],
+      "suppression_reason": null,
+      "coverage_status": "VISIBLE_TRANSLATION"
+    },
+    {
+      "source_cue_id": "2de23dee-209a-4a7f-bd9c-6870bf6eab27",
+      "start": 21.43,
+      "end": 22.13,
+      "source_text": "盯着我的饭盒眼神拉丝",
+      "source_integrity_status": "REPAIRED",
+      "semantic_group_id": "grp_2de23dee",
+      "quality_status": "PASS",
+      "final_vi": "Chằm chằm nhìn hộp cơm của tôi",
+      "canonical_vi": "Chằm chằm nhìn hộp cơm của tôi",
+      "render_cue_ids": [
+        "sub_014"
+      ],
+      "ass_event_ids": [
+        "ass_event_14"
+      ],
+      "suppression_reason": null,
+      "coverage_status": "VISIBLE_TRANSLATION"
+    },
+    {
+      "source_cue_id": "174c63c9-fa25-489b-96dd-d7a4d9872b79_seg1",
+      "start": 22.65,
+      "end": 23.1,
+      "source_text": "盯着我的饭盒眼神拉丝",
+      "source_integrity_status": "REPAIRED",
+      "semantic_group_id": "grp_174c63c9",
+      "quality_status": "PASS",
+      "final_vi": "Lúc đó tôi đang nghĩ",
+      "canonical_vi": "Lúc đó tôi đang nghĩ",
+      "render_cue_ids": [
+        "sub_015"
+      ],
+      "ass_event_ids": [
+        "ass_event_15"
+      ],
+      "suppression_reason": null,
+      "coverage_status": "VISIBLE_TRANSLATION"
+    },
+    {
+      "source_cue_id": "174c63c9-fa25-489b-96dd-d7a4d9872b79_seg2",
+      "start": 22.65,
+      "end": 24.6,
+      "source_text": "我当时寻思",
+      "source_integrity_status": "REPAIRED",
+      "semantic_group_id": "grp_174c63c9",
+      "quality_status": "PASS",
+      "final_vi": "Cô ấy vừa tốt nghiệp",
+      "canonical_vi": "Cô ấy vừa tốt nghiệp",
+      "render_cue_ids": [
+        "sub_016"
+      ],
+      "ass_event_ids": [
+        "ass_event_16"
+      ],
+      "suppression_reason": null,
+      "coverage_status": "VISIBLE_TRANSLATION"
+    },
+    {
+      "source_cue_id": "174c63c9-fa25-489b-96dd-d7a4d9872b79_seg3",
+      "start": 23.4,
+      "end": 24.77,
+      "source_text": "这姑娘刚毕业",
+      "source_integrity_status": "REPAIRED",
+      "semantic_group_id": "grp_174c63c9",
+      "quality_status": "PASS",
+      "final_vi": "Cô gái này vừa mới tốt nghiệp",
+      "canonical_vi": "Cô gái này vừa mới tốt nghiệp",
+      "render_cue_ids": [
+        "sub_017"
+      ],
+      "ass_event_ids": [
+        "ass_event_17"
+      ],
+      "suppression_reason": null,
+      "coverage_status": "VISIBLE_TRANSLATION"
+    },
+    {
+      "source_cue_id": "c8db5220-8ec0-4b92-86ca-aa4d40c93793",
+      "start": 25.37,
+      "end": 26.45,
+      "source_text": "工资低吃不起肉，",
+      "source_integrity_status": "PASS",
+      "semantic_group_id": "grp_c8db5220",
+      "quality_status": "PASS",
+      "final_vi": "Lương thấp, không đủ tiền ăn thịt.",
+      "canonical_vi": "Lương thấp, không đủ tiền ăn thịt.",
+      "render_cue_ids": [
+        "sub_018"
+      ],
+      "ass_event_ids": [
+        "ass_event_18"
+      ],
+      "suppression_reason": null,
+      "coverage_status": "VISIBLE_TRANSLATION"
+    },
+    {
+      "source_cue_id": "7db57a11-480f-4551-abec-c1fde41017b5",
+      "start": 28.39,
+      "end": 28.57,
+      "source_text": "嗯，",
+      "source_integrity_status": "PASS",
+      "semantic_group_id": "grp_7db57a11",
+      "quality_status": "PASS",
+      "final_vi": "Ừm.",
+      "canonical_vi": "Ừm.",
+      "render_cue_ids": [
+        "sub_019"
+      ],
+      "ass_event_ids": [
+        "ass_event_19"
+      ],
+      "suppression_reason": null,
+      "coverage_status": "VISIBLE_TRANSLATION"
+    },
+    {
+      "source_cue_id": "24a43d2f-605c-4e06-ba60-6be2f298a8c2",
+      "start": 28.57,
+      "end": 30.53,
+      "source_text": "顺手每天多做一份",
+      "source_integrity_status": "REPAIRED",
+      "semantic_group_id": "grp_24a43d2f",
+      "quality_status": "PASS",
+      "final_vi": "Mỗi ngày tiện thì làm thêm một phần nữa.",
+      "canonical_vi": "Mỗi ngày tiện thì làm thêm một phần nữa.",
+      "render_cue_ids": [
+        "sub_019"
+      ],
+      "ass_event_ids": [
+        "ass_event_19"
+      ],
+      "suppression_reason": null,
+      "coverage_status": "VISIBLE_TRANSLATION"
+    },
+    {
+      "source_cue_id": "cea90f64-2e95-4892-918f-c2fa6899a78d",
+      "start": 30.53,
+      "end": 31.41,
+      "source_text": "今天是糖醋排骨",
+      "source_integrity_status": "REPAIRED",
+      "semantic_group_id": "grp_cea90f64",
+      "quality_status": "PASS",
+      "final_vi": "Hôm nay là món sườn xào chua ngọt.",
+      "canonical_vi": "Hôm nay là món sườn xào chua ngọt.",
+      "render_cue_ids": [
+        "sub_020"
+      ],
+      "ass_event_ids": [
+        "ass_event_20"
+      ],
+      "suppression_reason": null,
+      "coverage_status": "VISIBLE_TRANSLATION"
+    },
+    {
+      "source_cue_id": "451a1005-a53a-4390-a649-43bcc9929c7f",
+      "start": 31.81,
+      "end": 32.79,
+      "source_text": "別又只吃生菜",
+      "source_integrity_status": "REPAIRED",
+      "semantic_group_id": "grp_451a1005",
+      "quality_status": "PASS",
+      "final_vi": "Đừng lại chỉ ăn rau sống nữa",
+      "canonical_vi": "Đừng lại chỉ ăn rau sống nữa",
+      "render_cue_ids": [
+        "sub_021"
+      ],
+      "ass_event_ids": [
+        "ass_event_21"
+      ],
+      "suppression_reason": null,
+      "coverage_status": "VISIBLE_TRANSLATION"
+    },
+    {
+      "source_cue_id": "daf6f79d-ebea-45cb-9e4a-d19fc0d84248",
+      "start": 33.03,
+      "end": 33.87,
+      "source_text": "別又只吃生菜",
+      "source_integrity_status": "REPAIRED",
+      "semantic_group_id": "grp_daf6f79d",
+      "quality_status": "PASS",
+      "final_vi": "Đừng lại chỉ ăn xà lách nữa.",
+      "canonical_vi": "Đừng lại chỉ ăn xà lách nữa.",
+      "render_cue_ids": [
+        "sub_022"
+      ],
+      "ass_event_ids": [
+        "ass_event_22"
+      ],
+      "suppression_reason": null,
+      "coverage_status": "VISIBLE_TRANSLATION"
+    },
+    {
+      "source_cue_id": "3ea9c6d7-c4de-4ce0-a0a0-2e49f271c5c1",
+      "start": 34.29,
+      "end": 34.53,
+      "source_text": "嗯，",
+      "source_integrity_status": "PASS",
+      "semantic_group_id": "grp_3ea9c6d7",
+      "quality_status": "PASS",
+      "final_vi": "Ừm.",
+      "canonical_vi": "Ừm.",
+      "render_cue_ids": [
+        "sub_023"
+      ],
+      "ass_event_ids": [
+        "ass_event_23"
+      ],
+      "suppression_reason": null,
+      "coverage_status": "VISIBLE_TRANSLATION"
+    },
+    {
+      "source_cue_id": "621bfe99-76f5-492f-af33-75dd989e4a2e",
+      "start": 35.09,
+      "end": 38.85,
+      "source_text": "好吃",
+      "source_integrity_status": "REPAIRED",
+      "semantic_group_id": "grp_621bfe99",
+      "quality_status": "PASS",
+      "final_vi": "Ngon",
+      "canonical_vi": "Ngon",
+      "render_cue_ids": [
+        "sub_024"
+      ],
+      "ass_event_ids": [
+        "ass_event_24"
+      ],
+      "suppression_reason": null,
+      "coverage_status": "VISIBLE_TRANSLATION"
+    },
+    {
+      "source_cue_id": "8fb87ed1-4aaf-412a-8901-f30c2fec841a",
+      "start": 39.15,
+      "end": 40.35,
+      "source_text": "他不喝奶茶也不换新衣服",
+      "source_integrity_status": "REPAIRED",
+      "semantic_group_id": "grp_8fb87ed1",
+      "quality_status": "PASS",
+      "final_vi": "Anh ấy không uống trà sữa cũng chẳng mua quần áo mới",
+      "canonical_vi": "Anh ấy không uống trà sữa cũng chẳng mua quần áo mới",
+      "render_cue_ids": [
+        "sub_025"
+      ],
+      "ass_event_ids": [
+        "ass_event_25"
+      ],
+      "suppression_reason": null,
+      "coverage_status": "VISIBLE_TRANSLATION"
+    },
+    {
+      "source_cue_id": "74b809fa-dea3-4421-b493-f34fd05d7a8c",
+      "start": 40.41,
+      "end": 41.19,
+      "source_text": "他不喝奶茶也不换新衣服",
+      "source_integrity_status": "REPAIRED",
+      "semantic_group_id": "grp_74b809fa",
+      "quality_status": "PASS",
+      "final_vi": "Anh ấy không uống trà sữa, cũng không thay đồ mới.",
+      "canonical_vi": "Anh ấy không uống trà sữa, cũng không thay đồ mới.",
+      "render_cue_ids": [
+        "sub_026"
+      ],
+      "ass_event_ids": [
+        "ass_event_26"
+      ],
+      "suppression_reason": null,
+      "coverage_status": "VISIBLE_TRANSLATION"
+    },
+    {
+      "source_cue_id": "61bf80f8-cb59-4a97-902a-9fdb0ce6287b",
+      "start": 41.27,
+      "end": 42.21,
+      "source_text": "他不喝奶茶也不换新衣服",
+      "source_integrity_status": "REPAIRED",
+      "semantic_group_id": "grp_61bf80f8",
+      "quality_status": "PASS",
+      "final_vi": "Anh ấy không uống trà sữa, cũng không thay đồ mới.",
+      "canonical_vi": "Anh ấy không uống trà sữa, cũng không thay đồ mới.",
+      "render_cue_ids": [
+        "sub_027"
+      ],
+      "ass_event_ids": [
+        "ass_event_27"
+      ],
+      "suppression_reason": null,
+      "coverage_status": "VISIBLE_TRANSLATION"
+    },
+    {
+      "source_cue_id": "3d989bbd-d6f7-447c-872a-a80fa3c8fbd9",
+      "start": 42.51,
+      "end": 44.25,
+      "source_text": "我是真以为他快揭不开锅了，",
+      "source_integrity_status": "PASS",
+      "semantic_group_id": "grp_3d989bbd",
+      "quality_status": "PASS",
+      "final_vi": "Tôi thật sự nghĩ anh ấy sắp không còn đủ tiền để mua thực phẩm.",
+      "canonical_vi": "Tôi thật sự nghĩ anh ấy sắp không còn đủ tiền để mua thực phẩm.",
+      "render_cue_ids": [
+        "sub_028"
+      ],
+      "ass_event_ids": [
+        "ass_event_28"
+      ],
+      "suppression_reason": null,
+      "coverage_status": "VISIBLE_TRANSLATION"
+    },
+    {
+      "source_cue_id": "28def9ab-7108-4e74-a8fc-ea424519d4ca",
+      "start": 45.35,
+      "end": 46.39,
+      "source_text": "直到那天加班，",
+      "source_integrity_status": "PASS",
+      "semantic_group_id": "grp_28def9ab",
+      "quality_status": "PASS",
+      "final_vi": "Cho đến ngày hôm đó anh ấy làm thêm giờ,",
+      "canonical_vi": "Cho đến ngày hôm đó anh ấy làm thêm giờ,",
+      "render_cue_ids": [
+        "sub_029"
+      ],
+      "ass_event_ids": [
+        "ass_event_29"
+      ],
+      "suppression_reason": null,
+      "coverage_status": "VISIBLE_TRANSLATION"
+    },
+    {
+      "source_cue_id": "c8d316fd-5b1a-4e38-91b6-cc686148195c",
+      "start": 47.01,
+      "end": 48.85,
+      "source_text": "150万的豪车停在他面前",
+      "source_integrity_status": "REPAIRED",
+      "semantic_group_id": "grp_c8d316fd",
+      "quality_status": "PASS",
+      "final_vi": "Chiếc xe sang trị 1,5 triệu dừng trước mặt anh ấy.",
+      "canonical_vi": "Chiếc xe sang trị 1,5 triệu dừng trước mặt anh ấy.",
+      "render_cue_ids": [
+        "sub_030"
+      ],
+      "ass_event_ids": [
+        "ass_event_30"
+      ],
+      "suppression_reason": null,
+      "coverage_status": "VISIBLE_TRANSLATION"
+    },
+    {
+      "source_cue_id": "33f619df-4ae2-496f-b563-a4ad6966dbe9",
+      "start": 48.85,
+      "end": 51.61,
+      "source_text": "150万的豪车停在他面前",
+      "source_integrity_status": "REPAIRED",
+      "semantic_group_id": "grp_33f619df",
+      "quality_status": "PASS",
+      "final_vi": "Chiếc xe sang trị 1,5 triệu dừng trước mặt anh ấy.",
+      "canonical_vi": "Chiếc xe sang trị 1,5 triệu dừng trước mặt anh ấy.",
+      "render_cue_ids": [
+        "sub_031"
+      ],
+      "ass_event_ids": [
+        "ass_event_31"
+      ],
+      "suppression_reason": null,
+      "coverage_status": "VISIBLE_TRANSLATION"
+    },
+    {
+      "source_cue_id": "f2473df3-4ce0-4aa4-b19a-5fe83ccc1e00",
+      "start": 52.93,
+      "end": 53.83,
+      "source_text": "我就开始怀疑",
+      "source_integrity_status": "REPAIRED",
+      "semantic_group_id": "grp_f2473df3",
+      "quality_status": "PASS",
+      "final_vi": "Tôi bắt đầu nghi ngờ",
+      "canonical_vi": "Tôi bắt đầu nghi ngờ",
+      "render_cue_ids": [
+        "sub_032"
+      ],
+      "ass_event_ids": [
+        "ass_event_32"
+      ],
+      "suppression_reason": null,
+      "coverage_status": "VISIBLE_TRANSLATION"
+    },
+    {
+      "source_cue_id": "9cd6db59-496e-49b1-a267-3d2d7a07322a",
+      "start": 53.83,
+      "end": 54.85,
+      "source_text": "我就开始怀疑",
+      "source_integrity_status": "REPAIRED",
+      "semantic_group_id": "grp_9cd6db59",
+      "quality_status": "PASS",
+      "final_vi": "Tôi bắt đầu nghi ngờ.",
+      "canonical_vi": "Tôi bắt đầu nghi ngờ.",
+      "render_cue_ids": [
+        "sub_033"
+      ],
+      "ass_event_ids": [
+        "ass_event_33"
+      ],
+      "suppression_reason": null,
+      "coverage_status": "VISIBLE_TRANSLATION"
+    },
+    {
+      "source_cue_id": "90bb8c56-a710-45f1-8ddc-85cbf1be243b_seg1",
+      "start": 55.75,
+      "end": 58.6,
+      "source_text": "原来小丑可能真是我自己",
+      "source_integrity_status": "REPAIRED",
+      "semantic_group_id": "grp_90bb8c56",
+      "quality_status": "PASS",
+      "final_vi": "Hóa ra kẻ ngốc có thể chính là tôi.",
+      "canonical_vi": "Hóa ra kẻ ngốc có thể chính là tôi.",
+      "render_cue_ids": [
+        "sub_034"
+      ],
+      "ass_event_ids": [
+        "ass_event_34"
+      ],
+      "suppression_reason": null,
+      "coverage_status": "VISIBLE_TRANSLATION"
+    },
+    {
+      "source_cue_id": "90bb8c56-a710-45f1-8ddc-85cbf1be243b_seg2",
+      "start": 57.9,
+      "end": 60.515,
+      "source_text": "就是你天天给我闺女做饭",
+      "source_integrity_status": "REPAIRED",
+      "semantic_group_id": "grp_90bb8c56",
+      "quality_status": "PASS",
+      "final_vi": "Chính cậu mỗi ngày nấu cơm cho con gái tôi à?",
+      "canonical_vi": "Chính cậu mỗi ngày nấu cơm cho con gái tôi à?",
+      "render_cue_ids": [
+        "sub_035"
+      ],
+      "ass_event_ids": [
+        "ass_event_35"
+      ],
+      "suppression_reason": null,
+      "coverage_status": "VISIBLE_TRANSLATION"
+    },
+    {
+      "source_cue_id": "0b072dda-7361-4515-8baf-955ffa88638b_seg1",
+      "start": 61.64,
+      "end": 63.1,
+      "source_text": "呃是是我阿姨",
+      "source_integrity_status": "REPAIRED",
+      "semantic_group_id": "grp_0b072dda",
+      "quality_status": "PASS",
+      "final_vi": "Ơ... dạ là dì của cháu.",
+      "canonical_vi": "Ơ... dạ là dì của cháu.",
+      "render_cue_ids": [
+        "sub_036"
+      ],
+      "ass_event_ids": [
+        "ass_event_36"
+      ],
+      "suppression_reason": null,
+      "coverage_status": "VISIBLE_TRANSLATION"
+    },
+    {
+      "source_cue_id": "0b072dda-7361-4515-8baf-955ffa88638b_seg2",
+      "start": 67.8,
+      "end": 69.095,
+      "source_text": "周末来家里吃饭",
+      "source_integrity_status": "REPAIRED",
+      "semantic_group_id": "grp_0b072dda",
+      "quality_status": "PASS",
+      "final_vi": "Cuối tuần ghé nhà ăn cơm nhé.",
+      "canonical_vi": "Cuối tuần ghé nhà ăn cơm nhé.",
+      "render_cue_ids": [
+        "sub_037"
+      ],
+      "ass_event_ids": [
+        "ass_event_37"
+      ],
+      "suppression_reason": null,
+      "coverage_status": "VISIBLE_TRANSLATION"
+    },
+    {
+      "source_cue_id": "3c2c0c28-6a73-4866-ba6e-3aa7c043da0d",
+      "start": 69.5,
+      "end": 70.605,
+      "source_text": "带上你的保温桶",
+      "source_integrity_status": "REPAIRED",
+      "semantic_group_id": "grp_3c2c0c28",
+      "quality_status": "PASS",
+      "final_vi": "Mang theo bình giữ nhiệt của bạn",
+      "canonical_vi": "Mang theo bình giữ nhiệt của bạn",
+      "render_cue_ids": [
+        "sub_038"
+      ],
+      "ass_event_ids": [
+        "ass_event_38"
+      ],
+      "suppression_reason": null,
+      "coverage_status": "VISIBLE_TRANSLATION"
+    },
+    {
+      "source_cue_id": "bd3bcc14-1bdb-43c6-acdc-226526441a92",
+      "start": 71.02,
+      "end": 71.92,
+      "source_text": "做个糖醋排骨",
+      "source_integrity_status": "REPAIRED",
+      "semantic_group_id": "grp_bd3bcc14",
+      "quality_status": "PASS",
+      "final_vi": "Làm sườn xào chua ngọt",
+      "canonical_vi": "Làm sườn xào chua ngọt",
+      "render_cue_ids": [
+        "sub_039"
+      ],
+      "ass_event_ids": [
+        "ass_event_39"
+      ],
+      "suppression_reason": null,
+      "coverage_status": "VISIBLE_TRANSLATION"
+    },
+    {
+      "source_cue_id": "815b487a-2c7e-492d-ad93-696738bd7911",
+      "start": 73.14,
+      "end": 73.555,
+      "source_text": "完了扶贫不仅扶出了个顶级富婆",
+      "source_integrity_status": "REPAIRED",
+      "semantic_group_id": "grp_815b487a",
+      "quality_status": "PASS",
+      "final_vi": "Giờ thì đã xong việc xóa đói giảm nghèo, không những thế mà còn đào tạo ra một bà giàu có hàng đầu",
+      "canonical_vi": "Giờ thì đã xong việc xóa đói giảm nghèo, không những thế mà còn đào tạo ra một bà giàu có hàng đầu",
+      "render_cue_ids": [
+        "sub_040"
+      ],
+      "ass_event_ids": [
+        "ass_event_40"
+      ],
+      "suppression_reason": null,
+      "coverage_status": "VISIBLE_TRANSLATION"
+    },
+    {
+      "source_cue_id": "4bc1a9c6-26e2-4712-adc7-7ef25dd3e201",
+      "start": 73.93,
+      "end": 75.875,
+      "source_text": "完了扶贫不仅扶出了个顶级富婆",
+      "source_integrity_status": "REPAIRED",
+      "semantic_group_id": "grp_4bc1a9c6",
+      "quality_status": "PASS",
+      "final_vi": "Giờ thì đã xong việc xóa đói giảm nghèo, không những thế mà còn đào tạo ra một bà giàu có hàng đầu",
+      "canonical_vi": "Giờ thì đã xong việc xóa đói giảm nghèo, không những thế mà còn đào tạo ra một bà giàu có hàng đầu",
+      "render_cue_ids": [
+        "sub_041"
+      ],
+      "ass_event_ids": [
+        "ass_event_41"
+      ],
+      "suppression_reason": null,
+      "coverage_status": "VISIBLE_TRANSLATION"
+    },
+    {
+      "source_cue_id": "41b55f41-9904-4209-99ad-d492d72734d7",
+      "start": 76.58,
+      "end": 78.995,
+      "source_text": "现在还要被强制见家长了",
+      "source_integrity_status": "REPAIRED",
+      "semantic_group_id": "grp_41b55f41",
+      "quality_status": "PASS",
+      "final_vi": "Bây giờ lại còn bị ép gặp bố mẹ",
+      "canonical_vi": "Bây giờ lại còn bị ép gặp bố mẹ",
+      "render_cue_ids": [
+        "sub_042"
+      ],
+      "ass_event_ids": [
+        "ass_event_42"
+      ],
+      "suppression_reason": null,
+      "coverage_status": "VISIBLE_TRANSLATION"
+    },
+    {
+      "source_cue_id": "3bb0ec82-a8a8-45a7-8cca-a2eaf67ccaf8",
+      "start": 80.36,
+      "end": 81.995,
+      "source_text": "起我叫江旭今年二十六某互，",
+      "source_integrity_status": "PASS",
+      "semantic_group_id": "grp_3bb0ec82",
+      "quality_status": "PASS",
+      "final_vi": "Tôi tên Giang Húc, năm nay 26 tuổi, làm ở một công ty...",
+      "canonical_vi": "Tôi tên Giang Húc, năm nay 26 tuổi, làm ở một công ty...",
+      "render_cue_ids": [
+        "sub_043"
+      ],
+      "ass_event_ids": [
+        "ass_event_43"
+      ],
+      "suppression_reason": null,
+      "coverage_status": "VISIBLE_TRANSLATION"
+    },
+    {
+      "source_cue_id": "5642f236-0d7a-4831-b45d-f02f0b800748",
+      "start": 82.91,
+      "end": 83.605,
+      "source_text": "我叫江叙",
+      "source_integrity_status": "REPAIRED",
+      "semantic_group_id": "grp_5642f236",
+      "quality_status": "PASS",
+      "final_vi": "Tôi tên là Giang Húc,",
+      "canonical_vi": "Tôi tên là Giang Húc,",
+      "render_cue_ids": [
+        "sub_044"
+      ],
+      "ass_event_ids": [
+        "ass_event_44"
+      ],
+      "suppression_reason": null,
+      "coverage_status": "VISIBLE_TRANSLATION"
+    },
+    {
+      "source_cue_id": "52a2c3fa-d034-465d-a684-2c89c5dcef97_seg1",
+      "start": 83.99,
+      "end": 84.6,
+      "source_text": "我叫江叙",
+      "source_integrity_status": "REPAIRED",
+      "semantic_group_id": "grp_52a2c3fa",
+      "quality_status": "PASS",
+      "final_vi": "Năm nay, 26 tuổi, lập trình viên công ty internet",
+      "canonical_vi": "Năm nay, 26 tuổi, lập trình viên công ty internet",
+      "render_cue_ids": [
+        "sub_045"
+      ],
+      "ass_event_ids": [
+        "ass_event_45"
+      ],
+      "suppression_reason": null,
+      "coverage_status": "VISIBLE_TRANSLATION"
+    },
+    {
+      "source_cue_id": "52a2c3fa-d034-465d-a684-2c89c5dcef97_seg2",
+      "start": 83.99,
+      "end": 86.5,
+      "source_text": "今年26某互联网公司程序员",
+      "source_integrity_status": "REPAIRED",
+      "semantic_group_id": "grp_52a2c3fa",
+      "quality_status": "PASS",
+      "final_vi": "Năm nay 26 tuổi, là lập trình viên tại một công ty internet",
+      "canonical_vi": "Năm nay 26 tuổi, là lập trình viên tại một công ty internet",
+      "render_cue_ids": [
+        "sub_046"
+      ],
+      "ass_event_ids": [
+        "ass_event_46"
+      ],
+      "suppression_reason": null,
+      "coverage_status": "VISIBLE_TRANSLATION"
+    },
+    {
+      "source_cue_id": "52a2c3fa-d034-465d-a684-2c89c5dcef97_seg3",
+      "start": 86.6,
+      "end": 88.955,
+      "source_text": "高级开发工师Ths工牌上印着高级开发工程师",
+      "source_integrity_status": "REPAIRED",
+      "semantic_group_id": "grp_52a2c3fa",
+      "quality_status": "PASS",
+      "final_vi": "Chứng chỉ cao cấp của kỹ sư phát triển, thẻ kỹ sư có ghi là kỹ sư phát triển cao cấp",
+      "canonical_vi": "Chứng chỉ cao cấp của kỹ sư phát triển, thẻ kỹ sư có ghi là kỹ sư phát triển cao cấp",
+      "render_cue_ids": [
+        "sub_047"
+      ],
+      "ass_event_ids": [
+        "ass_event_47"
+      ],
+      "suppression_reason": null,
+      "coverage_status": "VISIBLE_TRANSLATION"
+    },
+    {
+      "source_cue_id": "30ea7e5c-ffe2-4cb2-9098-06ff45be115e",
+      "start": 89.28,
+      "end": 93.265,
+      "source_text": "高级开发师ACC被产品经理追着跑",
+      "source_integrity_status": "REPAIRED",
+      "semantic_group_id": "grp_30ea7e5c",
+      "quality_status": "PASS",
+      "final_vi": "Kỹ sư cao cấp ACC bị quản lý sản phẩm rượt đuổi",
+      "canonical_vi": "Kỹ sư cao cấp ACC bị quản lý sản phẩm rượt đuổi",
+      "render_cue_ids": [
+        "sub_048"
+      ],
+      "ass_event_ids": [
+        "ass_event_48"
+      ],
+      "suppression_reason": null,
+      "coverage_status": "VISIBLE_TRANSLATION"
+    },
+    {
+      "source_cue_id": "76c8cf07-335e-471c-b4ab-c173458126dc",
+      "start": 93.91,
+      "end": 95.695,
+      "source_text": "够活但活得不太体面",
+      "source_integrity_status": "REPAIRED",
+      "semantic_group_id": "grp_76c8cf07",
+      "quality_status": "PASS",
+      "final_vi": "Đủ sống nhưng không được đàng hoàng",
+      "canonical_vi": "Đủ sống nhưng không được đàng hoàng",
+      "render_cue_ids": [
+        "sub_049"
+      ],
+      "ass_event_ids": [
+        "ass_event_49"
+      ],
+      "suppression_reason": null,
+      "coverage_status": "VISIBLE_TRANSLATION"
+    },
+    {
+      "source_cue_id": "f40e80b2-c50e-4c6b-b97a-d4de60140886",
+      "start": 96.13,
+      "end": 97.135,
+      "source_text": "够活但活得不太体面",
+      "source_integrity_status": "REPAIRED",
+      "semantic_group_id": "grp_f40e80b2",
+      "quality_status": "PASS",
+      "final_vi": "Sống đủ nhưng không sống một cách trang nhã.",
+      "canonical_vi": "Sống đủ nhưng không sống một cách trang nhã.",
+      "render_cue_ids": [
+        "sub_050"
+      ],
+      "ass_event_ids": [
+        "ass_event_50"
+      ],
+      "suppression_reason": null,
+      "coverage_status": "VISIBLE_TRANSLATION"
+    },
+    {
+      "source_cue_id": "4752a988-6717-4e9a-8271-65bf72cc6969_seg1",
+      "start": 98.33,
+      "end": 100.1,
+      "source_text": "唯一让我在这个",
+      "source_integrity_status": "REPAIRED",
+      "semantic_group_id": "grp_4752a988",
+      "quality_status": "PASS",
+      "final_vi": "Điều duy nhất khiến tôi có chút giá trị trong",
+      "canonical_vi": "Điều duy nhất khiến tôi có chút giá trị trong",
+      "render_cue_ids": [
+        "sub_051"
+      ],
+      "ass_event_ids": [
+        "ass_event_51"
+      ],
+      "suppression_reason": null,
+      "coverage_status": "VISIBLE_TRANSLATION"
+    },
+    {
+      "source_cue_id": "4752a988-6717-4e9a-8271-65bf72cc6969_seg2",
+      "start": 98.9,
+      "end": 101.6,
+      "source_text": "写字楼里有点存在感的",
+      "source_integrity_status": "REPAIRED",
+      "semantic_group_id": "grp_4752a988",
+      "quality_status": "PASS",
+      "final_vi": "tòa nhà văn phòng này",
+      "canonical_vi": "tòa nhà văn phòng này",
+      "render_cue_ids": [
+        "sub_052"
+      ],
+      "ass_event_ids": [
+        "ass_event_52"
+      ],
+      "suppression_reason": null,
+      "coverage_status": "VISIBLE_TRANSLATION"
+    },
+    {
+      "source_cue_id": "4752a988-6717-4e9a-8271-65bf72cc6969_seg3",
+      "start": 100.4,
+      "end": 103.115,
+      "source_text": "是我妈传给我的手艺做饭",
+      "source_integrity_status": "REPAIRED",
+      "semantic_group_id": "grp_4752a988",
+      "quality_status": "PASS",
+      "final_vi": "chính là kỹ năng nấu ăn mẹ truyền lại.",
+      "canonical_vi": "chính là kỹ năng nấu ăn mẹ truyền lại.",
+      "render_cue_ids": [
+        "sub_053"
+      ],
+      "ass_event_ids": [
+        "ass_event_53"
+      ],
+      "suppression_reason": null,
+      "coverage_status": "VISIBLE_TRANSLATION"
+    },
+    {
+      "source_cue_id": "4d1ff225-9363-4076-bd63-7b2d0b4a2f83",
+      "start": 104.2,
+      "end": 104.545,
+      "source_text": "一，",
+      "source_integrity_status": "PASS",
+      "semantic_group_id": "grp_4d1ff225",
+      "quality_status": "PASS",
+      "final_vi": "Một,",
+      "canonical_vi": "Một,",
+      "render_cue_ids": [
+        "sub_054"
+      ],
+      "ass_event_ids": [
+        "ass_event_54"
+      ],
+      "suppression_reason": null,
+      "coverage_status": "VISIBLE_TRANSLATION"
+    },
+    {
+      "source_cue_id": "4716213f-9e18-4b42-bc94-ab8b0e253a97",
+      "start": 104.5,
+      "end": 105.0,
+      "source_text": "嗯",
+      "source_integrity_status": "PASS",
+      "semantic_group_id": "grp_4716213f",
+      "quality_status": "PASS",
+      "final_vi": "Ừm.",
+      "canonical_vi": "Ừm.",
+      "render_cue_ids": [],
+      "ass_event_ids": [],
+      "suppression_reason": "Noise pattern or length <= 1 ('嗯')",
+      "coverage_status": "EXPLICITLY_SUPPRESSED"
+    },
+    {
+      "source_cue_id": "7fedace1-e344-46da-8fbc-e48516cc699f",
+      "start": 105.07,
+      "end": 107.075,
+      "source_text": "你这饭给外卖判了死缓",
+      "source_integrity_status": "REPAIRED",
+      "semantic_group_id": "grp_7fedace1",
+      "quality_status": "PASS",
+      "final_vi": "Cơm cậu nấu ngon thế này thì đồ ăn ngoài hết cửa sống luôn.",
+      "canonical_vi": "Cơm cậu nấu ngon thế này thì đồ ăn ngoài hết cửa sống luôn.",
+      "render_cue_ids": [
+        "sub_055"
+      ],
+      "ass_event_ids": [
+        "ass_event_55"
+      ],
+      "suppression_reason": null,
+      "coverage_status": "VISIBLE_TRANSLATION"
+    },
+    {
+      "source_cue_id": "371d2df2-592f-4fb6-8df8-af76b9f8fd63",
+      "start": 111.26,
+      "end": 111.86,
+      "source_text": "这是苏棠",
+      "source_integrity_status": "REPAIRED",
+      "semantic_group_id": "grp_371d2df2",
+      "quality_status": "PASS",
+      "final_vi": "Đây là Tô Đường,",
+      "canonical_vi": "Đây là Tô Đường,",
+      "render_cue_ids": [
+        "sub_056"
+      ],
+      "ass_event_ids": [
+        "ass_event_56"
+      ],
+      "suppression_reason": null,
+      "coverage_status": "VISIBLE_TRANSLATION"
+    },
+    {
+      "source_cue_id": "4e922104-0c6e-452e-9f8a-ff7b23468a6b_seg1",
+      "start": 112.1,
+      "end": 112.6,
+      "source_text": "这是苏棠",
+      "source_integrity_status": "REPAIRED",
+      "semantic_group_id": "grp_4e922104",
+      "quality_status": "PASS",
+      "final_vi": "Đây là Tô Đường,",
+      "canonical_vi": "Đây là Tô Đường,",
+      "render_cue_ids": [
+        "sub_057"
+      ],
+      "ass_event_ids": [
+        "ass_event_57"
+      ],
+      "suppression_reason": null,
+      "coverage_status": "VISIBLE_TRANSLATION"
+    },
+    {
+      "source_cue_id": "4e922104-0c6e-452e-9f8a-ff7b23468a6b_seg2",
+      "start": 112.1,
+      "end": 113.6,
+      "source_text": "今天入职",
+      "source_integrity_status": "REPAIRED",
+      "semantic_group_id": "grp_4e922104",
+      "quality_status": "PASS",
+      "final_vi": "vừa mới vào làm,",
+      "canonical_vi": "vừa mới vào làm,",
+      "render_cue_ids": [
+        "sub_057"
+      ],
+      "ass_event_ids": [
+        "ass_event_57"
+      ],
+      "suppression_reason": null,
+      "coverage_status": "VISIBLE_TRANSLATION"
+    },
+    {
+      "source_cue_id": "4e922104-0c6e-452e-9f8a-ff7b23468a6b_seg3",
+      "start": 112.4,
+      "end": 114.165,
+      "source_text": "以后跟你们一个项目组",
+      "source_integrity_status": "REPAIRED",
+      "semantic_group_id": "grp_4e922104",
+      "quality_status": "PASS",
+      "final_vi": "sau này sẽ cùng nhóm dự án với mọi người.",
+      "canonical_vi": "sau này sẽ cùng nhóm dự án với mọi người.",
+      "render_cue_ids": [
+        "sub_058"
+      ],
+      "ass_event_ids": [
+        "ass_event_58"
+      ],
+      "suppression_reason": null,
+      "coverage_status": "VISIBLE_TRANSLATION"
+    },
+    {
+      "source_cue_id": "66f296df-298d-42d5-8618-3bc7b06ef36d",
+      "start": 114.8,
+      "end": 115.365,
+      "source_text": "大家好",
+      "source_integrity_status": "REPAIRED",
+      "semantic_group_id": "grp_66f296df",
+      "quality_status": "PASS",
+      "final_vi": "Xin chào mọi người",
+      "canonical_vi": "Xin chào mọi người",
+      "render_cue_ids": [
+        "sub_059"
+      ],
+      "ass_event_ids": [
+        "ass_event_59"
+      ],
+      "suppression_reason": null,
+      "coverage_status": "VISIBLE_TRANSLATION"
+    },
+    {
+      "source_cue_id": "84a673be-490e-469d-933c-f700962519db",
+      "start": 121.85,
+      "end": 122.99,
+      "source_text": "我刚准备动筷子",
+      "source_integrity_status": "REPAIRED",
+      "semantic_group_id": "grp_84a673be",
+      "quality_status": "PASS",
+      "final_vi": "Tôi vừa định gắp thức ăn",
+      "canonical_vi": "Tôi vừa định gắp thức ăn",
+      "render_cue_ids": [
+        "sub_060"
+      ],
+      "ass_event_ids": [
+        "ass_event_60"
+      ],
+      "suppression_reason": null,
+      "coverage_status": "VISIBLE_TRANSLATION"
+    },
+    {
+      "source_cue_id": "4d2d0858-498e-4a06-ae5d-a4c6907fe79e",
+      "start": 123.67,
+      "end": 125.675,
+      "source_text": "突然感觉到一道很强烈的视线",
+      "source_integrity_status": "REPAIRED",
+      "semantic_group_id": "grp_4d2d0858",
+      "quality_status": "PASS",
+      "final_vi": "Đột nhiên tôi cảm nhận được một ánh mắt rất mạnh mẽ.",
+      "canonical_vi": "Đột nhiên tôi cảm nhận được một ánh mắt rất mạnh mẽ.",
+      "render_cue_ids": [
+        "sub_061"
+      ],
+      "ass_event_ids": [
+        "ass_event_61"
+      ],
+      "suppression_reason": null,
+      "coverage_status": "VISIBLE_TRANSLATION"
+    },
+    {
+      "source_cue_id": "28f49dbb-a610-4fb4-a840-177911e2219d",
+      "start": 126.5,
+      "end": 127.0,
+      "source_text": "AL",
+      "source_integrity_status": "PASS",
+      "semantic_group_id": "grp_28f49dbb",
+      "quality_status": "PASS",
+      "final_vi": "",
+      "canonical_vi": "",
+      "render_cue_ids": [],
+      "ass_event_ids": [],
+      "suppression_reason": "Noise pattern or length <= 1 ('AL')",
+      "coverage_status": "EXPLICITLY_SUPPRESSED"
+    },
+    {
+      "source_cue_id": "434f5d1e-6981-4eb9-be44-2f97a11a5afc",
+      "start": 129.71,
+      "end": 131.35,
+      "source_text": "那表情怎么形容呢",
+      "source_integrity_status": "REPAIRED",
+      "semantic_group_id": "grp_434f5d1e",
+      "quality_status": "PASS",
+      "final_vi": "Biết miêu tả biểu cảm đó thế nào nhỉ,",
+      "canonical_vi": "Biết miêu tả biểu cảm đó thế nào nhỉ,",
+      "render_cue_ids": [
+        "sub_062"
+      ],
+      "ass_event_ids": [
+        "ass_event_62"
+      ],
+      "suppression_reason": null,
+      "coverage_status": "VISIBLE_TRANSLATION"
+    },
+    {
+      "source_cue_id": "d2c4c40f-0688-47eb-8a19-b03b9fe54816",
+      "start": 132.15,
+      "end": 133.33,
+      "source_text": "你家养了条金毛",
+      "source_integrity_status": "REPAIRED",
+      "semantic_group_id": "grp_d2c4c40f",
+      "quality_status": "PASS",
+      "final_vi": "Bạn nuôi một con chó Golden Retriever.",
+      "canonical_vi": "Bạn nuôi một con chó Golden Retriever.",
+      "render_cue_ids": [
+        "sub_063"
+      ],
+      "ass_event_ids": [
+        "ass_event_63"
+      ],
+      "suppression_reason": null,
+      "coverage_status": "VISIBLE_TRANSLATION"
+    },
+    {
+      "source_cue_id": "23fdfc13-f1c6-442f-913c-5e58f3e92902",
+      "start": 133.69,
+      "end": 134.83,
+      "source_text": "它蹲你旁边",
+      "source_integrity_status": "REPAIRED",
+      "semantic_group_id": "grp_23fdfc13",
+      "quality_status": "PASS",
+      "final_vi": "Nó ngồi xổm bên cạnh bạn.",
+      "canonical_vi": "Nó ngồi xổm bên cạnh bạn.",
+      "render_cue_ids": [
+        "sub_064"
+      ],
+      "ass_event_ids": [
+        "ass_event_64"
+      ],
+      "suppression_reason": null,
+      "coverage_status": "VISIBLE_TRANSLATION"
+    },
+    {
+      "source_cue_id": "3759809e-b962-4a0f-b2ff-1ac922b31781_seg1",
+      "start": 134.87,
+      "end": 135.6,
+      "source_text": "你吃牛排的时候",
+      "source_integrity_status": "REPAIRED",
+      "semantic_group_id": "grp_3759809e",
+      "quality_status": "PASS",
+      "final_vi": "Lúc cậu ăn bít tết,",
+      "canonical_vi": "Lúc cậu ăn bít tết,",
+      "render_cue_ids": [
+        "sub_065"
+      ],
+      "ass_event_ids": [
+        "ass_event_65"
+      ],
+      "suppression_reason": null,
+      "coverage_status": "VISIBLE_TRANSLATION"
+    },
+    {
+      "source_cue_id": "3759809e-b962-4a0f-b2ff-1ac922b31781_seg2",
+      "start": 134.87,
+      "end": 136.6,
+      "source_text": "它蹲你旁边",
+      "source_integrity_status": "REPAIRED",
+      "semantic_group_id": "grp_3759809e",
+      "quality_status": "PASS",
+      "final_vi": "nó ngồi xổm ngay bên cạnh,",
+      "canonical_vi": "nó ngồi xổm ngay bên cạnh,",
+      "render_cue_ids": [
+        "sub_065"
+      ],
+      "ass_event_ids": [
+        "ass_event_65"
+      ],
+      "suppression_reason": null,
+      "coverage_status": "VISIBLE_TRANSLATION"
+    },
+    {
+      "source_cue_id": "3759809e-b962-4a0f-b2ff-1ac922b31781_seg3",
+      "start": 135.4,
+      "end": 136.87,
+      "source_text": "两只爪子搭桌沿",
+      "source_integrity_status": "REPAIRED",
+      "semantic_group_id": "grp_3759809e",
+      "quality_status": "PASS",
+      "final_vi": "hai chân trước gác lên mép bàn,",
+      "canonical_vi": "hai chân trước gác lên mép bàn,",
+      "render_cue_ids": [
+        "sub_066"
+      ],
+      "ass_event_ids": [
+        "ass_event_66"
+      ],
+      "suppression_reason": null,
+      "coverage_status": "VISIBLE_TRANSLATION"
+    },
+    {
+      "source_cue_id": "9c2b7126-dc81-4dde-aba8-f78576c47711",
+      "start": 136.87,
+      "end": 138.19,
+      "source_text": "下巴磕在上面",
+      "source_integrity_status": "REPAIRED",
+      "semantic_group_id": "grp_9c2b7126",
+      "quality_status": "PASS",
+      "final_vi": "cằm tì lên trên,",
+      "canonical_vi": "cằm tì lên trên,",
+      "render_cue_ids": [
+        "sub_066"
+      ],
+      "ass_event_ids": [
+        "ass_event_66"
+      ],
+      "suppression_reason": null,
+      "coverage_status": "VISIBLE_TRANSLATION"
+    },
+    {
+      "source_cue_id": "8f024d8b-74da-45aa-90c3-bf974f43eb01",
+      "start": 138.79,
+      "end": 140.77,
+      "source_text": "全身都写着给我一口",
+      "source_integrity_status": "REPAIRED",
+      "semantic_group_id": "grp_8f024d8b",
+      "quality_status": "PASS",
+      "final_vi": "toàn thân toát lên vẻ muốn xin một miếng.",
+      "canonical_vi": "toàn thân toát lên vẻ muốn xin một miếng.",
+      "render_cue_ids": [
+        "sub_067"
+      ],
+      "ass_event_ids": [
+        "ass_event_67"
+      ],
+      "suppression_reason": null,
+      "coverage_status": "VISIBLE_TRANSLATION"
+    },
+    {
+      "source_cue_id": "8de598c3-5fe0-4d32-9f1b-d95cec7c8667_seg1",
+      "start": 141.19,
+      "end": 141.6,
+      "source_text": "全身都写着给我一口",
+      "source_integrity_status": "REPAIRED",
+      "semantic_group_id": "grp_8de598c3",
+      "quality_status": "PASS",
+      "final_vi": "toàn thân toát lên vẻ muốn xin một miếng,",
+      "canonical_vi": "toàn thân toát lên vẻ muốn xin một miếng,",
+      "render_cue_ids": [
+        "sub_068"
+      ],
+      "ass_event_ids": [
+        "ass_event_68"
+      ],
+      "suppression_reason": null,
+      "coverage_status": "VISIBLE_TRANSLATION"
+    },
+    {
+      "source_cue_id": "8de598c3-5fe0-4d32-9f1b-d95cec7c8667_seg2",
+      "start": 141.19,
+      "end": 143.1,
+      "source_text": "就那个眼神",
+      "source_integrity_status": "REPAIRED",
+      "semantic_group_id": "grp_8de598c3",
+      "quality_status": "PASS",
+      "final_vi": "chính là ánh mắt đó đấy.",
+      "canonical_vi": "chính là ánh mắt đó đấy.",
+      "render_cue_ids": [
+        "sub_068"
+      ],
+      "ass_event_ids": [
+        "ass_event_68"
+      ],
+      "suppression_reason": null,
+      "coverage_status": "VISIBLE_TRANSLATION"
+    },
+    {
+      "source_cue_id": "a3fb8d1d-f8ad-42db-8225-da4a39f56ecd",
+      "start": 148.06,
+      "end": 150.82,
+      "source_text": "他的视线跟着我的筷子一起动",
+      "source_integrity_status": "REPAIRED",
+      "semantic_group_id": "grp_a3fb8d1d",
+      "quality_status": "PASS",
+      "final_vi": "Cái nhìn của anh ấy di chuyển theo chiếc đũa của tôi.",
+      "canonical_vi": "Cái nhìn của anh ấy di chuyển theo chiếc đũa của tôi.",
+      "render_cue_ids": [
+        "sub_069"
+      ],
+      "ass_event_ids": [
+        "ass_event_69"
+      ],
+      "suppression_reason": null,
+      "coverage_status": "VISIBLE_TRANSLATION"
+    },
+    {
+      "source_cue_id": "2da9c669-7d59-4e86-8409-faea0bf28535",
+      "start": 152.28,
+      "end": 153.06,
+      "source_text": "你没吃午饭",
+      "source_integrity_status": "REPAIRED",
+      "semantic_group_id": "grp_2da9c669",
+      "quality_status": "PASS",
+      "final_vi": "Bạn chưa ăn trưa.",
+      "canonical_vi": "Bạn chưa ăn trưa.",
+      "render_cue_ids": [
+        "sub_070"
+      ],
+      "ass_event_ids": [
+        "ass_event_70"
+      ],
+      "suppression_reason": null,
+      "coverage_status": "VISIBLE_TRANSLATION"
+    },
+    {
+      "source_cue_id": "4ab3697f-3a5d-4013-bf88-3b5bd78b536a",
+      "start": 153.76,
+      "end": 156.72,
+      "source_text": "沙拉",
+      "source_integrity_status": "REPAIRED",
+      "semantic_group_id": "grp_4ab3697f",
+      "quality_status": "PASS",
+      "final_vi": "Salad",
+      "canonical_vi": "Salad",
+      "render_cue_ids": [
+        "sub_071"
+      ],
+      "ass_event_ids": [
+        "ass_event_71"
+      ],
+      "suppression_reason": null,
+      "coverage_status": "VISIBLE_TRANSLATION"
+    },
+    {
+      "source_cue_id": "09ffee62-3387-4d7f-9c52-6b3119f83589",
+      "start": 156.5,
+      "end": 157.5,
+      "source_text": "哦",
+      "source_integrity_status": "PASS",
+      "semantic_group_id": "grp_09ffee62",
+      "quality_status": "PASS",
+      "final_vi": "Ồ.",
+      "canonical_vi": "Ồ.",
+      "render_cue_ids": [],
+      "ass_event_ids": [],
+      "suppression_reason": "Noise pattern or length <= 1 ('哦')",
+      "coverage_status": "EXPLICITLY_SUPPRESSED"
+    },
+    {
+      "source_cue_id": "b77253b6-0ff9-4227-bc37-1fac1597d28e",
+      "start": 161.16,
+      "end": 162.5,
+      "source_text": "那双眼睛大而圆",
+      "source_integrity_status": "REPAIRED",
+      "semantic_group_id": "grp_b77253b6",
+      "quality_status": "PASS",
+      "final_vi": "Đôi mắt to tròn",
+      "canonical_vi": "Đôi mắt to tròn",
+      "render_cue_ids": [
+        "sub_072"
+      ],
+      "ass_event_ids": [
+        "ass_event_72"
+      ],
+      "suppression_reason": null,
+      "coverage_status": "VISIBLE_TRANSLATION"
+    },
+    {
+      "source_cue_id": "1a267f02-1421-4bcb-95dc-9d4419483610",
+      "start": 163.16,
+      "end": 164.7,
+      "source_text": "盯人的时候有种迫害感",
+      "source_integrity_status": "REPAIRED",
+      "semantic_group_id": "grp_1a267f02",
+      "quality_status": "PASS",
+      "final_vi": "Khi chằm chằm nhìn người khác, mình cảm thấy như bị áp bức.",
+      "canonical_vi": "Khi chằm chằm nhìn người khác, mình cảm thấy như bị áp bức.",
+      "render_cue_ids": [
+        "sub_073"
+      ],
+      "ass_event_ids": [
+        "ass_event_73"
+      ],
+      "suppression_reason": null,
+      "coverage_status": "VISIBLE_TRANSLATION"
+    },
+    {
+      "source_cue_id": "91162b49-1637-420c-854d-8c1b0fdfc3cb",
+      "start": 165.88,
+      "end": 167.86,
+      "source_text": "我觉得每一口饭都被审视了",
+      "source_integrity_status": "REPAIRED",
+      "semantic_group_id": "grp_91162b49",
+      "quality_status": "PASS",
+      "final_vi": "Tôi cảm thấy mỗi miếng cơm đều bị soi xét.",
+      "canonical_vi": "Tôi cảm thấy mỗi miếng cơm đều bị soi xét.",
+      "render_cue_ids": [
+        "sub_074"
+      ],
+      "ass_event_ids": [
+        "ass_event_74"
+      ],
+      "suppression_reason": null,
+      "coverage_status": "VISIBLE_TRANSLATION"
+    },
+    {
+      "source_cue_id": "49e68708-c8ec-4ca0-a117-3da6854540f2",
+      "start": 168.9,
+      "end": 171.98,
+      "source_text": "都像被他扫描了一遍",
+      "source_integrity_status": "REPAIRED",
+      "semantic_group_id": "grp_49e68708",
+      "quality_status": "PASS",
+      "final_vi": "Như thể chúng đã bị anh ấy quét qua một lần.",
+      "canonical_vi": "Như thể chúng đã bị anh ấy quét qua một lần.",
+      "render_cue_ids": [
+        "sub_075"
+      ],
+      "ass_event_ids": [
+        "ass_event_75"
+      ],
+      "suppression_reason": null,
+      "coverage_status": "VISIBLE_TRANSLATION"
+    },
+    {
+      "source_cue_id": "28073272-c188-45e3-b222-5ef2e27bf4e3_seg1",
+      "start": 171.98,
+      "end": 173.1,
+      "source_text": "都像被他扫描了一遍",
+      "source_integrity_status": "REPAIRED",
+      "semantic_group_id": "grp_28073272",
+      "quality_status": "PASS",
+      "final_vi": "Như thể chúng đã bị anh ta quét qua một lần.",
+      "canonical_vi": "Như thể chúng đã bị anh ta quét qua một lần.",
+      "render_cue_ids": [
+        "sub_076"
+      ],
+      "ass_event_ids": [
+        "ass_event_76"
+      ],
+      "suppression_reason": null,
+      "coverage_status": "VISIBLE_TRANSLATION"
+    },
+    {
+      "source_cue_id": "28073272-c188-45e3-b222-5ef2e27bf4e3_seg2",
+      "start": 178.4,
+      "end": 179.26,
+      "source_text": "哥们你是不是该表示一下",
+      "source_integrity_status": "REPAIRED",
+      "semantic_group_id": "grp_28073272",
+      "quality_status": "PASS",
+      "final_vi": "Bạn ơi, sao không bày tỏ một chút nhỉ?",
+      "canonical_vi": "Bạn ơi, sao không bày tỏ một chút nhỉ?",
+      "render_cue_ids": [
+        "sub_077"
+      ],
+      "ass_event_ids": [
+        "ass_event_77"
+      ],
+      "suppression_reason": null,
+      "coverage_status": "VISIBLE_TRANSLATION"
+    },
+    {
+      "source_cue_id": "6d240e9e-db99-49aa-beb0-e6e6fafa89dd",
+      "start": 179.46,
+      "end": 180.01,
+      "source_text": "哥们你是不是该表示一下",
+      "source_integrity_status": "REPAIRED",
+      "semantic_group_id": "grp_6d240e9e",
+      "quality_status": "PASS",
+      "final_vi": "Bạn ơi, sao không bày tỏ một chút nhỉ?",
+      "canonical_vi": "Bạn ơi, sao không bày tỏ một chút nhỉ?",
+      "render_cue_ids": [
+        "sub_078"
+      ],
+      "ass_event_ids": [
+        "ass_event_78"
+      ],
+      "suppression_reason": null,
+      "coverage_status": "VISIBLE_TRANSLATION"
+    }
+  ]
+}
