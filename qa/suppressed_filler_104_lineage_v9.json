@@ -1,0 +1,47 @@
+{
+  "source_cue_id": "4716213f-9e18-4b42-bc94-ab8b0e253a97",
+  "source_text": "嗯",
+  "start": 104.5,
+  "end": 105.0,
+  "ocr_interval": [
+    103.9,
+    105.6
+  ],
+  "ocr_bbox": [
+    612,
+    630,
+    666,
+    682
+  ],
+  "ocr_confidence": 0.999,
+  "source_integrity_status": "PASS",
+  "translation_status": "SUPPRESSED",
+  "quality_status": "PASS",
+  "suppression_status": "SUPPRESSED_FILLER",
+  "suppression_reason": "Single-character filler interjection without independent subtitle turn",
+  "draft_vi": null,
+  "repaired_vi": null,
+  "final_vi": null,
+  "get_final_vi_text_result": "",
+  "render_subtitle_cue_exists": false,
+  "render_text": null,
+  "ass_text_event_exists": false,
+  "source_cover_event": {
+    "cover_event_id": "suppressed_4716213f",
+    "source_bbox": [
+      612,
+      630,
+      666,
+      682
+    ],
+    "final_cover_bbox": [
+      587,
+      618,
+      689,
+      692
+    ],
+    "cover_start": 103.833,
+    "cover_end": 104.612,
+    "geometry_reason": "CENTERED_SOURCE_GLYPH_PADDING"
+  }
+}

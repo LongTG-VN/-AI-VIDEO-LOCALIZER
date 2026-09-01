@@ -1,0 +1,102 @@
+[
+  {
+    "cue_id": "4752a988-6717-4e9a-8271-65bf72cc6969_seg1",
+    "start": 98.33,
+    "end": 100.1,
+    "source_text": "唯一让我在这个",
+    "group_id": "grp_4752a988-6717-4e9a-8271-65bf72cc6969_seg1",
+    "group_full_vi": "唯一让我在这个",
+    "allocated_vi": "Điều duy nhất khiến tôi có chút giá trị trong",
+    "render_text": "Điều duy nhất khiến tôi\\Ncó chút giá trị trong"
+  },
+  {
+    "cue_id": "4752a988-6717-4e9a-8271-65bf72cc6969_seg2",
+    "start": 98.9,
+    "end": 101.6,
+    "source_text": "写字楼里有点存在感的",
+    "group_id": "grp_4752a988-6717-4e9a-8271-65bf72cc6969_seg2",
+    "group_full_vi": "写字楼里有点存在感的",
+    "allocated_vi": "tòa nhà văn phòng này",
+    "render_text": "Tòa nhà văn phòng này"
+  },
+  {
+    "cue_id": "4752a988-6717-4e9a-8271-65bf72cc6969_seg3",
+    "start": 100.4,
+    "end": 103.115,
+    "source_text": "是我妈传给我的手艺做饭",
+    "group_id": "grp_4752a988-6717-4e9a-8271-65bf72cc6969_seg3",
+    "group_full_vi": "是我妈传给我的手艺做饭",
+    "allocated_vi": "chính là kỹ năng nấu ăn mẹ truyền lại.",
+    "render_text": "Chính là kỹ năng nấu\\Năn mẹ truyền lại."
+  },
+  {
+    "cue_id": "4d1ff225-9363-4076-bd63-7b2d0b4a2f83",
+    "start": 104.2,
+    "end": 104.545,
+    "source_text": "一，",
+    "group_id": "grp_4d1ff225-9363-4076-bd63-7b2d0b4a2f83",
+    "group_full_vi": "一，",
+    "allocated_vi": "Một,",
+    "render_text": "Một"
+  },
+  {
+    "cue_id": "4716213f-9e18-4b42-bc94-ab8b0e253a97",
+    "start": 104.5,
+    "end": 105.0,
+    "source_text": "嗯",
+    "group_id": "grp_4716213f-9e18-4b42-bc94-ab8b0e253a97",
+    "group_full_vi": "嗯",
+    "allocated_vi": "Ừm.",
+    "render_text": "Ừm."
+  },
+  {
+    "cue_id": "7fedace1-e344-46da-8fbc-e48516cc699f",
+    "start": 105.07,
+    "end": 107.075,
+    "source_text": "你这饭给外卖判了死缓",
+    "group_id": "grp_7fedace1-e344-46da-8fbc-e48516cc699f",
+    "group_full_vi": "你这饭给外卖判了死缓",
+    "allocated_vi": "Món này của anh làm đồ ăn ngoài phải 'án treo' luôn.",
+    "render_text": "Món này của anh làm đồ ăn\\Nngoài phải 'án treo' luôn."
+  },
+  {
+    "cue_id": "371d2df2-592f-4fb6-8df8-af76b9f8fd63",
+    "start": 111.26,
+    "end": 111.86,
+    "source_text": "这是苏棠",
+    "group_id": "grp_371d2df2-592f-4fb6-8df8-af76b9f8fd63",
+    "group_full_vi": "这是苏棠",
+    "allocated_vi": "Đây là Tô Đường",
+    "render_text": "Đây là Tô Đường"
+  },
+  {
+    "cue_id": "4e922104-0c6e-452e-9f8a-ff7b23468a6b_seg1",
+    "start": 112.1,
+    "end": 112.6,
+    "source_text": "这是苏棠",
+    "group_id": "grp_4e922104-0c6e-452e-9f8a-ff7b23468a6b_seg1",
+    "group_full_vi": "这是苏棠",
+    "allocated_vi": "Đây là Tô Đường",
+    "render_text": "Đây là Tô Đường"
+  },
+  {
+    "cue_id": "4e922104-0c6e-452e-9f8a-ff7b23468a6b_seg2",
+    "start": 112.1,
+    "end": 113.6,
+    "source_text": "今天入职",
+    "group_id": "grp_4e922104-0c6e-452e-9f8a-ff7b23468a6b_seg2",
+    "group_full_vi": "今天入职",
+    "allocated_vi": "vừa mới vào làm",
+    "render_text": "Vừa mới vào làm"
+  },
+  {
+    "cue_id": "4e922104-0c6e-452e-9f8a-ff7b23468a6b_seg3",
+    "start": 112.4,
+    "end": 114.165,
+    "source_text": "以后跟你们一个项目组",
+    "group_id": "grp_4e922104-0c6e-452e-9f8a-ff7b23468a6b_seg3",
+    "group_full_vi": "以后跟你们一个项目组",
+    "allocated_vi": "sau này sẽ cùng nhóm dự án với mọi người",
+    "render_text": "Sau này sẽ cùng nhóm\\Ndự án với mọi người"
+  }
+]

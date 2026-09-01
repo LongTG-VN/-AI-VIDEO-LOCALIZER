@@ -1,0 +1,296 @@
+[
+  {
+    "group_id": "grp_4752a988-6717-4e9a-8271-65bf72cc6969_seg1",
+    "source_cue_ids": [
+      "4752a988-6717-4e9a-8271-65bf72cc6969_seg1"
+    ],
+    "source_texts": [
+      "唯一让我在这个"
+    ],
+    "combined_source_text": "唯一让我在这个",
+    "start": 98.33,
+    "end": 100.1,
+    "speaker_id": "speaker_1",
+    "speaker_character_id": null,
+    "addressee_id": null,
+    "addressee_character_id": null,
+    "discourse_mode": "unknown",
+    "grouping_reason": "single_cue_default",
+    "confidence": 1.0,
+    "full_vi": "唯一让我在这个",
+    "allocations": [
+      {
+        "cue_id": "4752a988-6717-4e9a-8271-65bf72cc6969_seg1",
+        "source_text": "唯一让我在这个",
+        "allocated_vi": "唯一让我在这个"
+      }
+    ],
+    "validation_status": "PASS",
+    "validation_issues": []
+  },
+  {
+    "group_id": "grp_4752a988-6717-4e9a-8271-65bf72cc6969_seg2",
+    "source_cue_ids": [
+      "4752a988-6717-4e9a-8271-65bf72cc6969_seg2"
+    ],
+    "source_texts": [
+      "写字楼里有点存在感的"
+    ],
+    "combined_source_text": "写字楼里有点存在感的",
+    "start": 98.9,
+    "end": 101.6,
+    "speaker_id": "speaker_1",
+    "speaker_character_id": null,
+    "addressee_id": null,
+    "addressee_character_id": null,
+    "discourse_mode": "unknown",
+    "grouping_reason": "single_cue_default",
+    "confidence": 1.0,
+    "full_vi": "写字楼里有点存在感的",
+    "allocations": [
+      {
+        "cue_id": "4752a988-6717-4e9a-8271-65bf72cc6969_seg2",
+        "source_text": "写字楼里有点存在感的",
+        "allocated_vi": "写字楼里有点存在感的"
+      }
+    ],
+    "validation_status": "PASS",
+    "validation_issues": []
+  },
+  {
+    "group_id": "grp_4752a988-6717-4e9a-8271-65bf72cc6969_seg3",
+    "source_cue_ids": [
+      "4752a988-6717-4e9a-8271-65bf72cc6969_seg3"
+    ],
+    "source_texts": [
+      "是我妈传给我的手艺做饭"
+    ],
+    "combined_source_text": "是我妈传给我的手艺做饭",
+    "start": 100.4,
+    "end": 103.115,
+    "speaker_id": "speaker_1",
+    "speaker_character_id": null,
+    "addressee_id": null,
+    "addressee_character_id": null,
+    "discourse_mode": "unknown",
+    "grouping_reason": "single_cue_default",
+    "confidence": 1.0,
+    "full_vi": "是我妈传给我的手艺做饭",
+    "allocations": [
+      {
+        "cue_id": "4752a988-6717-4e9a-8271-65bf72cc6969_seg3",
+        "source_text": "是我妈传给我的手艺做饭",
+        "allocated_vi": "是我妈传给我的手艺做饭"
+      }
+    ],
+    "validation_status": "PASS",
+    "validation_issues": []
+  },
+  {
+    "group_id": "grp_4d1ff225-9363-4076-bd63-7b2d0b4a2f83",
+    "source_cue_ids": [
+      "4d1ff225-9363-4076-bd63-7b2d0b4a2f83"
+    ],
+    "source_texts": [
+      "一，"
+    ],
+    "combined_source_text": "一，",
+    "start": 104.2,
+    "end": 104.545,
+    "speaker_id": "speaker_1",
+    "speaker_character_id": null,
+    "addressee_id": null,
+    "addressee_character_id": null,
+    "discourse_mode": "unknown",
+    "grouping_reason": "single_cue_default",
+    "confidence": 1.0,
+    "full_vi": "一，",
+    "allocations": [
+      {
+        "cue_id": "4d1ff225-9363-4076-bd63-7b2d0b4a2f83",
+        "source_text": "一，",
+        "allocated_vi": "一，"
+      }
+    ],
+    "validation_status": "PASS",
+    "validation_issues": []
+  },
+  {
+    "group_id": "grp_4716213f-9e18-4b42-bc94-ab8b0e253a97",
+    "source_cue_ids": [
+      "4716213f-9e18-4b42-bc94-ab8b0e253a97"
+    ],
+    "source_texts": [
+      "嗯"
+    ],
+    "combined_source_text": "嗯",
+    "start": 104.5,
+    "end": 105.0,
+    "speaker_id": null,
+    "speaker_character_id": null,
+    "addressee_id": null,
+    "addressee_character_id": null,
+    "discourse_mode": "unknown",
+    "grouping_reason": "single_cue_default",
+    "confidence": 1.0,
+    "full_vi": "嗯",
+    "allocations": [
+      {
+        "cue_id": "4716213f-9e18-4b42-bc94-ab8b0e253a97",
+        "source_text": "嗯",
+        "allocated_vi": "嗯"
+      }
+    ],
+    "validation_status": "PASS",
+    "validation_issues": []
+  },
+  {
+    "group_id": "grp_7fedace1-e344-46da-8fbc-e48516cc699f",
+    "source_cue_ids": [
+      "7fedace1-e344-46da-8fbc-e48516cc699f"
+    ],
+    "source_texts": [
+      "你这饭给外卖判了死缓"
+    ],
+    "combined_source_text": "你这饭给外卖判了死缓",
+    "start": 105.07,
+    "end": 107.075,
+    "speaker_id": "speaker_1",
+    "speaker_character_id": null,
+    "addressee_id": null,
+    "addressee_character_id": null,
+    "discourse_mode": "unknown",
+    "grouping_reason": "single_cue_default",
+    "confidence": 1.0,
+    "full_vi": "你这饭给外卖判了死缓",
+    "allocations": [
+      {
+        "cue_id": "7fedace1-e344-46da-8fbc-e48516cc699f",
+        "source_text": "你这饭给外卖判了死缓",
+        "allocated_vi": "你这饭给外卖判了死缓"
+      }
+    ],
+    "validation_status": "PASS",
+    "validation_issues": []
+  },
+  {
+    "group_id": "grp_371d2df2-592f-4fb6-8df8-af76b9f8fd63",
+    "source_cue_ids": [
+      "371d2df2-592f-4fb6-8df8-af76b9f8fd63"
+    ],
+    "source_texts": [
+      "这是苏棠"
+    ],
+    "combined_source_text": "这是苏棠",
+    "start": 111.26,
+    "end": 111.86,
+    "speaker_id": "speaker_1",
+    "speaker_character_id": null,
+    "addressee_id": null,
+    "addressee_character_id": null,
+    "discourse_mode": "unknown",
+    "grouping_reason": "single_cue_default",
+    "confidence": 1.0,
+    "full_vi": "这是苏棠",
+    "allocations": [
+      {
+        "cue_id": "371d2df2-592f-4fb6-8df8-af76b9f8fd63",
+        "source_text": "这是苏棠",
+        "allocated_vi": "这是苏棠"
+      }
+    ],
+    "validation_status": "FAIL",
+    "validation_issues": [
+      "Canonical name 'Tô Đường' owned by source '这是苏棠' missing from cue 371d2df2-592f-4fb6-8df8-af76b9f8fd63"
+    ]
+  },
+  {
+    "group_id": "grp_4e922104-0c6e-452e-9f8a-ff7b23468a6b_seg1",
+    "source_cue_ids": [
+      "4e922104-0c6e-452e-9f8a-ff7b23468a6b_seg1"
+    ],
+    "source_texts": [
+      "这是苏棠"
+    ],
+    "combined_source_text": "这是苏棠",
+    "start": 112.1,
+    "end": 112.6,
+    "speaker_id": "speaker_1",
+    "speaker_character_id": null,
+    "addressee_id": null,
+    "addressee_character_id": null,
+    "discourse_mode": "unknown",
+    "grouping_reason": "single_cue_default",
+    "confidence": 1.0,
+    "full_vi": "这是苏棠",
+    "allocations": [
+      {
+        "cue_id": "4e922104-0c6e-452e-9f8a-ff7b23468a6b_seg1",
+        "source_text": "这是苏棠",
+        "allocated_vi": "这是苏棠"
+      }
+    ],
+    "validation_status": "FAIL",
+    "validation_issues": [
+      "Canonical name 'Tô Đường' owned by source '这是苏棠' missing from cue 4e922104-0c6e-452e-9f8a-ff7b23468a6b_seg1"
+    ]
+  },
+  {
+    "group_id": "grp_4e922104-0c6e-452e-9f8a-ff7b23468a6b_seg2",
+    "source_cue_ids": [
+      "4e922104-0c6e-452e-9f8a-ff7b23468a6b_seg2"
+    ],
+    "source_texts": [
+      "今天入职"
+    ],
+    "combined_source_text": "今天入职",
+    "start": 112.1,
+    "end": 113.6,
+    "speaker_id": "speaker_1",
+    "speaker_character_id": null,
+    "addressee_id": null,
+    "addressee_character_id": null,
+    "discourse_mode": "unknown",
+    "grouping_reason": "single_cue_default",
+    "confidence": 1.0,
+    "full_vi": "今天入职",
+    "allocations": [
+      {
+        "cue_id": "4e922104-0c6e-452e-9f8a-ff7b23468a6b_seg2",
+        "source_text": "今天入职",
+        "allocated_vi": "今天入职"
+      }
+    ],
+    "validation_status": "PASS",
+    "validation_issues": []
+  },
+  {
+    "group_id": "grp_4e922104-0c6e-452e-9f8a-ff7b23468a6b_seg3",
+    "source_cue_ids": [
+      "4e922104-0c6e-452e-9f8a-ff7b23468a6b_seg3"
+    ],
+    "source_texts": [
+      "以后跟你们一个项目组"
+    ],
+    "combined_source_text": "以后跟你们一个项目组",
+    "start": 112.4,
+    "end": 114.165,
+    "speaker_id": "speaker_1",
+    "speaker_character_id": null,
+    "addressee_id": null,
+    "addressee_character_id": null,
+    "discourse_mode": "unknown",
+    "grouping_reason": "single_cue_default",
+    "confidence": 1.0,
+    "full_vi": "以后跟你们一个项目组",
+    "allocations": [
+      {
+        "cue_id": "4e922104-0c6e-452e-9f8a-ff7b23468a6b_seg3",
+        "source_text": "以后跟你们一个项目组",
+        "allocated_vi": "以后跟你们一个项目组"
+      }
+    ],
+    "validation_status": "PASS",
+    "validation_issues": []
+  }
+]

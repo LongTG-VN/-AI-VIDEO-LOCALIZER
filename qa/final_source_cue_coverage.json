@@ -1,0 +1,1040 @@
+[
+  {
+    "source_cue_id": "e54d5576-e3ed-420e-9ecb-47b447f47f84",
+    "start": 1.19,
+    "end": 1.83,
+    "source_text": "小伙子我闺女那张无限额黑卡",
+    "final_vi": "Thằng nhóc, cái thẻ đen không giới hạn của con gái tao",
+    "status": "RENDERED",
+    "suppression_reason": null,
+    "render_cue_ids": [
+      "sub_001"
+    ]
+  },
+  {
+    "source_cue_id": "66b4918f-64ff-43bc-8b81-102716889346",
+    "start": 2.33,
+    "end": 3.59,
+    "source_text": "小伙子我闺女那张无限额黑卡",
+    "final_vi": "Này anh, thẻ đen không giới hạn của con gái tôi đấy.",
+    "status": "RENDERED",
+    "suppression_reason": null,
+    "render_cue_ids": [
+      "sub_002"
+    ]
+  },
+  {
+    "source_cue_id": "c5d4d993-fd04-4829-b586-916105aba261",
+    "start": 3.59,
+    "end": 5.59,
+    "source_text": "小伙子我闺女那张无限额黑卡",
+    "final_vi": "Này anh, thẻ đen không giới hạn của con gái tôi đấy.",
+    "status": "RENDERED",
+    "suppression_reason": null,
+    "render_cue_ids": [
+      "sub_003"
+    ]
+  },
+  {
+    "source_cue_id": "d9e4c3aa-4f4c-468f-ad00-826e98b81404",
+    "start": 5.89,
+    "end": 7.27,
+    "source_text": "一分钱都没花过",
+    "final_vi": "Tôi chưa bao giờ tiêu một đồng nào.",
+    "status": "RENDERED",
+    "suppression_reason": null,
+    "render_cue_ids": [
+      "sub_004"
+    ]
+  },
+  {
+    "source_cue_id": "6306912f-c98f-424e-b9bc-e80edc6db227",
+    "start": 8.39,
+    "end": 9.03,
+    "source_text": "无限额黑卡",
+    "final_vi": "Thẻ đen không giới hạn",
+    "status": "RENDERED",
+    "suppression_reason": null,
+    "render_cue_ids": [
+      "sub_005"
+    ]
+  },
+  {
+    "source_cue_id": "7cadef9d-9e74-468b-af8e-e618eb3de629",
+    "start": 9.03,
+    "end": 10.81,
+    "source_text": "整整8个月没动过等等",
+    "final_vi": "Đã trọn 8 tháng không di chuyển.",
+    "status": "RENDERED",
+    "suppression_reason": null,
+    "render_cue_ids": [
+      "sub_006"
+    ]
+  },
+  {
+    "source_cue_id": "f4091e40-861d-4335-b2ff-64701808f75c",
+    "start": 10.81,
+    "end": 11.29,
+    "source_text": "整整8个月没动过等等",
+    "final_vi": "Đã trọn 8 tháng không di chuyển.",
+    "status": "RENDERED",
+    "suppression_reason": null,
+    "render_cue_ids": [
+      "sub_007"
+    ]
+  },
+  {
+    "source_cue_id": "6b53665e-dbd9-486e-907f-02f106dd850e",
+    "start": 11.63,
+    "end": 12.55,
+    "source_text": "我这大半年来养的到底是流浪猫",
+    "final_vi": "Con tôi nuôi suốt hơn nửa năm nay, cuối cùng lại là một con mèo hoang.",
+    "status": "RENDERED",
+    "suppression_reason": null,
+    "render_cue_ids": [
+      "sub_008"
+    ]
+  },
+  {
+    "source_cue_id": "24909eda-d767-4189-afa9-007ba04edb67",
+    "start": 12.55,
+    "end": 13.57,
+    "source_text": "我这大半年来养的到底是流浪猫",
+    "final_vi": "Con tôi nuôi suốt hơn nửa năm nay, cuối cùng lại là một con mèo hoang.",
+    "status": "RENDERED",
+    "suppression_reason": null,
+    "render_cue_ids": [
+      "sub_009"
+    ]
+  },
+  {
+    "source_cue_id": "9650ac10-4fd6-4f0c-94df-72c5f9e16c3d",
+    "start": 13.73,
+    "end": 16.29,
+    "source_text": "还是个顶级富婆女朋友",
+    "final_vi": "Lại còn là bạn gái đại gia cấp cao",
+    "status": "RENDERED",
+    "suppression_reason": null,
+    "render_cue_ids": [
+      "sub_010"
+    ]
+  },
+  {
+    "source_cue_id": "c087bf48-2004-48f6-8037-51bbb60bcd36",
+    "start": 16.29,
+    "end": 19.01,
+    "source_text": "公司来了个新人",
+    "final_vi": "Công ty có nhân viên mới đến.",
+    "status": "RENDERED",
+    "suppression_reason": null,
+    "render_cue_ids": [
+      "sub_011"
+    ]
+  },
+  {
+    "source_cue_id": "463ee519-8023-4647-bc0b-ff69cc026f78_seg1",
+    "start": 19.29,
+    "end": 20.1,
+    "source_text": "公司来了个新人",
+    "final_vi": "Ăn cỏ mỗi ngày",
+    "status": "RENDERED",
+    "suppression_reason": null,
+    "render_cue_ids": [
+      "sub_012"
+    ]
+  },
+  {
+    "source_cue_id": "463ee519-8023-4647-bc0b-ff69cc026f78_seg2",
+    "start": 19.29,
+    "end": 20.2,
+    "source_text": "天天吃草",
+    "final_vi": "Mà ngày nào cũng ăn chay",
+    "status": "RENDERED",
+    "suppression_reason": null,
+    "render_cue_ids": [
+      "sub_013"
+    ]
+  },
+  {
+    "source_cue_id": "463ee519-8023-4647-bc0b-ff69cc026f78_seg3",
+    "start": 20.6,
+    "end": 21.43,
+    "source_text": "盯着我的饭盒眼神拉丝",
+    "final_vi": "Chằm chằm nhìn hộp cơm của tôi",
+    "status": "RENDERED",
+    "suppression_reason": null,
+    "render_cue_ids": [
+      "sub_014"
+    ]
+  },
+  {
+    "source_cue_id": "2de23dee-209a-4a7f-bd9c-6870bf6eab27",
+    "start": 21.43,
+    "end": 22.13,
+    "source_text": "盯着我的饭盒眼神拉丝",
+    "final_vi": "Chằm chằm nhìn hộp cơm của tôi",
+    "status": "RENDERED",
+    "suppression_reason": null,
+    "render_cue_ids": [
+      "sub_014"
+    ]
+  },
+  {
+    "source_cue_id": "174c63c9-fa25-489b-96dd-d7a4d9872b79_seg1",
+    "start": 22.65,
+    "end": 23.1,
+    "source_text": "盯着我的饭盒眼神拉丝",
+    "final_vi": "Lúc đó tôi đang nghĩ",
+    "status": "RENDERED",
+    "suppression_reason": null,
+    "render_cue_ids": [
+      "sub_015"
+    ]
+  },
+  {
+    "source_cue_id": "174c63c9-fa25-489b-96dd-d7a4d9872b79_seg2",
+    "start": 22.65,
+    "end": 24.6,
+    "source_text": "我当时寻思",
+    "final_vi": "Cô ấy vừa tốt nghiệp",
+    "status": "RENDERED",
+    "suppression_reason": null,
+    "render_cue_ids": [
+      "sub_016"
+    ]
+  },
+  {
+    "source_cue_id": "174c63c9-fa25-489b-96dd-d7a4d9872b79_seg3",
+    "start": 23.4,
+    "end": 24.77,
+    "source_text": "这姑娘刚毕业",
+    "final_vi": "Cô gái này vừa mới tốt nghiệp",
+    "status": "RENDERED",
+    "suppression_reason": null,
+    "render_cue_ids": [
+      "sub_017"
+    ]
+  },
+  {
+    "source_cue_id": "c8db5220-8ec0-4b92-86ca-aa4d40c93793",
+    "start": 25.37,
+    "end": 26.45,
+    "source_text": "工资低吃不起肉，",
+    "final_vi": "Lương thấp, không đủ tiền ăn thịt.",
+    "status": "RENDERED",
+    "suppression_reason": null,
+    "render_cue_ids": [
+      "sub_018"
+    ]
+  },
+  {
+    "source_cue_id": "7db57a11-480f-4551-abec-c1fde41017b5",
+    "start": 28.39,
+    "end": 28.57,
+    "source_text": "嗯，",
+    "final_vi": "Ừm.",
+    "status": "RENDERED",
+    "suppression_reason": null,
+    "render_cue_ids": [
+      "sub_019"
+    ]
+  },
+  {
+    "source_cue_id": "24a43d2f-605c-4e06-ba60-6be2f298a8c2",
+    "start": 28.57,
+    "end": 30.53,
+    "source_text": "顺手每天多做一份",
+    "final_vi": "Mỗi ngày tiện thì làm thêm một phần nữa.",
+    "status": "RENDERED",
+    "suppression_reason": null,
+    "render_cue_ids": [
+      "sub_019"
+    ]
+  },
+  {
+    "source_cue_id": "cea90f64-2e95-4892-918f-c2fa6899a78d",
+    "start": 30.53,
+    "end": 31.41,
+    "source_text": "今天是糖醋排骨",
+    "final_vi": "Hôm nay là món sườn xào chua ngọt.",
+    "status": "RENDERED",
+    "suppression_reason": null,
+    "render_cue_ids": [
+      "sub_020"
+    ]
+  },
+  {
+    "source_cue_id": "451a1005-a53a-4390-a649-43bcc9929c7f",
+    "start": 31.81,
+    "end": 32.79,
+    "source_text": "別又只吃生菜",
+    "final_vi": "Đừng lại chỉ ăn rau sống nữa",
+    "status": "RENDERED",
+    "suppression_reason": null,
+    "render_cue_ids": [
+      "sub_021"
+    ]
+  },
+  {
+    "source_cue_id": "daf6f79d-ebea-45cb-9e4a-d19fc0d84248",
+    "start": 33.03,
+    "end": 33.87,
+    "source_text": "別又只吃生菜",
+    "final_vi": "Đừng lại chỉ ăn xà lách nữa.",
+    "status": "RENDERED",
+    "suppression_reason": null,
+    "render_cue_ids": [
+      "sub_022"
+    ]
+  },
+  {
+    "source_cue_id": "3ea9c6d7-c4de-4ce0-a0a0-2e49f271c5c1",
+    "start": 34.29,
+    "end": 34.53,
+    "source_text": "嗯，",
+    "final_vi": "Ừm.",
+    "status": "RENDERED",
+    "suppression_reason": null,
+    "render_cue_ids": [
+      "sub_023"
+    ]
+  },
+  {
+    "source_cue_id": "621bfe99-76f5-492f-af33-75dd989e4a2e",
+    "start": 35.09,
+    "end": 38.85,
+    "source_text": "好吃",
+    "final_vi": "Ngon",
+    "status": "RENDERED",
+    "suppression_reason": null,
+    "render_cue_ids": [
+      "sub_024"
+    ]
+  },
+  {
+    "source_cue_id": "8fb87ed1-4aaf-412a-8901-f30c2fec841a",
+    "start": 39.15,
+    "end": 40.35,
+    "source_text": "他不喝奶茶也不换新衣服",
+    "final_vi": "Anh ấy không uống trà sữa cũng chẳng mua quần áo mới",
+    "status": "RENDERED",
+    "suppression_reason": null,
+    "render_cue_ids": [
+      "sub_025"
+    ]
+  },
+  {
+    "source_cue_id": "74b809fa-dea3-4421-b493-f34fd05d7a8c",
+    "start": 40.41,
+    "end": 41.19,
+    "source_text": "他不喝奶茶也不换新衣服",
+    "final_vi": "Anh ấy không uống trà sữa, cũng không thay đồ mới.",
+    "status": "RENDERED",
+    "suppression_reason": null,
+    "render_cue_ids": [
+      "sub_026"
+    ]
+  },
+  {
+    "source_cue_id": "61bf80f8-cb59-4a97-902a-9fdb0ce6287b",
+    "start": 41.27,
+    "end": 42.21,
+    "source_text": "他不喝奶茶也不换新衣服",
+    "final_vi": "Anh ấy không uống trà sữa, cũng không thay đồ mới.",
+    "status": "RENDERED",
+    "suppression_reason": null,
+    "render_cue_ids": [
+      "sub_027"
+    ]
+  },
+  {
+    "source_cue_id": "3d989bbd-d6f7-447c-872a-a80fa3c8fbd9",
+    "start": 42.51,
+    "end": 44.25,
+    "source_text": "我是真以为他快揭不开锅了，",
+    "final_vi": "Tôi thật sự nghĩ anh ấy sắp không còn đủ tiền để mua thực phẩm.",
+    "status": "RENDERED",
+    "suppression_reason": null,
+    "render_cue_ids": [
+      "sub_028"
+    ]
+  },
+  {
+    "source_cue_id": "28def9ab-7108-4e74-a8fc-ea424519d4ca",
+    "start": 45.35,
+    "end": 46.39,
+    "source_text": "直到那天加班，",
+    "final_vi": "Cho đến ngày hôm đó anh ấy làm thêm giờ,",
+    "status": "RENDERED",
+    "suppression_reason": null,
+    "render_cue_ids": [
+      "sub_029"
+    ]
+  },
+  {
+    "source_cue_id": "c8d316fd-5b1a-4e38-91b6-cc686148195c",
+    "start": 47.01,
+    "end": 48.85,
+    "source_text": "150万的豪车停在他面前",
+    "final_vi": "Chiếc xe sang trị 1,5 triệu dừng trước mặt anh ấy.",
+    "status": "RENDERED",
+    "suppression_reason": null,
+    "render_cue_ids": [
+      "sub_030"
+    ]
+  },
+  {
+    "source_cue_id": "33f619df-4ae2-496f-b563-a4ad6966dbe9",
+    "start": 48.85,
+    "end": 51.61,
+    "source_text": "150万的豪车停在他面前",
+    "final_vi": "Chiếc xe sang trị 1,5 triệu dừng trước mặt anh ấy.",
+    "status": "RENDERED",
+    "suppression_reason": null,
+    "render_cue_ids": [
+      "sub_031"
+    ]
+  },
+  {
+    "source_cue_id": "f2473df3-4ce0-4aa4-b19a-5fe83ccc1e00",
+    "start": 52.93,
+    "end": 53.83,
+    "source_text": "我就开始怀疑",
+    "final_vi": "Tôi bắt đầu nghi ngờ",
+    "status": "RENDERED",
+    "suppression_reason": null,
+    "render_cue_ids": [
+      "sub_032"
+    ]
+  },
+  {
+    "source_cue_id": "9cd6db59-496e-49b1-a267-3d2d7a07322a",
+    "start": 53.83,
+    "end": 54.85,
+    "source_text": "我就开始怀疑",
+    "final_vi": "Tôi bắt đầu nghi ngờ.",
+    "status": "RENDERED",
+    "suppression_reason": null,
+    "render_cue_ids": [
+      "sub_033"
+    ]
+  },
+  {
+    "source_cue_id": "90bb8c56-a710-45f1-8ddc-85cbf1be243b_seg1",
+    "start": 55.75,
+    "end": 58.6,
+    "source_text": "原来小丑可能真是我自己",
+    "final_vi": "Hóa ra kẻ ngốc có thể chính là tôi.",
+    "status": "RENDERED",
+    "suppression_reason": null,
+    "render_cue_ids": [
+      "sub_034"
+    ]
+  },
+  {
+    "source_cue_id": "90bb8c56-a710-45f1-8ddc-85cbf1be243b_seg2",
+    "start": 57.9,
+    "end": 60.515,
+    "source_text": "就是你天天给我闺女做饭",
+    "final_vi": "Chính cậu mỗi ngày nấu cơm cho con gái tôi à?",
+    "status": "RENDERED",
+    "suppression_reason": null,
+    "render_cue_ids": [
+      "sub_035"
+    ]
+  },
+  {
+    "source_cue_id": "0b072dda-7361-4515-8baf-955ffa88638b_seg1",
+    "start": 61.64,
+    "end": 63.1,
+    "source_text": "呃是是我阿姨",
+    "final_vi": "Ơ... dạ là dì của cháu.",
+    "status": "RENDERED",
+    "suppression_reason": null,
+    "render_cue_ids": [
+      "sub_036"
+    ]
+  },
+  {
+    "source_cue_id": "0b072dda-7361-4515-8baf-955ffa88638b_seg2",
+    "start": 67.8,
+    "end": 69.095,
+    "source_text": "周末来家里吃饭",
+    "final_vi": "Cuối tuần ghé nhà ăn cơm nhé.",
+    "status": "RENDERED",
+    "suppression_reason": null,
+    "render_cue_ids": [
+      "sub_037"
+    ]
+  },
+  {
+    "source_cue_id": "3c2c0c28-6a73-4866-ba6e-3aa7c043da0d",
+    "start": 69.5,
+    "end": 70.605,
+    "source_text": "带上你的保温桶",
+    "final_vi": "Mang theo bình giữ nhiệt của bạn",
+    "status": "RENDERED",
+    "suppression_reason": null,
+    "render_cue_ids": [
+      "sub_038"
+    ]
+  },
+  {
+    "source_cue_id": "bd3bcc14-1bdb-43c6-acdc-226526441a92",
+    "start": 71.02,
+    "end": 71.92,
+    "source_text": "做个糖醋排骨",
+    "final_vi": "Làm sườn xào chua ngọt",
+    "status": "RENDERED",
+    "suppression_reason": null,
+    "render_cue_ids": [
+      "sub_039"
+    ]
+  },
+  {
+    "source_cue_id": "815b487a-2c7e-492d-ad93-696738bd7911",
+    "start": 73.14,
+    "end": 73.555,
+    "source_text": "完了扶贫不仅扶出了个顶级富婆",
+    "final_vi": "Giờ thì đã xong việc xóa đói giảm nghèo, không những thế mà còn đào tạo ra một bà giàu có hàng đầu",
+    "status": "RENDERED",
+    "suppression_reason": null,
+    "render_cue_ids": [
+      "sub_040"
+    ]
+  },
+  {
+    "source_cue_id": "4bc1a9c6-26e2-4712-adc7-7ef25dd3e201",
+    "start": 73.93,
+    "end": 75.875,
+    "source_text": "完了扶贫不仅扶出了个顶级富婆",
+    "final_vi": "Giờ thì đã xong việc xóa đói giảm nghèo, không những thế mà còn đào tạo ra một bà giàu có hàng đầu",
+    "status": "RENDERED",
+    "suppression_reason": null,
+    "render_cue_ids": [
+      "sub_041"
+    ]
+  },
+  {
+    "source_cue_id": "41b55f41-9904-4209-99ad-d492d72734d7",
+    "start": 76.58,
+    "end": 78.995,
+    "source_text": "现在还要被强制见家长了",
+    "final_vi": "Bây giờ lại còn bị ép gặp bố mẹ",
+    "status": "RENDERED",
+    "suppression_reason": null,
+    "render_cue_ids": [
+      "sub_042"
+    ]
+  },
+  {
+    "source_cue_id": "3bb0ec82-a8a8-45a7-8cca-a2eaf67ccaf8",
+    "start": 80.36,
+    "end": 81.995,
+    "source_text": "起我叫江旭今年二十六某互，",
+    "final_vi": "Tôi tên Giang Húc, năm nay 26 tuổi, làm ở một công ty...",
+    "status": "RENDERED",
+    "suppression_reason": null,
+    "render_cue_ids": [
+      "sub_043"
+    ]
+  },
+  {
+    "source_cue_id": "5642f236-0d7a-4831-b45d-f02f0b800748",
+    "start": 82.91,
+    "end": 83.605,
+    "source_text": "我叫江叙",
+    "final_vi": "Tôi tên là Giang Húc,",
+    "status": "RENDERED",
+    "suppression_reason": null,
+    "render_cue_ids": [
+      "sub_044"
+    ]
+  },
+  {
+    "source_cue_id": "52a2c3fa-d034-465d-a684-2c89c5dcef97_seg1",
+    "start": 83.99,
+    "end": 84.6,
+    "source_text": "我叫江叙",
+    "final_vi": "Năm nay, 26 tuổi, lập trình viên công ty internet",
+    "status": "RENDERED",
+    "suppression_reason": null,
+    "render_cue_ids": [
+      "sub_045"
+    ]
+  },
+  {
+    "source_cue_id": "52a2c3fa-d034-465d-a684-2c89c5dcef97_seg2",
+    "start": 83.99,
+    "end": 86.5,
+    "source_text": "今年26某互联网公司程序员",
+    "final_vi": "Năm nay 26 tuổi, là lập trình viên tại một công ty internet",
+    "status": "RENDERED",
+    "suppression_reason": null,
+    "render_cue_ids": [
+      "sub_046"
+    ]
+  },
+  {
+    "source_cue_id": "52a2c3fa-d034-465d-a684-2c89c5dcef97_seg3",
+    "start": 86.6,
+    "end": 88.955,
+    "source_text": "高级开发工师Ths工牌上印着高级开发工程师",
+    "final_vi": "Chứng chỉ cao cấp của kỹ sư phát triển, thẻ kỹ sư có ghi là kỹ sư phát triển cao cấp",
+    "status": "RENDERED",
+    "suppression_reason": null,
+    "render_cue_ids": [
+      "sub_047"
+    ]
+  },
+  {
+    "source_cue_id": "30ea7e5c-ffe2-4cb2-9098-06ff45be115e",
+    "start": 89.28,
+    "end": 93.265,
+    "source_text": "高级开发师ACC被产品经理追着跑",
+    "final_vi": "Kỹ sư cao cấp ACC bị quản lý sản phẩm rượt đuổi",
+    "status": "RENDERED",
+    "suppression_reason": null,
+    "render_cue_ids": [
+      "sub_048"
+    ]
+  },
+  {
+    "source_cue_id": "76c8cf07-335e-471c-b4ab-c173458126dc",
+    "start": 93.91,
+    "end": 95.695,
+    "source_text": "够活但活得不太体面",
+    "final_vi": "Đủ sống nhưng không được đàng hoàng",
+    "status": "RENDERED",
+    "suppression_reason": null,
+    "render_cue_ids": [
+      "sub_049"
+    ]
+  },
+  {
+    "source_cue_id": "f40e80b2-c50e-4c6b-b97a-d4de60140886",
+    "start": 96.13,
+    "end": 97.135,
+    "source_text": "够活但活得不太体面",
+    "final_vi": "Sống đủ nhưng không sống một cách trang nhã.",
+    "status": "RENDERED",
+    "suppression_reason": null,
+    "render_cue_ids": [
+      "sub_050"
+    ]
+  },
+  {
+    "source_cue_id": "4752a988-6717-4e9a-8271-65bf72cc6969_seg1",
+    "start": 98.33,
+    "end": 100.1,
+    "source_text": "唯一让我在这个",
+    "final_vi": "Điều duy nhất khiến tôi có chút giá trị trong",
+    "status": "RENDERED",
+    "suppression_reason": null,
+    "render_cue_ids": [
+      "sub_051"
+    ]
+  },
+  {
+    "source_cue_id": "4752a988-6717-4e9a-8271-65bf72cc6969_seg2",
+    "start": 98.9,
+    "end": 101.6,
+    "source_text": "写字楼里有点存在感的",
+    "final_vi": "tòa nhà văn phòng này",
+    "status": "RENDERED",
+    "suppression_reason": null,
+    "render_cue_ids": [
+      "sub_052"
+    ]
+  },
+  {
+    "source_cue_id": "4752a988-6717-4e9a-8271-65bf72cc6969_seg3",
+    "start": 100.4,
+    "end": 103.115,
+    "source_text": "是我妈传给我的手艺做饭",
+    "final_vi": "chính là kỹ năng nấu ăn mẹ truyền lại.",
+    "status": "RENDERED",
+    "suppression_reason": null,
+    "render_cue_ids": [
+      "sub_053"
+    ]
+  },
+  {
+    "source_cue_id": "4d1ff225-9363-4076-bd63-7b2d0b4a2f83",
+    "start": 104.2,
+    "end": 104.545,
+    "source_text": "一，",
+    "final_vi": "Một,",
+    "status": "RENDERED",
+    "suppression_reason": null,
+    "render_cue_ids": [
+      "sub_054"
+    ]
+  },
+  {
+    "source_cue_id": "4716213f-9e18-4b42-bc94-ab8b0e253a97",
+    "start": 104.5,
+    "end": 105.0,
+    "source_text": "嗯",
+    "final_vi": "Ừm.",
+    "status": "SUPPRESSED",
+    "suppression_reason": "Noise pattern or length <= 1 ('嗯')",
+    "render_cue_ids": []
+  },
+  {
+    "source_cue_id": "7fedace1-e344-46da-8fbc-e48516cc699f",
+    "start": 105.07,
+    "end": 107.075,
+    "source_text": "你这饭给外卖判了死缓",
+    "final_vi": "Cơm cậu nấu ngon thế này thì đồ ăn ngoài hết cửa sống luôn.",
+    "status": "RENDERED",
+    "suppression_reason": null,
+    "render_cue_ids": [
+      "sub_055"
+    ]
+  },
+  {
+    "source_cue_id": "371d2df2-592f-4fb6-8df8-af76b9f8fd63",
+    "start": 111.26,
+    "end": 111.86,
+    "source_text": "这是苏棠",
+    "final_vi": "Đây là Tô Đường,",
+    "status": "RENDERED",
+    "suppression_reason": null,
+    "render_cue_ids": [
+      "sub_056"
+    ]
+  },
+  {
+    "source_cue_id": "4e922104-0c6e-452e-9f8a-ff7b23468a6b_seg1",
+    "start": 112.1,
+    "end": 112.6,
+    "source_text": "这是苏棠",
+    "final_vi": "Đây là Tô Đường,",
+    "status": "RENDERED",
+    "suppression_reason": null,
+    "render_cue_ids": [
+      "sub_057"
+    ]
+  },
+  {
+    "source_cue_id": "4e922104-0c6e-452e-9f8a-ff7b23468a6b_seg2",
+    "start": 112.1,
+    "end": 113.6,
+    "source_text": "今天入职",
+    "final_vi": "vừa mới vào làm,",
+    "status": "RENDERED",
+    "suppression_reason": null,
+    "render_cue_ids": [
+      "sub_057"
+    ]
+  },
+  {
+    "source_cue_id": "4e922104-0c6e-452e-9f8a-ff7b23468a6b_seg3",
+    "start": 112.4,
+    "end": 114.165,
+    "source_text": "以后跟你们一个项目组",
+    "final_vi": "sau này sẽ cùng nhóm dự án với mọi người.",
+    "status": "RENDERED",
+    "suppression_reason": null,
+    "render_cue_ids": [
+      "sub_058"
+    ]
+  },
+  {
+    "source_cue_id": "66f296df-298d-42d5-8618-3bc7b06ef36d",
+    "start": 114.8,
+    "end": 115.365,
+    "source_text": "大家好",
+    "final_vi": "Xin chào mọi người",
+    "status": "RENDERED",
+    "suppression_reason": null,
+    "render_cue_ids": [
+      "sub_059"
+    ]
+  },
+  {
+    "source_cue_id": "84a673be-490e-469d-933c-f700962519db",
+    "start": 121.85,
+    "end": 122.99,
+    "source_text": "我刚准备动筷子",
+    "final_vi": "Tôi vừa định gắp thức ăn",
+    "status": "RENDERED",
+    "suppression_reason": null,
+    "render_cue_ids": [
+      "sub_060"
+    ]
+  },
+  {
+    "source_cue_id": "4d2d0858-498e-4a06-ae5d-a4c6907fe79e",
+    "start": 123.67,
+    "end": 125.675,
+    "source_text": "突然感觉到一道很强烈的视线",
+    "final_vi": "Đột nhiên tôi cảm nhận được một ánh mắt rất mạnh mẽ.",
+    "status": "RENDERED",
+    "suppression_reason": null,
+    "render_cue_ids": [
+      "sub_061"
+    ]
+  },
+  {
+    "source_cue_id": "28f49dbb-a610-4fb4-a840-177911e2219d",
+    "start": 126.5,
+    "end": 127.0,
+    "source_text": "AL",
+    "final_vi": "",
+    "status": "SUPPRESSED",
+    "suppression_reason": "Noise pattern or length <= 1 ('AL')",
+    "render_cue_ids": []
+  },
+  {
+    "source_cue_id": "434f5d1e-6981-4eb9-be44-2f97a11a5afc",
+    "start": 129.71,
+    "end": 131.35,
+    "source_text": "那表情怎么形容呢",
+    "final_vi": "Biết miêu tả biểu cảm đó thế nào nhỉ,",
+    "status": "RENDERED",
+    "suppression_reason": null,
+    "render_cue_ids": [
+      "sub_062"
+    ]
+  },
+  {
+    "source_cue_id": "d2c4c40f-0688-47eb-8a19-b03b9fe54816",
+    "start": 132.15,
+    "end": 133.33,
+    "source_text": "你家养了条金毛",
+    "final_vi": "Bạn nuôi một con chó Golden Retriever.",
+    "status": "RENDERED",
+    "suppression_reason": null,
+    "render_cue_ids": [
+      "sub_063"
+    ]
+  },
+  {
+    "source_cue_id": "23fdfc13-f1c6-442f-913c-5e58f3e92902",
+    "start": 133.69,
+    "end": 134.83,
+    "source_text": "它蹲你旁边",
+    "final_vi": "Nó ngồi xổm bên cạnh bạn.",
+    "status": "RENDERED",
+    "suppression_reason": null,
+    "render_cue_ids": [
+      "sub_064"
+    ]
+  },
+  {
+    "source_cue_id": "3759809e-b962-4a0f-b2ff-1ac922b31781_seg1",
+    "start": 134.87,
+    "end": 135.6,
+    "source_text": "你吃牛排的时候",
+    "final_vi": "Lúc cậu ăn bít tết,",
+    "status": "RENDERED",
+    "suppression_reason": null,
+    "render_cue_ids": [
+      "sub_065"
+    ]
+  },
+  {
+    "source_cue_id": "3759809e-b962-4a0f-b2ff-1ac922b31781_seg2",
+    "start": 134.87,
+    "end": 136.6,
+    "source_text": "它蹲你旁边",
+    "final_vi": "nó ngồi xổm ngay bên cạnh,",
+    "status": "RENDERED",
+    "suppression_reason": null,
+    "render_cue_ids": [
+      "sub_065"
+    ]
+  },
+  {
+    "source_cue_id": "3759809e-b962-4a0f-b2ff-1ac922b31781_seg3",
+    "start": 135.4,
+    "end": 136.87,
+    "source_text": "两只爪子搭桌沿",
+    "final_vi": "hai chân trước gác lên mép bàn,",
+    "status": "RENDERED",
+    "suppression_reason": null,
+    "render_cue_ids": [
+      "sub_066"
+    ]
+  },
+  {
+    "source_cue_id": "9c2b7126-dc81-4dde-aba8-f78576c47711",
+    "start": 136.87,
+    "end": 138.19,
+    "source_text": "下巴磕在上面",
+    "final_vi": "cằm tì lên trên,",
+    "status": "RENDERED",
+    "suppression_reason": null,
+    "render_cue_ids": [
+      "sub_066"
+    ]
+  },
+  {
+    "source_cue_id": "8f024d8b-74da-45aa-90c3-bf974f43eb01",
+    "start": 138.79,
+    "end": 140.77,
+    "source_text": "全身都写着给我一口",
+    "final_vi": "toàn thân toát lên vẻ muốn xin một miếng.",
+    "status": "RENDERED",
+    "suppression_reason": null,
+    "render_cue_ids": [
+      "sub_067"
+    ]
+  },
+  {
+    "source_cue_id": "8de598c3-5fe0-4d32-9f1b-d95cec7c8667_seg1",
+    "start": 141.19,
+    "end": 141.6,
+    "source_text": "全身都写着给我一口",
+    "final_vi": "toàn thân toát lên vẻ muốn xin một miếng,",
+    "status": "RENDERED",
+    "suppression_reason": null,
+    "render_cue_ids": [
+      "sub_068"
+    ]
+  },
+  {
+    "source_cue_id": "8de598c3-5fe0-4d32-9f1b-d95cec7c8667_seg2",
+    "start": 141.19,
+    "end": 143.1,
+    "source_text": "就那个眼神",
+    "final_vi": "chính là ánh mắt đó đấy.",
+    "status": "RENDERED",
+    "suppression_reason": null,
+    "render_cue_ids": [
+      "sub_068"
+    ]
+  },
+  {
+    "source_cue_id": "a3fb8d1d-f8ad-42db-8225-da4a39f56ecd",
+    "start": 148.06,
+    "end": 150.82,
+    "source_text": "他的视线跟着我的筷子一起动",
+    "final_vi": "Cái nhìn của anh ấy di chuyển theo chiếc đũa của tôi.",
+    "status": "RENDERED",
+    "suppression_reason": null,
+    "render_cue_ids": [
+      "sub_069"
+    ]
+  },
+  {
+    "source_cue_id": "2da9c669-7d59-4e86-8409-faea0bf28535",
+    "start": 152.28,
+    "end": 153.06,
+    "source_text": "你没吃午饭",
+    "final_vi": "Bạn chưa ăn trưa.",
+    "status": "RENDERED",
+    "suppression_reason": null,
+    "render_cue_ids": [
+      "sub_070"
+    ]
+  },
+  {
+    "source_cue_id": "4ab3697f-3a5d-4013-bf88-3b5bd78b536a",
+    "start": 153.76,
+    "end": 156.72,
+    "source_text": "沙拉",
+    "final_vi": "Salad",
+    "status": "RENDERED",
+    "suppression_reason": null,
+    "render_cue_ids": [
+      "sub_071"
+    ]
+  },
+  {
+    "source_cue_id": "09ffee62-3387-4d7f-9c52-6b3119f83589",
+    "start": 156.5,
+    "end": 157.5,
+    "source_text": "哦",
+    "final_vi": "Ồ.",
+    "status": "SUPPRESSED",
+    "suppression_reason": "Noise pattern or length <= 1 ('哦')",
+    "render_cue_ids": []
+  },
+  {
+    "source_cue_id": "b77253b6-0ff9-4227-bc37-1fac1597d28e",
+    "start": 161.16,
+    "end": 162.5,
+    "source_text": "那双眼睛大而圆",
+    "final_vi": "Đôi mắt to tròn",
+    "status": "RENDERED",
+    "suppression_reason": null,
+    "render_cue_ids": [
+      "sub_072"
+    ]
+  },
+  {
+    "source_cue_id": "1a267f02-1421-4bcb-95dc-9d4419483610",
+    "start": 163.16,
+    "end": 164.7,
+    "source_text": "盯人的时候有种迫害感",
+    "final_vi": "Khi chằm chằm nhìn người khác, mình cảm thấy như bị áp bức.",
+    "status": "RENDERED",
+    "suppression_reason": null,
+    "render_cue_ids": [
+      "sub_073"
+    ]
+  },
+  {
+    "source_cue_id": "91162b49-1637-420c-854d-8c1b0fdfc3cb",
+    "start": 165.88,
+    "end": 167.86,
+    "source_text": "我觉得每一口饭都被审视了",
+    "final_vi": "Tôi cảm thấy mỗi miếng cơm đều bị soi xét.",
+    "status": "RENDERED",
+    "suppression_reason": null,
+    "render_cue_ids": [
+      "sub_074"
+    ]
+  },
+  {
+    "source_cue_id": "49e68708-c8ec-4ca0-a117-3da6854540f2",
+    "start": 168.9,
+    "end": 171.98,
+    "source_text": "都像被他扫描了一遍",
+    "final_vi": "Như thể chúng đã bị anh ấy quét qua một lần.",
+    "status": "RENDERED",
+    "suppression_reason": null,
+    "render_cue_ids": [
+      "sub_075"
+    ]
+  },
+  {
+    "source_cue_id": "28073272-c188-45e3-b222-5ef2e27bf4e3_seg1",
+    "start": 171.98,
+    "end": 173.1,
+    "source_text": "都像被他扫描了一遍",
+    "final_vi": "Như thể chúng đã bị anh ta quét qua một lần.",
+    "status": "RENDERED",
+    "suppression_reason": null,
+    "render_cue_ids": [
+      "sub_076"
+    ]
+  },
+  {
+    "source_cue_id": "28073272-c188-45e3-b222-5ef2e27bf4e3_seg2",
+    "start": 178.4,
+    "end": 179.26,
+    "source_text": "哥们你是不是该表示一下",
+    "final_vi": "Bạn ơi, sao không bày tỏ một chút nhỉ?",
+    "status": "RENDERED",
+    "suppression_reason": null,
+    "render_cue_ids": [
+      "sub_077"
+    ]
+  },
+  {
+    "source_cue_id": "6d240e9e-db99-49aa-beb0-e6e6fafa89dd",
+    "start": 179.46,
+    "end": 180.01,
+    "source_text": "哥们你是不是该表示一下",
+    "final_vi": "Bạn ơi, sao không bày tỏ một chút nhỉ?",
+    "status": "RENDERED",
+    "suppression_reason": null,
+    "render_cue_ids": [
+      "sub_078"
+    ]
+  }
+]

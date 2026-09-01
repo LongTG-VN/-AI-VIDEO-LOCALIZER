@@ -136,6 +136,420 @@ export default function App() {
               <div><strong>{stats.review}</strong><span>Needs review</span></div>
             </section>
 
+            <section className="visual-edit-card">
+              <div className="card-title">
+                <span>Visual Edit Composer</span>
+                <small>Style · Dynamic Blur · Graphic Overlays</small>
+              </div>
+              <div className="visual-edit-body">
+                <div className="form-row">
+                  <label className="field-label">Visual Style:</label>
+                  <div className="style-selector">
+                    <button
+                      type="button"
+                      className={(project.visual_edit?.mode ?? 'clean') === 'clean' ? 'active' : ''}
+                      onClick={() => setProject({
+                        ...project,
+                        visual_edit: {
+                          mode: 'clean',
+                          blur: project.visual_edit?.blur ?? { enabled: false, sigma: 18, padding_px: 8, feather_px: 6 },
+                          patch_cover: project.visual_edit?.patch_cover ?? { enabled: false, patch_opacity: 0.92, padding_px: 6, feather_px: 8, blur_sigma: 6 },
+                          overlays: project.visual_edit?.overlays ?? [],
+                          preset: project.visual_edit?.preset ?? 'default',
+                        }
+                      })}
+                    >
+                      Clean (Inpaint)
+                    </button>
+                    <button
+                      type="button"
+                      className={project.visual_edit?.mode === 'patch_cover' ? 'active recommended' : 'recommended'}
+                      onClick={() => setProject({
+                        ...project,
+                        visual_edit: {
+                          mode: 'patch_cover',
+                          blur: project.visual_edit?.blur ?? { enabled: false, sigma: 18, padding_px: 8, feather_px: 6 },
+                          patch_cover: project.visual_edit?.patch_cover ?? { enabled: true, patch_opacity: 0.92, padding_px: 6, feather_px: 8, blur_sigma: 6 },
+                          overlays: project.visual_edit?.overlays ?? [],
+                          preset: 'shortform_reference',
+                        }
+                      })}
+                    >
+                      ★ Patch Cover (Recommended)
+                    </button>
+                    <button
+                      type="button"
+                      className={project.visual_edit?.mode === 'blur' ? 'active' : ''}
+                      onClick={() => setProject({
+                        ...project,
+                        visual_edit: {
+                          mode: 'blur',
+                          blur: project.visual_edit?.blur ?? { enabled: true, sigma: 18, padding_px: 8, feather_px: 6 },
+                          patch_cover: project.visual_edit?.patch_cover ?? { enabled: false, patch_opacity: 0.92, padding_px: 6, feather_px: 8, blur_sigma: 6 },
+                          overlays: project.visual_edit?.overlays ?? [],
+                          preset: project.visual_edit?.preset ?? 'default',
+                        }
+                      })}
+                    >
+                      Blur
+                    </button>
+                    <button
+                      type="button"
+                      className={project.visual_edit?.mode === 'blur_overlay' ? 'active' : ''}
+                      onClick={() => setProject({
+                        ...project,
+                        visual_edit: {
+                          mode: 'blur_overlay',
+                          blur: project.visual_edit?.blur ?? { enabled: true, sigma: 18, padding_px: 8, feather_px: 6 },
+                          patch_cover: project.visual_edit?.patch_cover ?? { enabled: false, patch_opacity: 0.92, padding_px: 6, feather_px: 8, blur_sigma: 6 },
+                          overlays: project.visual_edit?.overlays ?? [],
+                          preset: project.visual_edit?.preset ?? 'default',
+                        }
+                      })}
+                    >
+                      Blur + Overlay
+                    </button>
+                  </div>
+                </div>
+
+                {project.visual_edit?.mode === 'patch_cover' && (
+                  <div className="sliders-grid">
+                    <div className="slider-item">
+                      <label>Cover Strength ({Math.round((project.visual_edit?.patch_cover?.patch_opacity ?? 0.92) * 100)}%)</label>
+                      <input
+                        type="range"
+                        min="0.70"
+                        max="1.00"
+                        step="0.01"
+                        value={project.visual_edit?.patch_cover?.patch_opacity ?? 0.92}
+                        onChange={(e) => {
+                          const val = Number(e.target.value)
+                          setProject({
+                            ...project,
+                            visual_edit: {
+                              ...project.visual_edit!,
+                              patch_cover: { ...project.visual_edit!.patch_cover!, patch_opacity: val }
+                            }
+                          })
+                        }}
+                      />
+                    </div>
+                    <div className="slider-item">
+                      <label>Feather ({project.visual_edit?.patch_cover?.feather_px ?? 8}px)</label>
+                      <input
+                        type="range"
+                        min="2"
+                        max="20"
+                        value={project.visual_edit?.patch_cover?.feather_px ?? 8}
+                        onChange={(e) => {
+                          const val = Number(e.target.value)
+                          setProject({
+                            ...project,
+                            visual_edit: {
+                              ...project.visual_edit!,
+                              patch_cover: { ...project.visual_edit!.patch_cover!, feather_px: val }
+                            }
+                          })
+                        }}
+                      />
+                    </div>
+                    <div className="slider-item">
+                      <label>Padding ({project.visual_edit?.patch_cover?.padding_px ?? 6}px)</label>
+                      <input
+                        type="range"
+                        min="0"
+                        max="16"
+                        value={project.visual_edit?.patch_cover?.padding_px ?? 6}
+                        onChange={(e) => {
+                          const val = Number(e.target.value)
+                          setProject({
+                            ...project,
+                            visual_edit: {
+                              ...project.visual_edit!,
+                              patch_cover: { ...project.visual_edit!.patch_cover!, padding_px: val }
+                            }
+                          })
+                        }}
+                      />
+                    </div>
+                    <div className="slider-item">
+                      <label>Blur Softness (σ: {project.visual_edit?.patch_cover?.blur_sigma ?? 6})</label>
+                      <input
+                        type="range"
+                        min="2"
+                        max="18"
+                        value={project.visual_edit?.patch_cover?.blur_sigma ?? 6}
+                        onChange={(e) => {
+                          const val = Number(e.target.value)
+                          setProject({
+                            ...project,
+                            visual_edit: {
+                              ...project.visual_edit!,
+                              patch_cover: { ...project.visual_edit!.patch_cover!, blur_sigma: val }
+                            }
+                          })
+                        }}
+                      />
+                    </div>
+                  </div>
+                )}
+
+                <div className="form-row">
+                  <label className="field-label">Subtitle Typography & Preset:</label>
+                  <div className="style-selector">
+                    <button
+                      type="button"
+                      className={(project.visual_edit?.preset ?? 'default') === 'default' ? 'active' : ''}
+                      onClick={() => setProject({
+                        ...project,
+                        visual_edit: {
+                          mode: project.visual_edit?.mode ?? 'clean',
+                          blur: project.visual_edit?.blur ?? { enabled: false, sigma: 18, padding_px: 8, feather_px: 6 },
+                          patch_cover: project.visual_edit?.patch_cover ?? { enabled: false, patch_opacity: 0.92, padding_px: 6, feather_px: 8, blur_sigma: 6 },
+                          subtitle_backing: { enabled: false, opacity: 0.60, padding_x: 18, padding_y: 8, corner_radius: 10, blur_radius: 6 },
+                          overlays: project.visual_edit?.overlays ?? [],
+                          preset: 'default',
+                        }
+                      })}
+                    >
+                      Classic Movie
+                    </button>
+                    <button
+                      type="button"
+                      className={((project.visual_edit?.preset ?? '') === 'shortform_white_black_soft_bg' || (project.visual_edit?.preset ?? '') === 'shortform_soft_bg') ? 'active recommended' : 'recommended'}
+                      onClick={() => setProject({
+                        ...project,
+                        visual_edit: {
+                          mode: 'patch_cover',
+                          blur: project.visual_edit?.blur ?? { enabled: false, sigma: 18, padding_px: 8, feather_px: 6 },
+                          patch_cover: project.visual_edit?.patch_cover ?? { enabled: true, patch_opacity: 0.92, padding_px: 6, feather_px: 8, blur_sigma: 6 },
+                          subtitle_backing: { enabled: true, opacity: 0.72, padding_x: 20, padding_y: 10, corner_radius: 10, blur_radius: 8 },
+                          overlays: project.visual_edit?.overlays ?? [],
+                          preset: 'shortform_white_black_soft_bg',
+                        }
+                      })}
+                    >
+                      ★ Shortform Soft BG (White + Thin Black)
+                    </button>
+                    <button
+                      type="button"
+                      className={project.visual_edit?.preset === 'shortform_bold_yellow' ? 'active' : ''}
+                      onClick={() => setProject({
+                        ...project,
+                        visual_edit: {
+                          mode: 'patch_cover',
+                          blur: project.visual_edit?.blur ?? { enabled: false, sigma: 18, padding_px: 8, feather_px: 6 },
+                          patch_cover: project.visual_edit?.patch_cover ?? { enabled: true, patch_opacity: 0.92, padding_px: 6, feather_px: 8, blur_sigma: 6 },
+                          subtitle_backing: { enabled: true, opacity: 0.72, padding_x: 20, padding_y: 10, corner_radius: 10, blur_radius: 6 },
+                          overlays: project.visual_edit?.overlays ?? [],
+                          preset: 'shortform_bold_yellow',
+                        }
+                      })}
+                    >
+                      Shortform Bold Yellow
+                    </button>
+                  </div>
+                </div>
+
+                {project.visual_edit?.subtitle_backing?.enabled && (
+                  <div className="sliders-grid">
+                    <div className="slider-item">
+                      <label>Backing Opacity ({Math.round((project.visual_edit?.subtitle_backing?.opacity ?? 0.72) * 100)}%)</label>
+                      <input
+                        type="range"
+                        min="0.30"
+                        max="0.95"
+                        step="0.05"
+                        value={project.visual_edit?.subtitle_backing?.opacity ?? 0.72}
+                        onChange={(e) => {
+                          const val = Number(e.target.value)
+                          setProject({
+                            ...project,
+                            visual_edit: {
+                              ...project.visual_edit!,
+                              subtitle_backing: { ...project.visual_edit!.subtitle_backing!, opacity: val }
+                            }
+                          })
+                        }}
+                      />
+                    </div>
+                    <div className="slider-item">
+                      <label>Backing Padding ({project.visual_edit?.subtitle_backing?.padding_x ?? 18}px)</label>
+                      <input
+                        type="range"
+                        min="4"
+                        max="36"
+                        value={project.visual_edit?.subtitle_backing?.padding_x ?? 18}
+                        onChange={(e) => {
+                          const val = Number(e.target.value)
+                          setProject({
+                            ...project,
+                            visual_edit: {
+                              ...project.visual_edit!,
+                              subtitle_backing: { ...project.visual_edit!.subtitle_backing!, padding_x: val }
+                            }
+                          })
+                        }}
+                      />
+                    </div>
+                  </div>
+                )}
+
+                {project.visual_edit?.mode === 'blur_overlay' && (
+                  <div className="overlays-section">
+                    <div className="overlays-header">
+                      <span>Image & Sticker Overlays</span>
+                      <button
+                        type="button"
+                        className="ghost small"
+                        onClick={() => {
+                          const newOv = {
+                            id: `ov_${Date.now()}`,
+                            path: 'data/uploads/sample_sticker.png',
+                            start: 0,
+                            end: project.duration ? Math.min(10, project.duration) : 10,
+                            x: 0.5,
+                            y: 0.2,
+                            width: 0.25,
+                            opacity: 1.0,
+                            fade_in_ms: 200,
+                            fade_out_ms: 200,
+                            z_index: 10,
+                            anchor: 'absolute' as const,
+                          }
+                          setProject({
+                            ...project,
+                            visual_edit: {
+                              ...project.visual_edit!,
+                              overlays: [...(project.visual_edit!.overlays || []), newOv]
+                            }
+                          })
+                        }}
+                      >
+                        + Add Overlay
+                      </button>
+                    </div>
+
+                    {(project.visual_edit.overlays || []).length === 0 ? (
+                      <div className="no-overlays">No graphic overlays added yet. Click &quot;+ Add Overlay&quot; to place images.</div>
+                    ) : (
+                      <div className="overlays-list">
+                        {project.visual_edit.overlays.map((ov, idx) => (
+                          <div className="overlay-row" key={ov.id}>
+                            <input
+                              type="text"
+                              className="ov-path"
+                              placeholder="Image path..."
+                              value={ov.path}
+                              onChange={(e) => {
+                                const val = e.target.value
+                                setProject({
+                                  ...project,
+                                  visual_edit: {
+                                    ...project.visual_edit!,
+                                    overlays: project.visual_edit!.overlays.map((item, i) => i === idx ? { ...item, path: val } : item)
+                                  }
+                                })
+                              }}
+                            />
+                            <div className="ov-field">
+                              <span>Time (s)</span>
+                              <input
+                                type="number"
+                                step="0.5"
+                                value={ov.start}
+                                onChange={(e) => {
+                                  const val = Number(e.target.value)
+                                  setProject({
+                                    ...project,
+                                    visual_edit: {
+                                      ...project.visual_edit!,
+                                      overlays: project.visual_edit!.overlays.map((item, i) => i === idx ? { ...item, start: val } : item)
+                                    }
+                                  })
+                                }}
+                              />
+                              <span>-</span>
+                              <input
+                                type="number"
+                                step="0.5"
+                                value={ov.end}
+                                onChange={(e) => {
+                                  const val = Number(e.target.value)
+                                  setProject({
+                                    ...project,
+                                    visual_edit: {
+                                      ...project.visual_edit!,
+                                      overlays: project.visual_edit!.overlays.map((item, i) => i === idx ? { ...item, end: val } : item)
+                                    }
+                                  })
+                                }}
+                              />
+                            </div>
+                            <div className="ov-field">
+                              <span>Scale</span>
+                              <input
+                                type="number"
+                                step="0.05"
+                                min="0.05"
+                                max="1.0"
+                                value={ov.width}
+                                onChange={(e) => {
+                                  const val = Number(e.target.value)
+                                  setProject({
+                                    ...project,
+                                    visual_edit: {
+                                      ...project.visual_edit!,
+                                      overlays: project.visual_edit!.overlays.map((item, i) => i === idx ? { ...item, width: val } : item)
+                                    }
+                                  })
+                                }}
+                              />
+                            </div>
+                            <div className="ov-field">
+                              <span>Opacity</span>
+                              <input
+                                type="number"
+                                step="0.1"
+                                min="0"
+                                max="1"
+                                value={ov.opacity}
+                                onChange={(e) => {
+                                  const val = Number(e.target.value)
+                                  setProject({
+                                    ...project,
+                                    visual_edit: {
+                                      ...project.visual_edit!,
+                                      overlays: project.visual_edit!.overlays.map((item, i) => i === idx ? { ...item, opacity: val } : item)
+                                    }
+                                  })
+                                }}
+                              />
+                            </div>
+                            <button
+                              type="button"
+                              className="ghost remove-btn"
+                              onClick={() => {
+                                setProject({
+                                  ...project,
+                                  visual_edit: {
+                                    ...project.visual_edit!,
+                                    overlays: project.visual_edit!.overlays.filter((_, i) => i !== idx)
+                                  }
+                                })
+                              }}
+                            >
+                              ✕
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            </section>
+
             <section className="editor-card">
               <div className="card-title"><span>Subtitle editor</span><small>Original / translated / confidence</small></div>
               {project.cues.length === 0 ? (

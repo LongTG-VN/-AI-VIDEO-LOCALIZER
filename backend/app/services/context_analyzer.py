@@ -7,6 +7,7 @@ from uuid import uuid4
 import httpx
 
 from app.models.project import Character, GlossaryEntry, Project, RelationshipRule, Scene
+from app.services.semantic_context import normalize_discourse_mode
 
 
 class ContextAnalysisError(RuntimeError):
@@ -22,6 +23,7 @@ def build_context_analysis_payload(project: Project) -> dict[str, Any]:
             "end": cue.end,
             "speaker_id": cue.speaker_id,
             "text": cue.source_text,
+            "existing_discourse_mode": normalize_discourse_mode(getattr(cue, "discourse_mode", None)),
         }
         for cue in project.cues
     ]
@@ -34,43 +36,53 @@ def build_context_analysis_payload(project: Project) -> dict[str, Any]:
 
 
 _CONTEXT_SYSTEM = """You are an expert Chinese-to-Vietnamese audiovisual context & character analyst.
-You analyze the Chinese dialogue transcript to extract characters, consolidate raw speaker IDs, infer directional social relationships with exact Vietnamese pronouns, segment into scenes, extract glossary terms, and determine addressees for each cue.
+You analyze the Chinese dialogue transcript to extract characters, consolidate raw speaker IDs, infer directional social relationships with exact Vietnamese pronouns, segment into scenes, extract glossary terms, determine addressees, and classify discourse mode for each cue.
 
 CRITICAL INSTRUCTIONS:
 1. Speaker Consolidation & Character Extraction:
-   - ASR diarization may produce multiple raw speaker IDs for the same actual character (e.g. speaker_1 and speaker_7 may be the same person).
+   - ASR diarization may produce multiple raw speaker IDs for the same actual character.
    - Group raw speaker_ids into canonical characters. Keep all raw speaker_ids listed under `speaker_ids`.
-   - Provide `name_zh` (Chinese name from dialogue or context, e.g. 秦扶栀), `name_vi` (Standard Sino-Vietnamese name, e.g. Tần Phù Chi), `gender`, `role` (e.g. daughter, mother, father, brother, narrator), `description`.
-   - For system prompts / alarm / narration, create appropriate roles (e.g. system, narrator).
+   - Provide `name_zh`, standard Vietnamese/Han-Viet `name_vi`, `gender`, `role`, and `description` when supported by evidence.
+   - Do not invent a named character if the transcript only supports an unknown speaker.
 
 2. Directional Relationship Graph:
-   - Relationships MUST be directional (A->B and B->A have different pronouns).
-   - For Vietnamese (`target_language=vi`), assign exact pronouns:
-     - `vi_self_pronoun`: pronoun character A uses to refer to themselves when speaking to B (e.g. con, mẹ, bố, anh, em, tôi).
-     - `vi_target_pronoun`: pronoun character A uses to address B (e.g. mẹ, con, con, em, anh, cô, cậu).
-   - Specify `relationship_type` (e.g. daughter_to_mother, mother_to_daughter, father_to_daughter, older_brother_to_younger_sister, etc.).
-   - Include `valid_from` (start timestamp) and `valid_until` (null if constant).
+   - Relationships MUST be directional because A->B and B->A can use different Vietnamese pronouns.
+   - For Vietnamese (`target_language=vi`), assign:
+     - `vi_self_pronoun`: how character A refers to themselves when speaking to B.
+     - `vi_target_pronoun`: how character A addresses B.
+   - Specify `relationship_type`, `valid_from`, and `valid_until`.
 
 3. Scene Segmentation:
-   - Partition dialogue into logical scenes with `start`, `end`, `summary`, `tone` (e.g. strict, tense, reflective), `characters`.
+   - Partition dialogue into logical scenes with `start`, `end`, `summary`, `tone`, and `characters`.
 
 4. Glossary:
-   - Extract character names, organizations, acronyms (e.g. KPI, names) with standard Vietnamese target terms.
+   - Extract character names, organizations, recurring proper nouns, acronyms, and domain terms with stable target forms.
 
 5. Addressee Inference:
-   - For each cue, infer `addressee_character_id` (the canonical character ID being spoken to).
-   - If spoken to general audience/self/system, indicate null and set `needs_review: true` if ambiguous.
+   - For each cue, infer `addressee_character_id` when someone is directly addressed.
+   - If spoken to self/audience, narration, or no concrete person, use null.
+   - Set `needs_review: true` when speaker/addressee evidence is materially ambiguous.
+
+6. Discourse Mode:
+   - Classify every cue as exactly one of:
+     `direct_dialogue`, `monologue`, `narration`, `system`, `unknown`.
+   - `direct_dialogue`: spoken to another character.
+   - `monologue`: inner thought / self-talk by a character.
+   - `narration`: exposition, memories, backstory, or voice-over describing events rather than addressing a present listener.
+   - `system`: alarms, UI/system voice, announcements not belonging to normal character conversation.
+   - `unknown`: only when evidence is insufficient.
+   - A single character may switch between dialogue, monologue, and narration; speaker identity alone must NOT collapse these modes.
 
 Output JSON ONLY with this exact structure:
 {
   "characters": [
     {
-      "id": "char_qin_fuzhi",
-      "name_zh": "秦扶栀",
-      "name_vi": "Tần Phù Chi",
-      "aliases": ["秦福之"],
+      "id": "char_a",
+      "name_zh": "林晚晚",
+      "name_vi": "Lâm Vãn Vãn",
+      "aliases": [],
       "gender": "female",
-      "role": "daughter / heroine",
+      "role": "lead",
       "description": "...",
       "speaker_ids": ["speaker_1"],
       "confidence": 0.95
@@ -78,42 +90,43 @@ Output JSON ONLY with this exact structure:
   ],
   "relationships": [
     {
-      "from_character_id": "char_qin_fuzhi",
-      "to_character_id": "char_song_zhixue",
-      "relationship": "con với mẹ",
-      "relationship_type": "daughter_to_mother",
+      "from_character_id": "char_a",
+      "to_character_id": "char_b",
+      "relationship": "younger_sister_to_older_brother",
+      "relationship_type": "younger_sister_to_older_brother",
       "valid_from": 0,
       "valid_until": null,
-      "vi_self_pronoun": "con",
-      "vi_target_pronoun": "mẹ",
+      "vi_self_pronoun": "em",
+      "vi_target_pronoun": "anh",
       "confidence": 0.98,
-      "notes": "Xưng con gọi mẹ"
+      "notes": "..."
     }
   ],
   "scenes": [
     {
       "scene_id": "scene_01",
       "start": 0.0,
-      "end": 21.5,
-      "summary": "Giới thiệu hoàn cảnh và sự kiểm soát nghiêm khắc của mẹ",
-      "tone": "áp lực, độc thoại",
-      "characters": ["char_qin_fuzhi", "char_song_zhixue"]
+      "end": 20.0,
+      "summary": "...",
+      "tone": "tense",
+      "characters": ["char_a", "char_b"]
     }
   ],
   "glossary": [
     {
-      "source": "秦扶栀",
-      "target": "Tần Phù Chi",
+      "source": "林晚晚",
+      "target": "Lâm Vãn Vãn",
       "category": "name",
       "confidence": 1.0,
-      "note": "Tên nữ chính"
+      "note": "character name"
     }
   ],
   "cues": [
     {
       "cue_id": "...",
-      "speaker_character_id": "char_qin_fuzhi",
-      "addressee_character_id": "char_song_zhixue",
+      "speaker_character_id": "char_a",
+      "addressee_character_id": "char_b",
+      "discourse_mode": "direct_dialogue",
       "needs_review": false
     }
   ]
@@ -143,25 +156,54 @@ class ContextAnalyzer:
         body = {
             "model": self.model,
             "temperature": 0.1,
-            "response_format": {"type": "json_object"},
             "messages": [
                 {"role": "system", "content": _CONTEXT_SYSTEM},
                 {"role": "user", "content": json.dumps(payload, ensure_ascii=False)},
             ],
         }
 
-        try:
-            response = httpx.post(
-                f"{self.base_url}/chat/completions",
-                headers=headers,
-                json=body,
-                timeout=180,
-            )
-            response.raise_for_status()
-            raw = response.json()["choices"][0]["message"]["content"]
-            result = json.loads(raw)
-        except (httpx.HTTPError, KeyError, json.JSONDecodeError) as exc:
-            raise ContextAnalysisError(f"Context provider error: {exc}") from exc
+        result = None
+        for attempt in range(8):
+            try:
+                response = httpx.post(
+                    f"{self.base_url}/chat/completions",
+                    headers=headers,
+                    json=body,
+                    timeout=180,
+                )
+                if response.status_code == 429:
+                    import time
+                    wait = 6 * (attempt + 1)
+                    print(f"Rate limited (429), sleeping {wait}s (attempt {attempt+1}/8)...")
+                    time.sleep(wait)
+                    continue
+                response.raise_for_status()
+                raw = response.json()["choices"][0]["message"]["content"].strip()
+                if raw.startswith("```"):
+                    lines = raw.splitlines()
+                    if lines[0].startswith("```"):
+                        lines = lines[1:]
+                    if lines and lines[-1].startswith("```"):
+                        lines = lines[:-1]
+                    raw = "\n".join(lines).strip()
+                result = json.loads(raw)
+                break
+            except httpx.HTTPStatusError as exc:
+                if exc.response.status_code == 429 and attempt < 7:
+                    import time
+                    wait = 6 * (attempt + 1)
+                    print(f"Rate limited (429), sleeping {wait}s (attempt {attempt+1}/8)...")
+                    time.sleep(wait)
+                    continue
+                raise ContextAnalysisError(f"Context provider error: {exc} -> {exc.response.text}") from exc
+            except (httpx.HTTPError, KeyError, json.JSONDecodeError) as exc:
+                if attempt < 7:
+                    import time
+                    time.sleep(3)
+                    continue
+                raise ContextAnalysisError(f"Context provider error: {exc}") from exc
+        if result is None:
+            raise ContextAnalysisError("Context provider error: Failed after retries.")
 
         # 1. Process Characters
         characters: list[Character] = []
@@ -203,7 +245,7 @@ class ContextAnalyzer:
                 characters.append(fallback_char)
 
         char_id_set = {c.id for c in characters}
-        # Helper to map any ID/speaker to canonical character ID
+
         def resolve_cid(key: str | None) -> str | None:
             if not key:
                 return None
@@ -276,13 +318,14 @@ class ContextAnalyzer:
                 cue.speaker_character_id = speaker_cid or resolve_cid(cue.speaker_id)
                 cue.addressee_id = addressee_cid
                 cue.addressee_character_id = addressee_cid
+                cue.discourse_mode = normalize_discourse_mode(mapped.get("discourse_mode"))
                 cue.needs_review = bool(mapped.get("needs_review", False))
             else:
                 cue.speaker_character_id = resolve_cid(cue.speaker_id)
+                cue.discourse_mode = normalize_discourse_mode(getattr(cue, "discourse_mode", None))
 
         project.characters = characters
         project.relationships = relationships
         project.scenes = scenes
         project.glossary = glossary
         return project
-

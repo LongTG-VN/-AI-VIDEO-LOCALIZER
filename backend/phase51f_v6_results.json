@@ -1,0 +1,158 @@
+{
+  "project_id": "golden-benchmark-v6",
+  "output_path": "D:\\codex\\FINAL_VI_QUALITY_V6.mp4",
+  "render_duration": 97.17,
+  "fusion_metrics": {
+    "asr_cues": 48,
+    "ocr_cues": 57,
+    "fused_cues": 48,
+    "asr_with_zero_ocr": 0,
+    "asr_with_one_ocr": 7,
+    "asr_with_multi_ocr": 41,
+    "multi_ocr_fragments_consumed": 112,
+    "partial_ocr_corrections": 2,
+    "full_ocr_replacements": 13,
+    "asr_full_text_preserved": 33,
+    "unmatched_ocr_cues": 0
+  },
+  "tracker_metrics": {
+    "visual_timing_cues": 57,
+    "visual_timing_start_refined": 56,
+    "visual_timing_end_refined": 56,
+    "avg_start_adjustment_ms": 567.9,
+    "max_start_adjustment_ms": 600.0,
+    "avg_end_adjustment_ms": 598.2,
+    "max_end_adjustment_ms": 900.0,
+    "visual_tracker_frames_scanned": 4025,
+    "visual_tracker_runtime_s": 7.62
+  },
+  "cleanup_metrics": {
+    "mode": "auto",
+    "frames_processed": 2703,
+    "frames_inpainted": 2565,
+    "frames_bypassed": 138,
+    "inpaint_rate": 94.9,
+    "bypass_rate": 5.1,
+    "active_intervals": 9,
+    "timing_source_explicit_ocr": 48,
+    "timing_source_legacy_ocr": 0,
+    "timing_source_fallback": 0,
+    "geometry_cues": 48,
+    "geometry_regions": 123,
+    "geometry_frames": 2558,
+    "geometry_missing_fallback_frames": 25,
+    "geometry_mask_success": 2558,
+    "geometry_mask_fail": 25,
+    "geometry_temporal_frames": 8,
+    "geometry_telea_frames": 2550,
+    "avg_region_mask_coverage": 0.559,
+    "max_region_mask_coverage": 0.914,
+    "outline_pixels_added": 52966380,
+    "temporal_frames": 8,
+    "fallback_inpaint_frames": 2557,
+    "temporal_scene_rejects": 190,
+    "temporal_local_motion_rejects": 17,
+    "temporal_alignment_failures": 112,
+    "temporal_mask_refined": 6,
+    "temporal_mask_refine_rejects": 2,
+    "avg_temporal_score": 6.7,
+    "mask_rejected_coverage": 0,
+    "mask_rejected_no_components": 23,
+    "mask_rejected_no_text_row": 3,
+    "lossless_intermediate": true,
+    "clean_runtime": 86.46,
+    "fps_speed": 31.3,
+    "output_path": "D:\\codex\\-AI-VIDEO-LOCALIZER\\backend\\data\\renders\\.golden-benchmark-v6-render\\cleaned_video.mkv"
+  },
+  "re_ocr_results": {
+    "11.90s": {
+      "all_texts": [
+        "Cô ão lêch, cô ão lêch,",
+        "tup thê ngòi không đúng."
+      ],
+      "chinese_residual": [],
+      "clean": true
+    },
+    "12.00s": {
+      "all_texts": [
+        "Cô áo lêch, cô áo lêch,",
+        "tu thê ngòi không đúng."
+      ],
+      "chinese_residual": [],
+      "clean": true
+    },
+    "15.80s": {
+      "all_texts": [
+        "Hay là đi dr tic?"
+      ],
+      "chinese_residual": [],
+      "clean": true
+    },
+    "16.80s": {
+      "all_texts": [
+        "Me tôi là Tông Chi Tuyêt,"
+      ],
+      "chinese_residual": [],
+      "clean": true
+    },
+    "17.00s": {
+      "all_texts": [
+        "Mę tôi là Tông Chi Tuyêt,"
+      ],
+      "chinese_residual": [],
+      "clean": true
+    },
+    "21.50s": {
+      "all_texts": [],
+      "chinese_residual": [],
+      "clean": true
+    },
+    "24.50s": {
+      "all_texts": [
+        "Chi có mt món hàng càn đuroc mài giüa tùng phút giây. Tn Phù Chi,",
+        "v ghi chép kinh tê vi mô ngày hôm qua đã xem xong chura?"
+      ],
+      "chinese_residual": [],
+      "clean": true
+    },
+    "35.50s": {
+      "all_texts": [
+        "Su tồn tai cua cô đang làm giàm",
+        "hiêu suât làm viêc cua nhà ho Tàn."
+      ],
+      "chinese_residual": [],
+      "clean": true
+    },
+    "56.00s": {
+      "all_texts": [
+        "Nhìn cho ký vào,"
+      ],
+      "chinese_residual": [],
+      "clean": true
+    },
+    "69.50s": {
+      "all_texts": [
+        "Cuc đòi vôn di thuc vè tôi,",
+        "vy mà tôi li lón lên trong môt..."
+      ],
+      "chinese_residual": [],
+      "clean": true
+    },
+    "72.00s": {
+      "all_texts": [
+        "Còn tôi,  mt gia đinh m quán ăn sáng,",
+        "bôn giò sáng đã phàidy phu nhào bt."
+      ],
+      "chinese_residual": [],
+      "clean": true
+    },
+    "74.00s": {
+      "all_texts": [
+        "Dy ph nhào bt. Tn Phù Chi,",
+        "mày đã cuóp đi cua tao muưòi..."
+      ],
+      "chinese_residual": [],
+      "clean": true
+    }
+  }
+}

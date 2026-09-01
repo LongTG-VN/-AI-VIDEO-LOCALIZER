@@ -1,0 +1,333 @@
+[
+  {
+    "cue_id": "f40e80b2-c50e-4c6b-b97a-d4de60140886",
+    "original_source_cue_ids": [
+      "f40e80b2-c50e-4c6b-b97a-d4de60140886"
+    ],
+    "start": 96.13,
+    "end": 97.135,
+    "source_text": "够活但活得不太体面",
+    "segmentation_method": "reconciled",
+    "source_integrity_status": "REPAIRED",
+    "draft_vi": "够活但活得不太体面",
+    "final_vi": "够活但活得不太体面",
+    "render_cue": {
+      "render_id": "sub_051",
+      "source_cue_ids": [
+        "f40e80b2-c50e-4c6b-b97a-d4de60140886"
+      ],
+      "start": 96.13,
+      "end": 97.14,
+      "render_text": "够活但活得不太体面"
+    },
+    "ass_event": {
+      "event_id": "evt_63",
+      "start": "0:01:33.91",
+      "end": "0:01:35.69",
+      "text": "够活但活得不太体面"
+    }
+  },
+  {
+    "cue_id": "4752a988-6717-4e9a-8271-65bf72cc6969_seg1",
+    "original_source_cue_ids": [
+      "4752a988-6717-4e9a-8271-65bf72cc6969"
+    ],
+    "start": 98.33,
+    "end": 100.1,
+    "source_text": "唯一让我在这个",
+    "segmentation_method": "ocr_turnover_split",
+    "source_integrity_status": "REPAIRED",
+    "draft_vi": "唯一让我在这个",
+    "final_vi": "唯一让我在这个",
+    "render_cue": {
+      "render_id": "sub_052",
+      "source_cue_ids": [
+        "4752a988-6717-4e9a-8271-65bf72cc6969_seg1"
+      ],
+      "start": 98.33,
+      "end": 100.1,
+      "render_text": "唯一让我在这个"
+    },
+    "ass_event": {
+      "event_id": "evt_65",
+      "start": "0:01:38.33",
+      "end": "0:01:40.10",
+      "text": "唯一让我在这个"
+    }
+  },
+  {
+    "cue_id": "4752a988-6717-4e9a-8271-65bf72cc6969_seg2",
+    "original_source_cue_ids": [
+      "4752a988-6717-4e9a-8271-65bf72cc6969"
+    ],
+    "start": 98.9,
+    "end": 101.6,
+    "source_text": "写字楼里有点存在感的",
+    "segmentation_method": "ocr_turnover_split",
+    "source_integrity_status": "REPAIRED",
+    "draft_vi": "写字楼里有点存在感的",
+    "final_vi": "写字楼里有点存在感的",
+    "render_cue": {
+      "render_id": "sub_053",
+      "source_cue_ids": [
+        "4752a988-6717-4e9a-8271-65bf72cc6969_seg2"
+      ],
+      "start": 100.13,
+      "end": 101.6,
+      "render_text": "写字楼里有点存在感的"
+    },
+    "ass_event": {
+      "event_id": "evt_66",
+      "start": "0:01:40.13",
+      "end": "0:01:41.60",
+      "text": "写字楼里有点存在感的"
+    }
+  },
+  {
+    "cue_id": "4752a988-6717-4e9a-8271-65bf72cc6969_seg3",
+    "original_source_cue_ids": [
+      "4752a988-6717-4e9a-8271-65bf72cc6969"
+    ],
+    "start": 100.4,
+    "end": 103.115,
+    "source_text": "是我妈传给我的手艺做饭",
+    "segmentation_method": "ocr_turnover_split",
+    "source_integrity_status": "REPAIRED",
+    "draft_vi": "是我妈传给我的手艺做饭",
+    "final_vi": "是我妈传给我的手艺做饭",
+    "render_cue": {
+      "render_id": "sub_054",
+      "source_cue_ids": [
+        "4752a988-6717-4e9a-8271-65bf72cc6969_seg3"
+      ],
+      "start": 101.63,
+      "end": 103.11,
+      "render_text": "是我妈传给我的手艺做饭"
+    },
+    "ass_event": {
+      "event_id": "evt_67",
+      "start": "0:01:41.63",
+      "end": "0:01:43.11",
+      "text": "是我妈传给我的手艺做饭"
+    }
+  },
+  {
+    "cue_id": "4d1ff225-9363-4076-bd63-7b2d0b4a2f83",
+    "original_source_cue_ids": [
+      "4d1ff225-9363-4076-bd63-7b2d0b4a2f83"
+    ],
+    "start": 104.2,
+    "end": 104.545,
+    "source_text": "一，",
+    "segmentation_method": "unmodified",
+    "source_integrity_status": "PASS",
+    "draft_vi": "Một.",
+    "final_vi": "Một.",
+    "render_cue": {
+      "render_id": "sub_055",
+      "source_cue_ids": [
+        "4d1ff225-9363-4076-bd63-7b2d0b4a2f83"
+      ],
+      "start": 104.2,
+      "end": 105.0,
+      "render_text": "Một."
+    },
+    "ass_event": {
+      "event_id": "evt_68",
+      "start": "0:01:44.20",
+      "end": "0:01:45.00",
+      "text": "Một."
+    }
+  },
+  {
+    "cue_id": "4716213f-9e18-4b42-bc94-ab8b0e253a97",
+    "original_source_cue_ids": [
+      "4716213f-9e18-4b42-bc94-ab8b0e253a97"
+    ],
+    "start": 104.5,
+    "end": 105.0,
+    "source_text": "嗯",
+    "segmentation_method": "unmodified",
+    "source_integrity_status": "PASS",
+    "draft_vi": "Ừm.",
+    "final_vi": "Ừm.",
+    "render_cue": {
+      "render_id": null,
+      "source_cue_ids": [
+        "4716213f-9e18-4b42-bc94-ab8b0e253a97"
+      ],
+      "start": 104.5,
+      "end": 105.0,
+      "render_text": "Ừm."
+    },
+    "ass_event": null
+  },
+  {
+    "cue_id": "7fedace1-e344-46da-8fbc-e48516cc699f",
+    "original_source_cue_ids": [
+      "7fedace1-e344-46da-8fbc-e48516cc699f"
+    ],
+    "start": 105.07,
+    "end": 107.075,
+    "source_text": "你这饭给外卖判了死缓",
+    "segmentation_method": "reconciled",
+    "source_integrity_status": "REPAIRED",
+    "draft_vi": "你这饭给外卖判了死缓",
+    "final_vi": "你这饭给外卖判了死缓",
+    "render_cue": {
+      "render_id": "sub_056",
+      "source_cue_ids": [
+        "7fedace1-e344-46da-8fbc-e48516cc699f"
+      ],
+      "start": 105.07,
+      "end": 107.08,
+      "render_text": "你这饭给外卖判了死缓"
+    },
+    "ass_event": {
+      "event_id": "evt_69",
+      "start": "0:01:45.07",
+      "end": "0:01:47.08",
+      "text": "你这饭给外卖判了死缓"
+    }
+  },
+  {
+    "cue_id": "371d2df2-592f-4fb6-8df8-af76b9f8fd63",
+    "original_source_cue_ids": [
+      "371d2df2-592f-4fb6-8df8-af76b9f8fd63"
+    ],
+    "start": 111.26,
+    "end": 111.86,
+    "source_text": "这是苏棠",
+    "segmentation_method": "reconciled",
+    "source_integrity_status": "REPAIRED",
+    "draft_vi": "这是苏棠",
+    "final_vi": "这是苏棠",
+    "render_cue": {
+      "render_id": "sub_057",
+      "source_cue_ids": [
+        "371d2df2-592f-4fb6-8df8-af76b9f8fd63"
+      ],
+      "start": 111.26,
+      "end": 112.06,
+      "render_text": "这是苏棠"
+    },
+    "ass_event": {
+      "event_id": "evt_70",
+      "start": "0:01:51.26",
+      "end": "0:01:52.06",
+      "text": "这是苏棠"
+    }
+  },
+  {
+    "cue_id": "4e922104-0c6e-452e-9f8a-ff7b23468a6b_seg1",
+    "original_source_cue_ids": [
+      "4e922104-0c6e-452e-9f8a-ff7b23468a6b"
+    ],
+    "start": 112.1,
+    "end": 112.6,
+    "source_text": "这是苏棠",
+    "segmentation_method": "ocr_turnover_split",
+    "source_integrity_status": "REPAIRED",
+    "draft_vi": "这是苏棠",
+    "final_vi": "这是苏棠",
+    "render_cue": {
+      "render_id": "sub_058",
+      "source_cue_ids": [
+        "4e922104-0c6e-452e-9f8a-ff7b23468a6b_seg1"
+      ],
+      "start": 112.1,
+      "end": 112.9,
+      "render_text": "这是苏棠"
+    },
+    "ass_event": {
+      "event_id": "evt_70",
+      "start": "0:01:51.26",
+      "end": "0:01:52.06",
+      "text": "这是苏棠"
+    }
+  },
+  {
+    "cue_id": "4e922104-0c6e-452e-9f8a-ff7b23468a6b_seg2",
+    "original_source_cue_ids": [
+      "4e922104-0c6e-452e-9f8a-ff7b23468a6b"
+    ],
+    "start": 112.1,
+    "end": 113.6,
+    "source_text": "今天入职",
+    "segmentation_method": "ocr_turnover_split",
+    "source_integrity_status": "REPAIRED",
+    "draft_vi": "今天入职",
+    "final_vi": "今天入职",
+    "render_cue": {
+      "render_id": "sub_059",
+      "source_cue_ids": [
+        "4e922104-0c6e-452e-9f8a-ff7b23468a6b_seg2"
+      ],
+      "start": 112.93,
+      "end": 113.73,
+      "render_text": "今天入职"
+    },
+    "ass_event": {
+      "event_id": "evt_72",
+      "start": "0:01:52.93",
+      "end": "0:01:53.73",
+      "text": "今天入职"
+    }
+  },
+  {
+    "cue_id": "4e922104-0c6e-452e-9f8a-ff7b23468a6b_seg3",
+    "original_source_cue_ids": [
+      "4e922104-0c6e-452e-9f8a-ff7b23468a6b"
+    ],
+    "start": 112.4,
+    "end": 114.165,
+    "source_text": "以后跟你们一个项目组",
+    "segmentation_method": "ocr_turnover_split",
+    "source_integrity_status": "REPAIRED",
+    "draft_vi": "以后跟你们一个项目组",
+    "final_vi": "以后跟你们一个项目组",
+    "render_cue": {
+      "render_id": "sub_060",
+      "source_cue_ids": [
+        "4e922104-0c6e-452e-9f8a-ff7b23468a6b_seg3"
+      ],
+      "start": 113.76,
+      "end": 114.56,
+      "render_text": "以后跟你们一个项目组"
+    },
+    "ass_event": {
+      "event_id": "evt_73",
+      "start": "0:01:53.76",
+      "end": "0:01:54.56",
+      "text": "以后跟你们一个项目组"
+    }
+  },
+  {
+    "cue_id": "66f296df-298d-42d5-8618-3bc7b06ef36d",
+    "original_source_cue_ids": [
+      "66f296df-298d-42d5-8618-3bc7b06ef36d"
+    ],
+    "start": 114.8,
+    "end": 115.365,
+    "source_text": "大家好",
+    "segmentation_method": "reconciled",
+    "source_integrity_status": "REPAIRED",
+    "draft_vi": "大家好",
+    "final_vi": "大家好",
+    "render_cue": {
+      "render_id": "sub_061",
+      "source_cue_ids": [
+        "66f296df-298d-42d5-8618-3bc7b06ef36d"
+      ],
+      "start": 114.8,
+      "end": 115.6,
+      "render_text": "大家好"
+    },
+    "ass_event": {
+      "event_id": "evt_74",
+      "start": "0:01:54.80",
+      "end": "0:01:55.60",
+      "text": "大家好"
+    }
+  }
+]

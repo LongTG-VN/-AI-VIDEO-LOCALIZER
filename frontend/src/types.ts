@@ -15,6 +15,16 @@ export type SubtitleCue = {
   review_notes?: string | null
   critic_score?: number | null
   critic_flags?: string[]
+  ocr_start?: number | null
+  ocr_end?: number | null
+  ocr_text?: string | null
+  ocr_regions?: OCRRegion[]
+}
+
+export type OCRRegion = {
+  text?: string | null
+  confidence?: number | null
+  points: number[][]
 }
 
 export type Character = {
@@ -67,6 +77,66 @@ export type Scene = {
   characters: string[]
 }
 
+export type VisualEditMode = 'clean' | 'patch_cover' | 'blur' | 'blur_overlay'
+
+export type OverlayAnchor = 'absolute' | 'subtitle_region' | 'top_left' | 'top_right' | 'bottom_left' | 'bottom_right' | 'center'
+
+export type BlurConfig = {
+  enabled: boolean
+  sigma: number
+  padding_px: number
+  feather_px: number
+  min_ocr_confidence?: number
+  temporal_gap_fill_frames?: number
+}
+
+export type PatchCoverConfig = {
+  enabled: boolean
+  patch_opacity: number
+  padding_px: number
+  feather_px: number
+  blur_sigma: number
+  min_ocr_confidence?: number
+  temporal_gap_fill_frames?: number
+  mask_persistence_frames?: number
+  use_temporal_donor?: boolean
+  use_spatial_donor?: boolean
+}
+
+export type OverlayConfig = {
+  id: string
+  path: string
+  start: number
+  end: number
+  x: number
+  y: number
+  width: number
+  opacity: number
+  fade_in_ms?: number
+  fade_out_ms?: number
+  z_index?: number
+  anchor?: OverlayAnchor
+}
+
+export type SubtitleBackingConfig = {
+  enabled: boolean
+  color?: string
+  opacity: number
+  padding_x: number
+  padding_y: number
+  corner_radius: number
+  blur_radius: number
+}
+
+export type VisualEditConfig = {
+  mode: VisualEditMode
+  blur: BlurConfig
+  patch_cover?: PatchCoverConfig
+  subtitle_backing?: SubtitleBackingConfig
+  overlays: OverlayConfig[]
+  preset?: 'default' | 'shortform_reference' | 'shortform_bold_yellow' | 'shortform_white_black_soft_bg' | 'shortform_soft_bg'
+}
+
 export type Project = {
   id: string
   name: string
@@ -81,5 +151,6 @@ export type Project = {
   relationships: Relationship[]
   glossary?: GlossaryEntry[]
   cues: SubtitleCue[]
+  visual_edit?: VisualEditConfig | null
 }
 

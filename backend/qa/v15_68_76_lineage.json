@@ -1,0 +1,98 @@
+{
+  "stage_a_persisted_cues_before_fix": [
+    {
+      "cue_id": "95cdbe76-fa4a-409c-833c-a5edd84e8247",
+      "start": 68.11,
+      "end": 70.01,
+      "source_text": "该属于我的人生而我在一个开。",
+      "translated_text": "Đây là phần của cuộc đời tôi, nhưng tôi đang ở trong một tình huống.",
+      "discourse_mode": "direct_dialogue"
+    },
+    {
+      "cue_id": "10048470-37e1-43f6-b7ef-6376ca7a2d89",
+      "start": 70.31,
+      "end": 73.8,
+      "source_text": "在早餐店的家庭里，凌晨四点就要起来帮忙揉面。",
+      "translated_text": "Trong gia đình quán sáng, lúc 4 giờ sáng phải dậy để giúp nhào bánh.",
+      "discourse_mode": "narration"
+    },
+    {
+      "cue_id": "f27831a8-2536-4905-b6e9-fb53a0d486b8",
+      "start": 73.8,
+      "end": 76.64,
+      "source_text": "秦扶栀，你偷了我十八年！",
+      "translated_text": "Tần Phù Chi, cô đã trộm lấy 18 năm của tôi!",
+      "discourse_mode": "direct_dialogue"
+    }
+  ],
+  "stage_b_c_translation_and_critic_after_fix": [
+    {
+      "cue_id": "95cdbe76-fa4a-409c-833c-a5edd84e8247",
+      "source_text": "该属于我的人生而我在一个开。",
+      "translated_text": "cuộc đời vốn dĩ thuộc về tôi",
+      "critic_pass": false,
+      "critic_flags": [
+        "dangling_fragment"
+      ],
+      "critic_notes": "Translation ends with an unnatural dangling grammatical fragment: 'cuộc đời vốn dĩ thuộc về tôi'."
+    },
+    {
+      "cue_id": "10048470-37e1-43f6-b7ef-6376ca7a2d89",
+      "source_text": "在早餐店的家庭里，凌晨四点就要起来帮忙揉面。",
+      "translated_text": "Ở một gia đình mở quán ăn sáng, bốn giờ sáng đã phải dậy giúp nhào bột.",
+      "critic_pass": true,
+      "critic_flags": [],
+      "critic_notes": ""
+    },
+    {
+      "cue_id": "f27831a8-2536-4905-b6e9-fb53a0d486b8",
+      "source_text": "秦扶栀，你偷了我十八年！",
+      "translated_text": "Tần Phù Chi, cô đã cướp mất mười tám năm của tôi!",
+      "critic_pass": true,
+      "critic_flags": [],
+      "critic_notes": ""
+    }
+  ],
+  "stage_e_utterance_engine_output": [
+    {
+      "render_id": "sub_038",
+      "source_cue_ids": [
+        "10048470-37e1-43f6-b7ef-6376ca7a2d89"
+      ],
+      "start": 70.31,
+      "end": 73.77,
+      "source_text": "在早餐店的家庭里，凌晨四点就要起来帮忙揉面。",
+      "translated_text": "Ở một gia đình mở quán ăn sáng, bốn giờ sáng đã phải dậy giúp nhào bột.",
+      "render_text": "Ở một gia đình mở quán ăn sáng,\\Nbốn giờ sáng đã phải dậy giúp nhào bột.",
+      "discourse_mode": "narration"
+    },
+    {
+      "render_id": "sub_039",
+      "source_cue_ids": [
+        "f27831a8-2536-4905-b6e9-fb53a0d486b8"
+      ],
+      "start": 73.8,
+      "end": 76.64,
+      "source_text": "秦扶栀，你偷了我十八年！",
+      "translated_text": "Tần Phù Chi, cô đã cướp mất mười tám năm của tôi!",
+      "render_text": "Tần Phù Chi,\\Ncô đã cướp mất mười tám năm của tôi!",
+      "discourse_mode": "direct_dialogue"
+    }
+  ],
+  "stage_f_ass_events_68_76s": [
+    {
+      "start": 70.31,
+      "end": 73.77,
+      "start_ass": "0:01:10.31",
+      "end_ass": "0:01:13.77",
+      "text": "Ở một gia đình mở quán ăn sáng,\\Nbốn giờ sáng đã phải dậy giúp nhào bột."
+    },
+    {
+      "start": 73.8,
+      "end": 76.64,
+      "start_ass": "0:01:13.80",
+      "end_ass": "0:01:16.64",
+      "text": "Tần Phù Chi,\\Ncô đã cướp mất mười tám năm của tôi!"
+    }
+  ]
+}

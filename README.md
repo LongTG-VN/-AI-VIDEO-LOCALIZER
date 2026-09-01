@@ -2,20 +2,28 @@
 
 Local-first MVP for translating Chinese videos into Vietnamese or English while preserving character relationships, forms of address, subtitle timing, and editability.
 
-## Implemented in this MVP
+The current branch also includes an end-to-end Vietnamese publishable render path: ASR/OCR fusion, relationship-aware translation, utterance-aware subtitles, Chinese hard-sub cleanup, ASS burn-in, and NVENC export.
+
+## Implemented
 
 - FastAPI backend with JSON project persistence.
 - Video import plus `ffprobe` metadata inspection.
-- FFmpeg audio extraction and final subtitle/sticker rendering.
+- FFmpeg audio extraction.
 - FunASR adapter with optional VAD, punctuation and speaker diarization output.
-- PaddleOCR hard-subtitle extraction by sampled/cropped frames.
+- PaddleOCR hard-subtitle extraction with subtitle ROI, frame-change skipping, multiline merging and noise filtering.
 - ASR + OCR temporal/confidence fusion.
+- Preserved OCR visual timing (`ocr_start` / `ocr_end`) separate from ASR dialogue timing for safe hard-sub cleanup.
 - LLM context analysis that maps speaker IDs to characters, infers addressees, directional relationships and Vietnamese pronouns.
 - OpenAI-compatible translation with stable cue-ID validation, glossary and neighboring-dialogue context.
-- SRT import/export and editable subtitle cues.
+- Translation critic / targeted retry support.
+- Utterance-aware render cues to suppress duplicate fragments, merge sentence continuations, calculate CPS and prevent stacked subtitles.
+- SRT import/export and ASS generation.
+- Chinese hard-sub removal with conservative text masks, OCR-gated timing, temporal donor reconstruction and Telea fallback.
+- Lossless FFV1 cleaned intermediate before final encode.
+- NVENC H.264 final export with original audio preserved.
 - Optional intro/outro and image sticker render configuration.
 - React/Vite editor UI for import, analyze, infer roles, translate, review and render.
-- Backend unit tests and GitHub Actions CI.
+- Backend unit/regression tests and GitHub Actions CI.
 
 ## Architecture
 
@@ -26,15 +34,22 @@ React/Vite editor
 FastAPI project API
       |
       +-- FFmpeg / ffprobe
-      +-- FunASR adapter ---------+
-      +-- PaddleOCR adapter ------+--> ASR/OCR fusion
-      |                                |
-      |                                v
+      +-- FunASR ------------------+
+      +-- PaddleOCR ---------------+--> ASR/OCR fusion
+      |                                  |
+      |                                  +--> dialogue timing
+      |                                  +--> visual OCR timing
+      |                                  |
+      |                                  v
       +-- LLM context analyzer --> character/relationship graph
-      |                                |
-      +-- translation engine <---------+
-      +-- subtitle/SRT store
-      +-- FFmpeg renderer -> MP4
+      |                                  |
+      +-- translation + critic <----------+
+      |                                  |
+      +-- utterance subtitle engine ------+
+      |                                  |
+      +-- hard-sub cleaner <--- OCR visual timing
+      |                                  |
+      +-- ASS + NVENC renderer ---------> MP4
 ```
 
 The heavy AI engines are adapters on purpose. The core project can run with `ASR_ENGINE=mock` and `OCR_ENGINE=none`, while FunASR and PaddleOCR can be installed independently for a machine's CPU/CUDA setup.
@@ -53,23 +68,24 @@ The heavy AI engines are adapters on purpose. The core project can run with `ASR
 cd backend
 python -m venv .venv
 
-# Windows
-.venv\Scripts\activate
+# Windows PowerShell
+.\.venv\Scripts\Activate.ps1
 
 # macOS/Linux
 # source .venv/bin/activate
 
+python -m pip install --upgrade pip
 pip install -r requirements.txt
 ```
 
 Create the environment file:
 
 ```bash
-# macOS/Linux
-cp .env.example .env
-
 # Windows PowerShell
-# Copy-Item .env.example .env
+Copy-Item .env.example .env
+
+# macOS/Linux
+# cp .env.example .env
 ```
 
 Run:
@@ -92,7 +108,7 @@ Open `http://localhost:5173`.
 
 ## Enable real Chinese ASR
 
-Install the PyTorch/torchaudio build suitable for the machine first, then:
+Install a matching PyTorch + torchaudio CUDA/CPU build for the machine first, then:
 
 ```bash
 cd backend
@@ -107,14 +123,14 @@ FUNASR_MODEL=paraformer-zh
 FUNASR_VAD_MODEL=fsmn-vad
 FUNASR_PUNC_MODEL=ct-punc
 FUNASR_SPK_MODEL=cam++
-FUNASR_DEVICE=cpu
+FUNASR_DEVICE=cuda
 ```
 
-For CUDA, change the device according to the installed FunASR/PyTorch environment.
+Use `FUNASR_DEVICE=cpu` when CUDA is unavailable.
 
 ## Enable hard-subtitle OCR
 
-Install the PaddlePaddle wheel suitable for the machine first, then:
+Install the PaddlePaddle runtime suitable for the machine first, then:
 
 ```bash
 cd backend
@@ -126,14 +142,24 @@ Set:
 ```env
 OCR_ENGINE=paddle
 OCR_FPS=2.0
-OCR_CROP_TOP_RATIO=0.62
+OCR_CROP_TOP_RATIO=0.65
+OCR_CROP_BOTTOM_RATIO=0.95
+OCR_CROP_LEFT_RATIO=0.06
+OCR_CROP_RIGHT_RATIO=0.94
+OCR_CHANGE_DIFF_THRESHOLD=16.0
 ```
 
-`OCR_CROP_TOP_RATIO` controls how much of the top of each frame is ignored. The default focuses OCR on the lower subtitle region to reduce logos and unrelated scene text.
+The optimized OCR path samples the subtitle ROI, skips visually unchanged frames, merges multiline subtitle text and stores visual OCR timing independently from spoken dialogue timing.
+
+## Important after upgrading from an older project
+
+Hard-sub quality mode now relies on `ocr_start` / `ocr_end` stored during Analyze. Projects analyzed before this change may only have ASR-backed cue timestamps.
+
+For the cleanest render after pulling this branch, run **Analyze again** on the source video before Context / Translate / Render. This regenerates precise visual hard-sub timing and avoids stale cleanup after the Chinese subtitle disappears.
 
 ## Translation / relationship inference provider
 
-The backend uses an OpenAI-compatible `/chat/completions` interface so the translation layer is provider-swappable.
+The backend uses an OpenAI-compatible `/chat/completions` interface.
 
 Configure `backend/.env`:
 
@@ -143,28 +169,51 @@ LLM_API_KEY=your-key
 LLM_MODEL=your-model-name
 ```
 
-The LLM is used twice for different jobs:
+The LLM is used for:
 
-1. **Infer roles**: analyze the transcript, keep existing diarized speaker IDs, infer characters/addressees/relationships and Vietnamese forms of address.
-2. **Translate**: translate immutable subtitle cue IDs with speaker, addressee, relationship, preferred pronouns, glossary and neighboring dialogue as context.
+1. **Infer roles** — characters, addressees, directional relationships and Vietnamese forms of address.
+2. **Translate** — stable cue-ID translation with speaker/addressee/relationship/glossary context.
+3. **Critic** — review translation consistency and retry only cues that need correction.
 
-A translation batch is rejected when the provider drops or changes cue IDs, protecting subtitle timing from accidental LLM merging/splitting.
-
-## Current workflow
+## Current end-to-end workflow
 
 ```text
 Video
   -> FFmpeg audio extraction
-  -> FunASR -------------------+
-  -> PaddleOCR hard subtitles -+-> fusion
-                                  -> infer roles/relationships
-                                  -> VI/EN context translation
-                                  -> review/edit cues
-                                  -> FFmpeg render
-                                  -> MP4
+  -> FunASR ----------------------+ 
+  -> PaddleOCR hard subtitles ----+-> fusion
+                                     -> preserve OCR visual timing
+                                     -> infer roles/relationships
+                                     -> context-aware VI/EN translation
+                                     -> translation critic
+                                     -> utterance-aware subtitle render cues
+                                     -> Chinese hard-sub cleanup
+                                     -> ASS burn-in
+                                     -> NVENC/libx264 render
+                                     -> MP4
 ```
 
-The default `.env.example` keeps heavy engines disabled (`ASR_ENGINE=mock`, `OCR_ENGINE=none`) so a fresh clone can start without downloading AI models. Enable the real adapters when the machine is ready.
+## Hard-sub cleanup modes
+
+`RenderOptions.hardsub_removal_mode` supports:
+
+- `none` — do not remove Chinese hard subtitles.
+- `inpaint` — fast spatial Telea inpainting.
+- `quality` — use guarded temporal donor reconstruction with Telea fallback.
+- `auto` — current default; selects the quality path.
+- `cover` — dark subtitle-band fallback.
+
+Quality mode also:
+
+- uses OCR visual timing instead of ASR timing when available;
+- rejects large bright background regions;
+- keeps a tight subtitle-shaped mask;
+- refuses temporal donors across detected active subtitle ranges;
+- rejects donors when local motion around the subtitle area is too high;
+- refines the mask against the aligned clean donor;
+- writes a lossless FFV1 intermediate before the final H.264 encode.
+
+The final visual result should still be reviewed on difficult moving/texture-heavy scenes.
 
 ## Tests
 
@@ -191,30 +240,34 @@ docker compose up --build
 
 The base backend image contains FFmpeg and the core API dependencies. GPU-specific FunASR/PaddleOCR dependencies are intentionally not baked into the base image yet.
 
-## Known MVP limitations
+## Current limitations
 
-- Automatic relationship inference depends on the configured LLM and is reviewable rather than treated as ground truth.
-- PaddleOCR currently uses a configurable bottom-frame crop rather than a learned subtitle-region detector.
-- Intro/outro inputs should already have compatible resolution/FPS/audio layout; normalization is a follow-up.
-- Hard Chinese subtitle removal/inpainting is not implemented yet.
-- Background/object editing is not implemented yet.
+- Automatic relationship inference remains reviewable rather than absolute ground truth.
+- OCR subtitle ROI is configurable rather than learned automatically.
+- Hard-sub removal is much safer than the original Telea-only version, but moving texture behind text can still require visual QA.
+- Intro/outro assets should have compatible resolution/FPS/audio layout.
 - Voice dubbing is not implemented yet.
+- Long-video checkpoint/resume mode for 2–3 hour videos is not implemented yet.
+- Background/object editing and SAM2 workflows are not implemented yet.
 
-## Next milestones
+## Milestones
 
-- [x] FunASR adapter and diarized cue support.
-- [x] PaddleOCR hard-subtitle extraction.
-- [x] ASR + OCR fusion.
-- [x] Character/addressee/relationship inference pass.
-- [x] Relationship-aware VI/EN translation.
-- [x] Subtitle editor and FFmpeg render path.
-- [ ] Translation critic / QA retry pass.
-- [ ] Better subtitle-region detection + OCR review UI.
-- [ ] Hard subtitle removal/inpainting.
-- [ ] Timeline controls for intro/outro/stickers in the UI.
+- [x] FunASR + speaker diarization.
+- [x] PaddleOCR extraction + frame skipping.
+- [x] ASR/OCR fusion.
+- [x] Directional Character Graph and Vietnamese pronouns.
+- [x] Context-aware translation.
+- [x] Translation critic and regression QA.
+- [x] Utterance-aware subtitle rendering.
+- [x] ASS subtitle styling and NVENC export.
+- [x] Hard-sub cleanup MVP.
+- [x] Hard-sub temporal quality pipeline.
+- [ ] Visual QA / tuning of the temporal hard-sub cleaner on the golden 90s video.
+- [ ] Vietnamese dubbing with character voice mapping and music/SFX preservation.
+- [ ] Long-video chunking + checkpoint/resume + global character memory.
+- [ ] Timeline controls for intro/outro/stickers.
 - [ ] SAM2 background/object workflows.
-- [ ] Tauri desktop shell with direct local file paths.
-- [ ] Voice dubbing pipeline.
+- [ ] Tauri desktop shell.
 
 ## Licensing note
 

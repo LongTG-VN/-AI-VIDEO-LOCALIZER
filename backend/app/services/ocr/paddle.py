@@ -10,7 +10,7 @@ from typing import Any
 import cv2
 import numpy as np
 
-from app.models.project import SubtitleCue
+from app.models.project import OCRRegion, SubtitleCue
 from app.services.ocr.base import OCREngine
 
 logger = logging.getLogger(__name__)
@@ -43,6 +43,20 @@ def _similar(a: str, b: str) -> float:
     return SequenceMatcher(None, _normalize(a), _normalize(b)).ratio()
 
 
+def _normalize_poly(poly: Any, x1: int, y1: int, w: int, h: int) -> list[list[float]]:
+    if not hasattr(poly, "__iter__"):
+        return []
+    points: list[list[float]] = []
+    for pt in poly:
+        if hasattr(pt, "__getitem__") and len(pt) >= 2:
+            px = float(pt[0]) + x1
+            py = float(pt[1]) + y1
+            nx = max(0.0, min(1.0, round(px / max(1, w), 4)))
+            ny = max(0.0, min(1.0, round(py / max(1, h), 4)))
+            points.append([nx, ny])
+    return points
+
+
 class PaddleSubtitleOCREngine(OCREngine):
     """High-performance Hard-subtitle OCR Engine with frame change detection.
 
@@ -55,6 +69,7 @@ class PaddleSubtitleOCREngine(OCREngine):
     5. Multiline merge: joins vertically stacked subtitle lines into a single coherent cue.
     6. Noise filter: removes stray non-Chinese artifacts while preserving short valid words.
     7. Detailed metrics: tracks runtime, skip rates, and merges.
+    8. Geometry preservation: captures bounding polygons for guided hardsub cleaning.
     """
 
     def __init__(
@@ -94,10 +109,15 @@ class PaddleSubtitleOCREngine(OCREngine):
         return self._ocr
 
     def _filter_and_merge_predictions(
-        self, predictions: Any
-    ) -> tuple[str, float, int, int]:
+        self,
+        predictions: Any,
+        x1: int = 0,
+        y1: int = 0,
+        w: int = 1,
+        h: int = 1,
+    ) -> tuple[str, float, int, int, list[OCRRegion]]:
         """Extracts, filters noise, sorts, and merges detected text lines in a frame."""
-        text_lines: list[tuple[str, float, float]] = []
+        text_lines: list[tuple[str, float, float, OCRRegion]] = []
         noise_count = 0
         multiline_count = 0
 
@@ -131,19 +151,62 @@ class PaddleSubtitleOCREngine(OCREngine):
                     continue
 
                 y_pos = float(p[0][1]) if hasattr(p, '__getitem__') and len(p) > 0 else 0.0
-                text_lines.append((t_str, float(s), y_pos))
+                norm_points = _normalize_poly(p, x1, y1, w, h)
+                region = OCRRegion(
+                    text=t_str,
+                    confidence=round(float(s), 4),
+                    points=norm_points,
+                )
+                text_lines.append((t_str, float(s), y_pos, region))
 
         if not text_lines:
-            return "", 0.0, noise_count, multiline_count
+            return "", 0.0, noise_count, multiline_count, []
 
         # Sort top-to-bottom for multiline merging
         text_lines.sort(key=lambda item: item[2])
         if len(text_lines) > 1:
             multiline_count = 1
 
-        merged_text = "".join(t for t, _, _ in text_lines)
-        avg_score = sum(s for _, s, _ in text_lines) / len(text_lines)
-        return merged_text, avg_score, noise_count, multiline_count
+        merged_text = "".join(t for t, _, _, _ in text_lines)
+        avg_score = sum(s for _, s, _, _ in text_lines) / len(text_lines)
+        regions = [item[3] for item in text_lines]
+        return merged_text, avg_score, noise_count, multiline_count, regions
+
+    @staticmethod
+    def _extend_ocr_cue(cue: SubtitleCue, end: float) -> None:
+        """Extend both dialogue and visual OCR timing while OCR owns the cue."""
+        cue.end = round(end, 2)
+        cue.ocr_end = cue.end
+
+    @staticmethod
+    def _merge_regions(existing: list[OCRRegion], new_regions: list[OCRRegion]) -> list[OCRRegion]:
+        if not existing:
+            return list(new_regions)
+        if not new_regions:
+            return list(existing)
+
+        if len(existing) == len(new_regions):
+            merged: list[OCRRegion] = []
+            for r1, r2 in zip(existing, new_regions):
+                all_pts = (r1.points or []) + (r2.points or [])
+                if not all_pts:
+                    merged.append(r1)
+                    continue
+                xs = [p[0] for p in all_pts]
+                ys = [p[1] for p in all_pts]
+                min_x, max_x = min(xs), max(xs)
+                min_y, max_y = min(ys), max(ys)
+                text = r2.text if (r2.text and len(r2.text) >= len(r1.text or "")) else r1.text
+                conf = max(r1.confidence or 0.0, r2.confidence or 0.0)
+                merged.append(
+                    OCRRegion(
+                        text=text,
+                        confidence=round(conf, 4),
+                        points=[[min_x, min_y], [max_x, min_y], [max_x, max_y], [min_x, max_y]],
+                    )
+                )
+            return merged
+        return list(new_regions) if len(new_regions) > len(existing) else list(existing)
 
     def extract_subtitles(self, video_path: Path) -> list[SubtitleCue]:
         if not video_path.exists():
@@ -228,35 +291,47 @@ class PaddleSubtitleOCREngine(OCREngine):
                     diff = float(np.mean(np.abs(thumb.astype(float) - prev_thumb.astype(float))))
 
                     # If text length is stable and thumbnail diff is below threshold, extend active cue!
-                    if dw < 0.35 and diff < self.change_threshold:
-                        current_cue.end = round(timestamp + frame_duration, 2)
+                    if dw < 0.08 and diff < 3.0:
+                        self._extend_ocr_cue(current_cue, timestamp + frame_duration)
                         frames_skipped += 1
                         prev_thumb = thumb
                         prev_bbox = (bx, by, bw, bh)
                         frame_idx += 1
                         continue
 
-                # Check C: Run PaddleOCR on new / changed subtitle frame
-                ocr_calls += 1
                 predictions = ocr.predict(sub_roi)
-                text, score, noise_cnt, ml_cnt = self._filter_and_merge_predictions(predictions)
+                text, score, noise_cnt, ml_cnt, regions = self._filter_and_merge_predictions(
+                    predictions, x1=x1, y1=y1, w=w, h=h
+                )
+                ocr_calls += 1
                 noise_removed += noise_cnt
                 multiline_merges += ml_cnt
 
                 if text:
-                    if current_cue is not None and _similar(current_cue.source_text, text) >= 0.85:
-                        current_cue.end = round(timestamp + frame_duration, 2)
-                        current_cue.ocr_confidence = max(current_cue.ocr_confidence or 0.0, score)
-                        current_cue.confidence = current_cue.ocr_confidence
+                    if current_cue is not None and _similar(current_cue.source_text, text) >= 0.70:
+                        self._extend_ocr_cue(current_cue, timestamp + frame_duration)
+                        current_cue.ocr_regions = self._merge_regions(current_cue.ocr_regions, regions)
+                        if len(text) >= len(current_cue.source_text):
+                            current_cue.source_text = text
+                            current_cue.ocr_text = text
+                        if score > (current_cue.ocr_confidence or 0.0):
+                            current_cue.ocr_confidence = round(score, 4)
+                            current_cue.confidence = current_cue.ocr_confidence
                     else:
                         if current_cue is not None:
                             raw_cues.append(current_cue)
+                        start = round(timestamp, 2)
+                        end = round(timestamp + frame_duration, 2)
                         current_cue = SubtitleCue(
-                            start=round(timestamp, 2),
-                            end=round(timestamp + frame_duration, 2),
+                            start=start,
+                            end=end,
                             source_text=text,
                             ocr_confidence=round(score, 4),
                             confidence=round(score, 4),
+                            ocr_start=start,
+                            ocr_end=end,
+                            ocr_text=text,
+                            ocr_regions=regions,
                         )
                     prev_thumb = thumb
                     prev_bbox = (bx, by, bw, bh)
@@ -284,8 +359,12 @@ class PaddleSubtitleOCREngine(OCREngine):
             prev = normalized_cues[-1]
             if _similar(prev.source_text, cue.source_text) >= 0.85 and (cue.start - prev.end) <= 0.45:
                 prev.end = max(prev.end, cue.end)
-                prev.ocr_confidence = max(prev.ocr_confidence or 0.0, cue.ocr_confidence or 0.0)
-                prev.confidence = prev.ocr_confidence
+                prev.ocr_end = max(prev.ocr_end or prev.end, cue.ocr_end or cue.end)
+                prev.ocr_regions = self._merge_regions(prev.ocr_regions, cue.ocr_regions)
+                if (cue.ocr_confidence or 0.0) > (prev.ocr_confidence or 0.0):
+                    prev.ocr_confidence = cue.ocr_confidence
+                    prev.ocr_text = cue.ocr_text or cue.source_text
+                    prev.confidence = prev.ocr_confidence
             else:
                 normalized_cues.append(cue)
 

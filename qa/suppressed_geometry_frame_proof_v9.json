@@ -1,0 +1,52 @@
+{
+  "source_cue_id": "4716213f-9e18-4b42-bc94-ab8b0e253a97",
+  "source_first_frame": 27,
+  "source_last_frame": 60,
+  "cover_first_frame": 25,
+  "cover_last_frame": 62,
+  "source_bbox_by_frame": [
+    {
+      "frame": 27,
+      "bbox": [
+        612,
+        630,
+        666,
+        682
+      ]
+    },
+    {
+      "frame": 35,
+      "bbox": [
+        612,
+        630,
+        666,
+        682
+      ]
+    },
+    {
+      "frame": 50,
+      "bbox": [
+        612,
+        630,
+        666,
+        682
+      ]
+    }
+  ],
+  "final_cover_bbox": [
+    587,
+    618,
+    689,
+    692
+  ],
+  "uncovered_glyph_frames": [],
+  "vertical_escape_frames": [],
+  "horizontal_escape_frames": [],
+  "ass_text_present": false,
+  "render_vi_present": false,
+  "next_source_first_frame": 60,
+  "next_cover_first_frame": 60,
+  "handoff_gap_frames": 0,
+  "double_dark_frames": 0,
+  "status": "PASS"
+}

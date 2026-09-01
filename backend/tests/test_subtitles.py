@@ -12,16 +12,17 @@ def test_parse_and_export_srt():
 你好
 
 2
-00:00:04,000 --> 00:00:05,000
+00:00:05,000 --> 00:00:07,000
 回来了吗？
 """
     cues = parse_srt(source)
     assert len(cues) == 2
     assert cues[0].source_text == "你好"
-    cues[0].translated_text = "Xin chào"
+    cues[0].translated_text = "Xin chào."
+    cues[1].translated_text = "Em về rồi à?"
     rendered = to_srt(cues)
-    assert "Xin chào" in rendered
-    assert "00:00:04,000 --> 00:00:05,000" in rendered
+    assert "Xin chào." in rendered
+    assert "00:00:05,000" in rendered
 
 
 def test_source_fallback_when_untranslated():

@@ -1,0 +1,212 @@
+{
+  "project_id": "golden-benchmark-v7",
+  "output_path": "D:\\codex\\FINAL_VI_QUALITY_V7.mp4",
+  "render_duration": 65.84,
+  "fusion_metrics": {
+    "asr_cues": 48,
+    "ocr_cues": 57,
+    "ocr_evidence_total": 48,
+    "fused_cues": 48,
+    "asr_derived_fused_cues": 48,
+    "asr_with_evidence": 41,
+    "asr_without_evidence": 7,
+    "span_corrections_applied": 1,
+    "span_corrections_rejected": 40,
+    "full_sentence_replacements": 0,
+    "asr_source_shortened": 0,
+    "asr_timing_changed": 0,
+    "unmatched_ocr_evidence": 0
+  },
+  "tracker_metrics": {
+    "visual_timing_cues": 57,
+    "visual_timing_start_refined": 56,
+    "visual_timing_end_refined": 56,
+    "avg_start_adjustment_ms": 567.9,
+    "max_start_adjustment_ms": 600.0,
+    "avg_end_adjustment_ms": 598.2,
+    "max_end_adjustment_ms": 900.0,
+    "visual_tracker_frames_scanned": 4025,
+    "visual_tracker_runtime_s": 7.62
+  },
+  "cleanup_metrics": {
+    "mode": "auto",
+    "frames_processed": 2703,
+    "frames_inpainted": 2587,
+    "frames_bypassed": 116,
+    "inpaint_rate": 95.7,
+    "bypass_rate": 4.3,
+    "active_intervals": 10,
+    "timing_source_explicit_ocr": 0,
+    "timing_source_legacy_ocr": 0,
+    "timing_source_fallback": 0,
+    "geometry_cues": 48,
+    "geometry_regions": 114,
+    "geometry_frames": 2568,
+    "geometry_missing_fallback_frames": 42,
+    "geometry_mask_success": 2568,
+    "geometry_mask_fail": 42,
+    "geometry_temporal_frames": 0,
+    "geometry_telea_frames": 2568,
+    "avg_region_mask_coverage": 0.558,
+    "max_region_mask_coverage": 0.914,
+    "outline_pixels_added": 27936385,
+    "temporal_frames": 0,
+    "fallback_inpaint_frames": 2587,
+    "temporal_scene_rejects": 127,
+    "temporal_local_motion_rejects": 4,
+    "temporal_alignment_failures": 17,
+    "temporal_mask_refined": 0,
+    "temporal_mask_refine_rejects": 0,
+    "avg_temporal_score": 0.0,
+    "mask_rejected_coverage": 0,
+    "mask_rejected_no_components": 24,
+    "mask_rejected_no_text_row": 3,
+    "lossless_intermediate": true,
+    "clean_runtime": 58.21,
+    "fps_speed": 46.4,
+    "output_path": "data\\renders\\.golden-benchmark-v7-render\\cleaned_video.mkv"
+  },
+  "source_qa": {
+    "11_14s": {
+      "pass": true,
+      "cues": [
+        "领口歪了，",
+        "坐姿不对，",
+        "笑的太假。"
+      ]
+    },
+    "18_26s": {
+      "pass": true,
+      "cues": [
+        "他的眼里没有一句只有一件需要时刻打磨的商品。",
+        "秦福之昨天的宏观经济笔记看完了吗？",
+        "快快了，"
+      ]
+    },
+    "34_38s": {
+      "pass": true,
+      "cues": [
+        "秦福之，",
+        "你的存在拉低了秦家的执行效率。",
+        "我哥财经杂志封面里走出来的资本怪物，"
+      ]
+    },
+    "54_57s": {
+      "pass": true,
+      "cues": [
+        "但我现在只想把这只偷偷藏起来的鸡腿。",
+        "肯文看清楚，",
+        "秦福之你，"
+      ]
+    },
+    "69_75s": {
+      "pass": true,
+      "cues": [
+        "该属于我的人生而我在一个开。",
+        "早餐店的家庭里凌晨四点就要，",
+        "起来帮忙揉面秦福之你偷了我十。",
+        "八年你，"
+      ]
+    }
+  },
+  "re_ocr_results": {
+    "11.90s": {
+      "all_texts": [
+        "Cô áo lch, tu thê ngòi không đúng,",
+        "Curòi già to quá."
+      ],
+      "chinese_residual": [],
+      "clean": true
+    },
+    "12.00s": {
+      "all_texts": [
+        "Cô áo lch, tur thê ngòi không đúng,",
+        "Curòigià to quá."
+      ],
+      "chinese_residual": [],
+      "clean": true
+    },
+    "15.80s": {
+      "all_texts": [
+        "Hôm nay cô đi làm nhc,",
+        "hay đi d tic vy?"
+      ],
+      "chinese_residual": [],
+      "clean": true
+    },
+    "16.80s": {
+      "all_texts": [
+        "Me tôi là Tông Tri Tuyét,"
+      ],
+      "chinese_residual": [],
+      "clean": true
+    },
+    "17.00s": {
+      "all_texts": [
+        "Me tôi là Tông Tri Tuyêt,"
+      ],
+      "chinese_residual": [],
+      "clean": true
+    },
+    "21.50s": {
+      "all_texts": [],
+      "chinese_residual": [],
+      "clean": true
+    },
+    "24.50s": {
+      "all_texts": [
+        "TànPhùChi,",
+        "v ghi chép kinh tê vimô hôm qua xem xong chura?"
+      ],
+      "chinese_residual": [],
+      "clean": true
+    },
+    "35.30s": {
+      "all_texts": [
+        "Su tồn tai cua mày",
+        "đã kéo gim hiu sut làm vic cua nhà ho Tàn."
+      ],
+      "chinese_residual": [],
+      "clean": true
+    },
+    "35.50s": {
+      "all_texts": [
+        "Surtòntaicuamày",
+        "đã kéo giàm hiu suát làm vic cua nhà ho Tn."
+      ],
+      "chinese_residual": [],
+      "clean": true
+    },
+    "56.00s": {
+      "all_texts": [
+        "Cô lên nhìn cho rôvào,"
+      ],
+      "chinese_residual": [],
+      "clean": true
+    },
+    "69.50s": {
+      "all_texts": [
+        "Cuc đòi vôn di thuc vè tôi,",
+        "vy mà tôi li lón lên  môt..."
+      ],
+      "chinese_residual": [],
+      "clean": true
+    },
+    "72.00s": {
+      "all_texts": [
+        "Tim bánh mì bui sáng,",
+        "tù bôn giò sáng đã phài..."
+      ],
+      "chinese_residual": [],
+      "clean": true
+    },
+    "74.00s": {
+      "all_texts": [
+        "Dy phu giúp nhào bt.",
+        "Tn Phù Chi, cô đă curóp đi muòi..."
+      ],
+      "chinese_residual": [],
+      "clean": true
+    }
+  }
+}

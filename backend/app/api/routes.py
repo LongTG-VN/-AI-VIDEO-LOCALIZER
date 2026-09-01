@@ -8,12 +8,14 @@ from fastapi import APIRouter, File, Form, HTTPException, UploadFile
 from fastapi.responses import FileResponse, PlainTextResponse
 
 from app.core.config import get_settings
-from app.models.project import Project, ProjectPatch, RenderOptions
+from app.models.project import DubbingMetrics, DubbingOptions, Project, ProjectPatch, RenderOptions
 from app.services.asr.factory import create_asr_engine
 from app.services.context_analyzer import ContextAnalyzer, ContextAnalysisError
+from app.services.dubbing import DubbingService
 from app.services.fusion import fuse_cues
 from app.services.media import MediaError, MediaService
 from app.services.ocr.factory import create_ocr_engine
+from app.services.ocr.visual_tracker import VisualBoundaryTracker
 from app.services.renderer import RenderError, Renderer
 from app.services.store import ProjectStore
 from app.services.subtitles import parse_srt, to_ass, to_srt
@@ -23,6 +25,19 @@ router = APIRouter(prefix="/api")
 settings = get_settings()
 store = ProjectStore(settings.data_dir / "projects")
 media = MediaService(settings.ffprobe_bin, settings.ffmpeg_bin)
+
+
+def _create_project_ocr_engine():
+    return create_ocr_engine(
+        settings.ocr_engine,
+        ffmpeg_bin=settings.ffmpeg_bin,
+        fps=settings.ocr_fps,
+        crop_top_ratio=settings.ocr_crop_top_ratio,
+        crop_bottom_ratio=settings.ocr_crop_bottom_ratio,
+        crop_left_ratio=settings.ocr_crop_left_ratio,
+        crop_right_ratio=settings.ocr_crop_right_ratio,
+        change_threshold=settings.ocr_change_diff_threshold,
+    )
 
 
 @router.get("/health")
@@ -114,12 +129,7 @@ def ocr_project(project_id: str) -> Project:
     except FileNotFoundError as exc:
         raise HTTPException(status_code=404, detail="Project not found") from exc
     try:
-        engine = create_ocr_engine(
-            settings.ocr_engine,
-            ffmpeg_bin=settings.ffmpeg_bin,
-            fps=settings.ocr_fps,
-            crop_top_ratio=settings.ocr_crop_top_ratio,
-        )
+        engine = _create_project_ocr_engine()
         project.cues = engine.extract_subtitles(Path(project.source_video_path))
     except (RuntimeError, ValueError) as exc:
         raise HTTPException(status_code=500, detail=str(exc)) from exc
@@ -144,15 +154,14 @@ def analyze_project(project_id: str) -> Project:
             spk_model=settings.funasr_spk_model,
             device=settings.funasr_device,
         )
-        ocr_engine = create_ocr_engine(
-            settings.ocr_engine,
-            ffmpeg_bin=settings.ffmpeg_bin,
-            fps=settings.ocr_fps,
-            crop_top_ratio=settings.ocr_crop_top_ratio,
-        )
+        ocr_engine = _create_project_ocr_engine()
         asr_cues = asr_engine.transcribe(audio_path, project.source_language)
         ocr_cues = ocr_engine.extract_subtitles(Path(project.source_video_path))
-        project.cues = fuse_cues(asr_cues, ocr_cues) if ocr_cues else asr_cues
+        fused = fuse_cues(asr_cues, ocr_cues) if ocr_cues else asr_cues
+        from app.services.source_integrity.pipeline import SourceIntegrityPipeline
+        source_pipeline = SourceIntegrityPipeline()
+        project.cues, report = source_pipeline.run_pipeline(fused, ocr_cues=ocr_cues)
+        project.source_integrity = report.model_dump()
     except (MediaError, RuntimeError, NotImplementedError, ValueError) as exc:
         raise HTTPException(status_code=500, detail=str(exc)) from exc
     return store.save(project)
@@ -221,13 +230,27 @@ def analyze_context(project_id: str) -> Project:
 
 
 @router.post("/projects/{project_id}/translate", response_model=Project)
-def translate_project(project_id: str) -> Project:
+def translate_project(project_id: str, force: bool = False) -> Project:
+    """Translate project cues; `force=true` reuses existing source/context and refreshes VI text.
+
+    This intentionally does not rerun ASR/OCR/fusion, so a quality-only translation iteration
+    can benefit from new context/name-lock logic without paying the media-analysis cost again.
+    """
     try:
         project = store.get(project_id)
     except FileNotFoundError as exc:
         raise HTTPException(status_code=404, detail="Project not found") from exc
     if not project.cues:
         raise HTTPException(status_code=400, detail="Project has no subtitle cues")
+
+    if force:
+        for cue in project.cues:
+            cue.translated_text = None
+            cue.translation_confidence = None
+            cue.critic_score = None
+            cue.critic_flags = []
+            cue.needs_review = False
+            cue.review_notes = None
 
     translator = OpenAICompatibleTranslator(
         settings.llm_base_url, settings.llm_api_key, settings.llm_model
@@ -236,6 +259,57 @@ def translate_project(project_id: str) -> Project:
         project.cues = translator.translate_project(project)
     except TranslationError as exc:
         raise HTTPException(status_code=502, detail=str(exc)) from exc
+    return store.save(project)
+
+
+@router.post("/projects/{project_id}/translation-quality", response_model=Project)
+def run_translation_quality_endpoint(project_id: str, force: bool = False) -> Project:
+    """Run Translation Quality Pipeline V1 (Audit, Targeted Repair, Naturalness, Validation).
+    
+    If force=true, invalidates existing quality/repair outputs and re-runs quality evaluation
+    while strictly preserving ASR, OCR, fusion, character graph, and relationships.
+    """
+    try:
+        project = store.get(project_id)
+    except FileNotFoundError as exc:
+        raise HTTPException(status_code=404, detail="Project not found") from exc
+    if not project.cues:
+        raise HTTPException(status_code=400, detail="Project has no subtitle cues")
+
+    if force:
+        for cue in project.cues:
+            cue.needs_review = False
+            cue.review_notes = None
+            cue.critic_flags = []
+            cue.critic_score = None
+        project.translation_quality = None
+
+    from app.services.translation_quality.pipeline import TranslationQualityPipeline
+    pipeline = TranslationQualityPipeline(
+        settings.llm_base_url, settings.llm_api_key, settings.llm_model
+    )
+    report = pipeline.run_pipeline(project)
+    project.translation_quality = report.model_dump()
+    return store.save(project)
+
+
+@router.post("/projects/{project_id}/source-integrity", response_model=Project)
+def run_source_integrity_endpoint(
+    project_id: str,
+    force: bool = Query(default=False, description="Force re-running source integrity"),
+) -> Project:
+    """Runs source integrity gate and re-segmentation across project cues."""
+    try:
+        project = store.get(project_id)
+    except FileNotFoundError as exc:
+        raise HTTPException(status_code=404, detail="Project not found") from exc
+    if not project.cues:
+        raise HTTPException(status_code=400, detail="Project has no subtitle cues")
+
+    from app.services.source_integrity.pipeline import SourceIntegrityPipeline
+    pipeline = SourceIntegrityPipeline()
+    project.cues, report = pipeline.run_pipeline(project.cues)
+    project.source_integrity = report.model_dump()
     return store.save(project)
 
 
@@ -250,10 +324,52 @@ def render_project(project_id: str, options: RenderOptions) -> dict:
 
     output = settings.data_dir / "renders" / f"{project.id}.mp4"
     try:
-        Renderer(settings.ffmpeg_bin).render(project, output, options)
+        renderer = Renderer(settings.ffmpeg_bin, settings.ffprobe_bin)
+        renderer.render(project, output, options)
     except RenderError as exc:
         raise HTTPException(status_code=500, detail=str(exc)) from exc
-    return {"project_id": project.id, "output": str(output.resolve()), "download_url": f"/api/renders/{project.id}.mp4"}
+    return {
+        "project_id": project.id,
+        "output": str(output.resolve()),
+        "download_url": f"/api/renders/{project.id}.mp4",
+        "render_metrics": renderer.last_render_metrics,
+    }
+
+
+@router.post("/projects/{project_id}/dub")
+async def dub_project_endpoint(project_id: str, options: DubbingOptions | None = None) -> dict:
+    try:
+        project = store.get(project_id)
+    except FileNotFoundError as exc:
+        raise HTTPException(status_code=404, detail="Project not found") from exc
+    if not project.cues:
+        raise HTTPException(status_code=400, detail="Project has no subtitle cues")
+
+    source_path = Path(project.source_video_path)
+    if not source_path.exists():
+        raise HTTPException(status_code=404, detail="Source video file not found")
+
+    output = settings.data_dir / "renders" / f"{project.id}_dubbed.mp4"
+    if options is None:
+        options = DubbingOptions()
+
+    dubber = DubbingService(ffmpeg_bin=settings.ffmpeg_bin)
+    try:
+        out_path, metrics = await dubber.dub_project(
+            project=project,
+            source_video_path=source_path,
+            output_video_path=output,
+            options=options,
+        )
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail=f"Dubbing failed: {exc}") from exc
+
+    return {
+        "project_id": project.id,
+        "output": str(out_path.resolve()),
+        "download_url": f"/api/renders/{out_path.name}",
+        "dubbing_metrics": metrics.model_dump(),
+    }
 
 
 @router.get("/renders/{filename}")
