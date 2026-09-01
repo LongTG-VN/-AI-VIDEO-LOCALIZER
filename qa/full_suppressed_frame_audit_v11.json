@@ -1,0 +1,36 @@
+{
+  "total_suppressed_visual_segments": 1,
+  "total_suppressed_cues": 2,
+  "audit_records": [
+    {
+      "visual_segment_id": "vseg_4716213f_01",
+      "source_cue_id": "4716213f-9e18-4b42-bc94-ab8b0e253a97",
+      "source_text": "嗯",
+      "start_frame": 3126,
+      "end_frame": 3147,
+      "start_t": 104.2,
+      "end_t": 104.9,
+      "cover_start_t": 103.833,
+      "cover_end_t": 104.933,
+      "robust_source_bbox": [
+        621,
+        638,
+        659,
+        674
+      ],
+      "cover_bbox": [
+        587,
+        618,
+        689,
+        692
+      ],
+      "uncovered_actual_frames": 0,
+      "readable_chinese_frames": 0,
+      "stale_vi_frames": 0,
+      "handoff_gap_frames": 0,
+      "double_dark_frames": 0,
+      "pixel_validation_status": "PASS"
+    }
+  ],
+  "status": "PASS"
+}

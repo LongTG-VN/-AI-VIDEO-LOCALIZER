@@ -1,0 +1,918 @@
+{
+  "visual_segment_id": "vseg_4716213f_01",
+  "source_cue_id": "4716213f-9e18-4b42-bc94-ab8b0e253a97",
+  "source_text": "嗯",
+  "first_visible_frame": 3126,
+  "last_visible_frame": 3147,
+  "first_cover_frame": 3124,
+  "last_cover_frame": 3148,
+  "uncovered_actual_frames": 0,
+  "readable_chinese_frames": 0,
+  "stale_vi_frames": 0,
+  "handoff_gap_frames": 0,
+  "double_dark_frames": 0,
+  "contrast_reduction_mean": 0.934,
+  "frames": [
+    {
+      "visual_segment_id": "vseg_4716213f_01",
+      "source_cue_id": "4716213f-9e18-4b42-bc94-ab8b0e253a97",
+      "frame_index": 3120,
+      "timestamp": 104.0,
+      "source_glyph_present": false,
+      "source_bbox": [
+        621,
+        638,
+        659,
+        674
+      ],
+      "expected_cover_bbox": [
+        587,
+        618,
+        689,
+        692
+      ],
+      "actual_cover_detected": true,
+      "contrast_before": 39.95,
+      "contrast_after": 10.13,
+      "glyph_covered": true,
+      "glyph_readable": false,
+      "status": "PASS"
+    },
+    {
+      "visual_segment_id": "vseg_4716213f_01",
+      "source_cue_id": "4716213f-9e18-4b42-bc94-ab8b0e253a97",
+      "frame_index": 3121,
+      "timestamp": 104.033,
+      "source_glyph_present": false,
+      "source_bbox": [
+        621,
+        638,
+        659,
+        674
+      ],
+      "expected_cover_bbox": [
+        587,
+        618,
+        689,
+        692
+      ],
+      "actual_cover_detected": true,
+      "contrast_before": 39.97,
+      "contrast_after": 10.12,
+      "glyph_covered": true,
+      "glyph_readable": false,
+      "status": "PASS"
+    },
+    {
+      "visual_segment_id": "vseg_4716213f_01",
+      "source_cue_id": "4716213f-9e18-4b42-bc94-ab8b0e253a97",
+      "frame_index": 3122,
+      "timestamp": 104.067,
+      "source_glyph_present": false,
+      "source_bbox": [
+        621,
+        638,
+        659,
+        674
+      ],
+      "expected_cover_bbox": [
+        587,
+        618,
+        689,
+        692
+      ],
+      "actual_cover_detected": true,
+      "contrast_before": 39.96,
+      "contrast_after": 10.16,
+      "glyph_covered": true,
+      "glyph_readable": false,
+      "status": "PASS"
+    },
+    {
+      "visual_segment_id": "vseg_4716213f_01",
+      "source_cue_id": "4716213f-9e18-4b42-bc94-ab8b0e253a97",
+      "frame_index": 3123,
+      "timestamp": 104.1,
+      "source_glyph_present": false,
+      "source_bbox": [
+        621,
+        638,
+        659,
+        674
+      ],
+      "expected_cover_bbox": [
+        587,
+        618,
+        689,
+        692
+      ],
+      "actual_cover_detected": true,
+      "contrast_before": 39.91,
+      "contrast_after": 10.13,
+      "glyph_covered": true,
+      "glyph_readable": false,
+      "status": "PASS"
+    },
+    {
+      "visual_segment_id": "vseg_4716213f_01",
+      "source_cue_id": "4716213f-9e18-4b42-bc94-ab8b0e253a97",
+      "frame_index": 3124,
+      "timestamp": 104.133,
+      "source_glyph_present": false,
+      "source_bbox": [
+        621,
+        638,
+        659,
+        674
+      ],
+      "expected_cover_bbox": [
+        587,
+        618,
+        689,
+        692
+      ],
+      "actual_cover_detected": true,
+      "contrast_before": 39.92,
+      "contrast_after": 10.14,
+      "glyph_covered": true,
+      "glyph_readable": false,
+      "status": "PASS"
+    },
+    {
+      "visual_segment_id": "vseg_4716213f_01",
+      "source_cue_id": "4716213f-9e18-4b42-bc94-ab8b0e253a97",
+      "frame_index": 3125,
+      "timestamp": 104.167,
+      "source_glyph_present": false,
+      "source_bbox": [
+        621,
+        638,
+        659,
+        674
+      ],
+      "expected_cover_bbox": [
+        587,
+        618,
+        689,
+        692
+      ],
+      "actual_cover_detected": true,
+      "contrast_before": 39.92,
+      "contrast_after": 10.14,
+      "glyph_covered": true,
+      "glyph_readable": false,
+      "status": "PASS"
+    },
+    {
+      "visual_segment_id": "vseg_4716213f_01",
+      "source_cue_id": "4716213f-9e18-4b42-bc94-ab8b0e253a97",
+      "frame_index": 3126,
+      "timestamp": 104.2,
+      "source_glyph_present": true,
+      "source_bbox": [
+        621,
+        638,
+        659,
+        674
+      ],
+      "expected_cover_bbox": [
+        587,
+        618,
+        689,
+        692
+      ],
+      "actual_cover_detected": true,
+      "contrast_before": 106.03,
+      "contrast_after": 6.62,
+      "glyph_covered": true,
+      "glyph_readable": false,
+      "status": "PASS"
+    },
+    {
+      "visual_segment_id": "vseg_4716213f_01",
+      "source_cue_id": "4716213f-9e18-4b42-bc94-ab8b0e253a97",
+      "frame_index": 3127,
+      "timestamp": 104.233,
+      "source_glyph_present": true,
+      "source_bbox": [
+        621,
+        638,
+        659,
+        674
+      ],
+      "expected_cover_bbox": [
+        587,
+        618,
+        689,
+        692
+      ],
+      "actual_cover_detected": true,
+      "contrast_before": 106.03,
+      "contrast_after": 6.61,
+      "glyph_covered": true,
+      "glyph_readable": false,
+      "status": "PASS"
+    },
+    {
+      "visual_segment_id": "vseg_4716213f_01",
+      "source_cue_id": "4716213f-9e18-4b42-bc94-ab8b0e253a97",
+      "frame_index": 3128,
+      "timestamp": 104.267,
+      "source_glyph_present": true,
+      "source_bbox": [
+        621,
+        638,
+        659,
+        674
+      ],
+      "expected_cover_bbox": [
+        587,
+        618,
+        689,
+        692
+      ],
+      "actual_cover_detected": true,
+      "contrast_before": 106.04,
+      "contrast_after": 6.6,
+      "glyph_covered": true,
+      "glyph_readable": false,
+      "status": "PASS"
+    },
+    {
+      "visual_segment_id": "vseg_4716213f_01",
+      "source_cue_id": "4716213f-9e18-4b42-bc94-ab8b0e253a97",
+      "frame_index": 3129,
+      "timestamp": 104.3,
+      "source_glyph_present": true,
+      "source_bbox": [
+        621,
+        638,
+        659,
+        674
+      ],
+      "expected_cover_bbox": [
+        587,
+        618,
+        689,
+        692
+      ],
+      "actual_cover_detected": true,
+      "contrast_before": 106.04,
+      "contrast_after": 6.66,
+      "glyph_covered": true,
+      "glyph_readable": false,
+      "status": "PASS"
+    },
+    {
+      "visual_segment_id": "vseg_4716213f_01",
+      "source_cue_id": "4716213f-9e18-4b42-bc94-ab8b0e253a97",
+      "frame_index": 3130,
+      "timestamp": 104.333,
+      "source_glyph_present": true,
+      "source_bbox": [
+        621,
+        638,
+        659,
+        674
+      ],
+      "expected_cover_bbox": [
+        587,
+        618,
+        689,
+        692
+      ],
+      "actual_cover_detected": true,
+      "contrast_before": 106.05,
+      "contrast_after": 6.65,
+      "glyph_covered": true,
+      "glyph_readable": false,
+      "status": "PASS"
+    },
+    {
+      "visual_segment_id": "vseg_4716213f_01",
+      "source_cue_id": "4716213f-9e18-4b42-bc94-ab8b0e253a97",
+      "frame_index": 3131,
+      "timestamp": 104.367,
+      "source_glyph_present": true,
+      "source_bbox": [
+        621,
+        638,
+        659,
+        674
+      ],
+      "expected_cover_bbox": [
+        587,
+        618,
+        689,
+        692
+      ],
+      "actual_cover_detected": true,
+      "contrast_before": 106.06,
+      "contrast_after": 6.61,
+      "glyph_covered": true,
+      "glyph_readable": false,
+      "status": "PASS"
+    },
+    {
+      "visual_segment_id": "vseg_4716213f_01",
+      "source_cue_id": "4716213f-9e18-4b42-bc94-ab8b0e253a97",
+      "frame_index": 3132,
+      "timestamp": 104.4,
+      "source_glyph_present": true,
+      "source_bbox": [
+        621,
+        638,
+        659,
+        674
+      ],
+      "expected_cover_bbox": [
+        587,
+        618,
+        689,
+        692
+      ],
+      "actual_cover_detected": true,
+      "contrast_before": 106.07,
+      "contrast_after": 6.65,
+      "glyph_covered": true,
+      "glyph_readable": false,
+      "status": "PASS"
+    },
+    {
+      "visual_segment_id": "vseg_4716213f_01",
+      "source_cue_id": "4716213f-9e18-4b42-bc94-ab8b0e253a97",
+      "frame_index": 3133,
+      "timestamp": 104.433,
+      "source_glyph_present": true,
+      "source_bbox": [
+        621,
+        638,
+        659,
+        674
+      ],
+      "expected_cover_bbox": [
+        587,
+        618,
+        689,
+        692
+      ],
+      "actual_cover_detected": true,
+      "contrast_before": 106.25,
+      "contrast_after": 7.24,
+      "glyph_covered": true,
+      "glyph_readable": false,
+      "status": "PASS"
+    },
+    {
+      "visual_segment_id": "vseg_4716213f_01",
+      "source_cue_id": "4716213f-9e18-4b42-bc94-ab8b0e253a97",
+      "frame_index": 3134,
+      "timestamp": 104.467,
+      "source_glyph_present": true,
+      "source_bbox": [
+        621,
+        638,
+        659,
+        674
+      ],
+      "expected_cover_bbox": [
+        587,
+        618,
+        689,
+        692
+      ],
+      "actual_cover_detected": true,
+      "contrast_before": 106.25,
+      "contrast_after": 7.24,
+      "glyph_covered": true,
+      "glyph_readable": false,
+      "status": "PASS"
+    },
+    {
+      "visual_segment_id": "vseg_4716213f_01",
+      "source_cue_id": "4716213f-9e18-4b42-bc94-ab8b0e253a97",
+      "frame_index": 3135,
+      "timestamp": 104.5,
+      "source_glyph_present": true,
+      "source_bbox": [
+        621,
+        638,
+        659,
+        674
+      ],
+      "expected_cover_bbox": [
+        587,
+        618,
+        689,
+        692
+      ],
+      "actual_cover_detected": true,
+      "contrast_before": 106.25,
+      "contrast_after": 7.24,
+      "glyph_covered": true,
+      "glyph_readable": false,
+      "status": "PASS"
+    },
+    {
+      "visual_segment_id": "vseg_4716213f_01",
+      "source_cue_id": "4716213f-9e18-4b42-bc94-ab8b0e253a97",
+      "frame_index": 3136,
+      "timestamp": 104.533,
+      "source_glyph_present": true,
+      "source_bbox": [
+        621,
+        638,
+        659,
+        674
+      ],
+      "expected_cover_bbox": [
+        587,
+        618,
+        689,
+        692
+      ],
+      "actual_cover_detected": true,
+      "contrast_before": 106.24,
+      "contrast_after": 7.23,
+      "glyph_covered": true,
+      "glyph_readable": false,
+      "status": "PASS"
+    },
+    {
+      "visual_segment_id": "vseg_4716213f_01",
+      "source_cue_id": "4716213f-9e18-4b42-bc94-ab8b0e253a97",
+      "frame_index": 3137,
+      "timestamp": 104.567,
+      "source_glyph_present": true,
+      "source_bbox": [
+        621,
+        638,
+        659,
+        674
+      ],
+      "expected_cover_bbox": [
+        587,
+        618,
+        689,
+        692
+      ],
+      "actual_cover_detected": true,
+      "contrast_before": 106.24,
+      "contrast_after": 7.24,
+      "glyph_covered": true,
+      "glyph_readable": false,
+      "status": "PASS"
+    },
+    {
+      "visual_segment_id": "vseg_4716213f_01",
+      "source_cue_id": "4716213f-9e18-4b42-bc94-ab8b0e253a97",
+      "frame_index": 3138,
+      "timestamp": 104.6,
+      "source_glyph_present": true,
+      "source_bbox": [
+        621,
+        638,
+        659,
+        674
+      ],
+      "expected_cover_bbox": [
+        587,
+        618,
+        689,
+        692
+      ],
+      "actual_cover_detected": true,
+      "contrast_before": 106.24,
+      "contrast_after": 7.23,
+      "glyph_covered": true,
+      "glyph_readable": false,
+      "status": "PASS"
+    },
+    {
+      "visual_segment_id": "vseg_4716213f_01",
+      "source_cue_id": "4716213f-9e18-4b42-bc94-ab8b0e253a97",
+      "frame_index": 3139,
+      "timestamp": 104.633,
+      "source_glyph_present": true,
+      "source_bbox": [
+        621,
+        638,
+        659,
+        674
+      ],
+      "expected_cover_bbox": [
+        587,
+        618,
+        689,
+        692
+      ],
+      "actual_cover_detected": true,
+      "contrast_before": 106.25,
+      "contrast_after": 7.23,
+      "glyph_covered": true,
+      "glyph_readable": false,
+      "status": "PASS"
+    },
+    {
+      "visual_segment_id": "vseg_4716213f_01",
+      "source_cue_id": "4716213f-9e18-4b42-bc94-ab8b0e253a97",
+      "frame_index": 3140,
+      "timestamp": 104.667,
+      "source_glyph_present": true,
+      "source_bbox": [
+        621,
+        638,
+        659,
+        674
+      ],
+      "expected_cover_bbox": [
+        587,
+        618,
+        689,
+        692
+      ],
+      "actual_cover_detected": true,
+      "contrast_before": 106.23,
+      "contrast_after": 7.24,
+      "glyph_covered": true,
+      "glyph_readable": false,
+      "status": "PASS"
+    },
+    {
+      "visual_segment_id": "vseg_4716213f_01",
+      "source_cue_id": "4716213f-9e18-4b42-bc94-ab8b0e253a97",
+      "frame_index": 3141,
+      "timestamp": 104.7,
+      "source_glyph_present": true,
+      "source_bbox": [
+        621,
+        638,
+        659,
+        674
+      ],
+      "expected_cover_bbox": [
+        587,
+        618,
+        689,
+        692
+      ],
+      "actual_cover_detected": true,
+      "contrast_before": 106.23,
+      "contrast_after": 7.23,
+      "glyph_covered": true,
+      "glyph_readable": false,
+      "status": "PASS"
+    },
+    {
+      "visual_segment_id": "vseg_4716213f_01",
+      "source_cue_id": "4716213f-9e18-4b42-bc94-ab8b0e253a97",
+      "frame_index": 3142,
+      "timestamp": 104.733,
+      "source_glyph_present": true,
+      "source_bbox": [
+        621,
+        638,
+        659,
+        674
+      ],
+      "expected_cover_bbox": [
+        587,
+        618,
+        689,
+        692
+      ],
+      "actual_cover_detected": true,
+      "contrast_before": 106.23,
+      "contrast_after": 7.24,
+      "glyph_covered": true,
+      "glyph_readable": false,
+      "status": "PASS"
+    },
+    {
+      "visual_segment_id": "vseg_4716213f_01",
+      "source_cue_id": "4716213f-9e18-4b42-bc94-ab8b0e253a97",
+      "frame_index": 3143,
+      "timestamp": 104.767,
+      "source_glyph_present": true,
+      "source_bbox": [
+        621,
+        638,
+        659,
+        674
+      ],
+      "expected_cover_bbox": [
+        587,
+        618,
+        689,
+        692
+      ],
+      "actual_cover_detected": true,
+      "contrast_before": 106.27,
+      "contrast_after": 7.22,
+      "glyph_covered": true,
+      "glyph_readable": false,
+      "status": "PASS"
+    },
+    {
+      "visual_segment_id": "vseg_4716213f_01",
+      "source_cue_id": "4716213f-9e18-4b42-bc94-ab8b0e253a97",
+      "frame_index": 3144,
+      "timestamp": 104.8,
+      "source_glyph_present": true,
+      "source_bbox": [
+        621,
+        638,
+        659,
+        674
+      ],
+      "expected_cover_bbox": [
+        587,
+        618,
+        689,
+        692
+      ],
+      "actual_cover_detected": true,
+      "contrast_before": 106.3,
+      "contrast_after": 7.23,
+      "glyph_covered": true,
+      "glyph_readable": false,
+      "status": "PASS"
+    },
+    {
+      "visual_segment_id": "vseg_4716213f_01",
+      "source_cue_id": "4716213f-9e18-4b42-bc94-ab8b0e253a97",
+      "frame_index": 3145,
+      "timestamp": 104.833,
+      "source_glyph_present": true,
+      "source_bbox": [
+        621,
+        638,
+        659,
+        674
+      ],
+      "expected_cover_bbox": [
+        587,
+        618,
+        689,
+        692
+      ],
+      "actual_cover_detected": true,
+      "contrast_before": 106.3,
+      "contrast_after": 7.22,
+      "glyph_covered": true,
+      "glyph_readable": false,
+      "status": "PASS"
+    },
+    {
+      "visual_segment_id": "vseg_4716213f_01",
+      "source_cue_id": "4716213f-9e18-4b42-bc94-ab8b0e253a97",
+      "frame_index": 3146,
+      "timestamp": 104.867,
+      "source_glyph_present": true,
+      "source_bbox": [
+        621,
+        638,
+        659,
+        674
+      ],
+      "expected_cover_bbox": [
+        587,
+        618,
+        689,
+        692
+      ],
+      "actual_cover_detected": true,
+      "contrast_before": 106.3,
+      "contrast_after": 7.2,
+      "glyph_covered": true,
+      "glyph_readable": false,
+      "status": "PASS"
+    },
+    {
+      "visual_segment_id": "vseg_4716213f_01",
+      "source_cue_id": "4716213f-9e18-4b42-bc94-ab8b0e253a97",
+      "frame_index": 3147,
+      "timestamp": 104.9,
+      "source_glyph_present": true,
+      "source_bbox": [
+        621,
+        638,
+        659,
+        674
+      ],
+      "expected_cover_bbox": [
+        587,
+        618,
+        689,
+        692
+      ],
+      "actual_cover_detected": true,
+      "contrast_before": 106.3,
+      "contrast_after": 7.21,
+      "glyph_covered": true,
+      "glyph_readable": false,
+      "status": "PASS"
+    },
+    {
+      "visual_segment_id": "vseg_4716213f_01",
+      "source_cue_id": "4716213f-9e18-4b42-bc94-ab8b0e253a97",
+      "frame_index": 3148,
+      "timestamp": 104.933,
+      "source_glyph_present": false,
+      "source_bbox": [
+        621,
+        638,
+        659,
+        674
+      ],
+      "expected_cover_bbox": [
+        587,
+        618,
+        689,
+        692
+      ],
+      "actual_cover_detected": true,
+      "contrast_before": 105.65,
+      "contrast_after": 6.06,
+      "glyph_covered": true,
+      "glyph_readable": false,
+      "status": "PASS"
+    },
+    {
+      "visual_segment_id": "vseg_4716213f_01",
+      "source_cue_id": "4716213f-9e18-4b42-bc94-ab8b0e253a97",
+      "frame_index": 3149,
+      "timestamp": 104.967,
+      "source_glyph_present": false,
+      "source_bbox": [
+        621,
+        638,
+        659,
+        674
+      ],
+      "expected_cover_bbox": [
+        587,
+        618,
+        689,
+        692
+      ],
+      "actual_cover_detected": true,
+      "contrast_before": 105.65,
+      "contrast_after": 6.05,
+      "glyph_covered": true,
+      "glyph_readable": false,
+      "status": "PASS"
+    },
+    {
+      "visual_segment_id": "vseg_4716213f_01",
+      "source_cue_id": "4716213f-9e18-4b42-bc94-ab8b0e253a97",
+      "frame_index": 3150,
+      "timestamp": 105.0,
+      "source_glyph_present": false,
+      "source_bbox": [
+        621,
+        638,
+        659,
+        674
+      ],
+      "expected_cover_bbox": [
+        587,
+        618,
+        689,
+        692
+      ],
+      "actual_cover_detected": true,
+      "contrast_before": 105.78,
+      "contrast_after": 6.05,
+      "glyph_covered": true,
+      "glyph_readable": false,
+      "status": "PASS"
+    },
+    {
+      "visual_segment_id": "vseg_4716213f_01",
+      "source_cue_id": "4716213f-9e18-4b42-bc94-ab8b0e253a97",
+      "frame_index": 3151,
+      "timestamp": 105.033,
+      "source_glyph_present": false,
+      "source_bbox": [
+        621,
+        638,
+        659,
+        674
+      ],
+      "expected_cover_bbox": [
+        587,
+        618,
+        689,
+        692
+      ],
+      "actual_cover_detected": true,
+      "contrast_before": 105.8,
+      "contrast_after": 6.05,
+      "glyph_covered": true,
+      "glyph_readable": false,
+      "status": "PASS"
+    },
+    {
+      "visual_segment_id": "vseg_4716213f_01",
+      "source_cue_id": "4716213f-9e18-4b42-bc94-ab8b0e253a97",
+      "frame_index": 3152,
+      "timestamp": 105.067,
+      "source_glyph_present": false,
+      "source_bbox": [
+        621,
+        638,
+        659,
+        674
+      ],
+      "expected_cover_bbox": [
+        587,
+        618,
+        689,
+        692
+      ],
+      "actual_cover_detected": true,
+      "contrast_before": 105.85,
+      "contrast_after": 6.05,
+      "glyph_covered": true,
+      "glyph_readable": false,
+      "status": "PASS"
+    },
+    {
+      "visual_segment_id": "vseg_4716213f_01",
+      "source_cue_id": "4716213f-9e18-4b42-bc94-ab8b0e253a97",
+      "frame_index": 3153,
+      "timestamp": 105.1,
+      "source_glyph_present": false,
+      "source_bbox": [
+        621,
+        638,
+        659,
+        674
+      ],
+      "expected_cover_bbox": [
+        587,
+        618,
+        689,
+        692
+      ],
+      "actual_cover_detected": true,
+      "contrast_before": 105.85,
+      "contrast_after": 71.5,
+      "glyph_covered": true,
+      "glyph_readable": false,
+      "status": "PASS"
+    },
+    {
+      "visual_segment_id": "vseg_4716213f_01",
+      "source_cue_id": "4716213f-9e18-4b42-bc94-ab8b0e253a97",
+      "frame_index": 3154,
+      "timestamp": 105.133,
+      "source_glyph_present": false,
+      "source_bbox": [
+        621,
+        638,
+        659,
+        674
+      ],
+      "expected_cover_bbox": [
+        587,
+        618,
+        689,
+        692
+      ],
+      "actual_cover_detected": true,
+      "contrast_before": 105.89,
+      "contrast_after": 71.5,
+      "glyph_covered": true,
+      "glyph_readable": false,
+      "status": "PASS"
+    },
+    {
+      "visual_segment_id": "vseg_4716213f_01",
+      "source_cue_id": "4716213f-9e18-4b42-bc94-ab8b0e253a97",
+      "frame_index": 3155,
+      "timestamp": 105.167,
+      "source_glyph_present": false,
+      "source_bbox": [
+        621,
+        638,
+        659,
+        674
+      ],
+      "expected_cover_bbox": [
+        587,
+        618,
+        689,
+        692
+      ],
+      "actual_cover_detected": true,
+      "contrast_before": 105.89,
+      "contrast_after": 71.5,
+      "glyph_covered": true,
+      "glyph_readable": false,
+      "status": "PASS"
+    }
+  ],
+  "status": "PASS"
+}

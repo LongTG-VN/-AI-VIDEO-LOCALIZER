@@ -174,6 +174,8 @@ class PatchCoverCleaner:
 
         engine = UtteranceEngine()
         render_cues, _ = engine.process_cues(cues, translated=True)
+        if not render_cues and cues and any(get_final_vi_text(c) for c in cues):
+            render_cues = [c for c in cues if get_final_vi_text(c)]
         cues_by_id = {
             (getattr(c, "id", None) or getattr(c, "render_id", None)): c
             for c in cues
@@ -334,6 +336,23 @@ class PatchCoverCleaner:
             if not src_text or src_text in ["AL", "10:50"]:
                 continue
 
+            chinese_polygons = []
+            for r in getattr(orig, "ocr_regions", []) or []:
+                pts = getattr(r, "points", []) or []
+                if self._is_valid_subtitle_polygon(pts):
+                    chinese_polygons.append(pts)
+            if not chinese_polygons:
+                for ev in getattr(orig, "ocr_evidence", []) or []:
+                    for r in getattr(ev, "regions", []) or []:
+                        pts = getattr(r, "points", []) or []
+                        if self._is_valid_subtitle_polygon(pts):
+                            chinese_polygons.append(pts)
+
+            # Skip phantom ASR cues (noise tokens without visual OCR evidence)
+            if not chinese_polygons and not getattr(orig, "ocr_evidence", None) and not getattr(orig, "ocr_regions", None):
+                if src_text in {"一，", "一", "...", "AL", "10:50"}:
+                    continue
+
             s_starts = [orig.start]
             s_ends = [orig.end]
             if getattr(orig, "ocr_start", None) is not None and 0.0 < orig.ocr_start:
@@ -352,18 +371,6 @@ class PatchCoverCleaner:
             post_roll_s = 2.0 / 30.0
             cover_start = max(0.0, source_start - pre_roll_s)
             cover_end = source_end + post_roll_s
-
-            chinese_polygons = []
-            for r in getattr(orig, "ocr_regions", []) or []:
-                pts = getattr(r, "points", []) or []
-                if self._is_valid_subtitle_polygon(pts):
-                    chinese_polygons.append(pts)
-            if not chinese_polygons:
-                for ev in getattr(orig, "ocr_evidence", []) or []:
-                    for r in getattr(ev, "regions", []) or []:
-                        pts = getattr(r, "points", []) or []
-                        if self._is_valid_subtitle_polygon(pts):
-                            chinese_polygons.append(pts)
 
             if chinese_polygons:
                 sub_band_polys = [p for p in chinese_polygons if any(pt[1] >= 0.80 for pt in p)]
@@ -414,11 +421,14 @@ class PatchCoverCleaner:
             prev = contexts[i - 1]
             curr = contexts[i]
             if prev["end"] > curr["start"]:
-                min_t = prev["vi_end"] if prev.get("has_vi") else prev["start"]
-                max_t = curr["vi_start"] if curr.get("has_vi") else curr["end"]
-                handoff_t = round(max(min_t, min(max_t, (prev["end"] + curr["start"]) / 2.0)), 3)
-                prev["end"] = handoff_t
-                curr["start"] = max(handoff_t, curr["start"])
+                if prev.get("has_vi") and not curr.get("has_vi"):
+                    curr["start"] = prev["end"]
+                elif not prev.get("has_vi") and curr.get("has_vi"):
+                    prev["end"] = curr["start"]
+                else:
+                    handoff_t = round((prev["end"] + curr["start"]) / 2.0, 3)
+                    prev["end"] = handoff_t
+                    curr["start"] = handoff_t
             elif 0.0 < (curr["start"] - prev["end"]) <= 0.08:
                 handoff_t = round((prev["end"] + curr["start"]) / 2.0, 3)
                 prev["end"] = handoff_t
