@@ -36,6 +36,8 @@ class SubtitleCue(BaseModel):
     addressee_character_id: str | None = None
     discourse_mode: Literal["direct_dialogue", "monologue", "narration", "system", "unknown"] = "unknown"
     source_text: str
+    repaired_source: str | None = None
+    repaired_source_text: str | None = None
     translated_text: str | None = None
     draft_translation: str | None = None
     quality_status: Literal["PASS", "REPAIRED", "NEEDS_REVIEW", "PENDING"] = "PENDING"
@@ -107,6 +109,26 @@ def get_final_vi_text(cue: SubtitleCue) -> str:
             if has_chinese and not has_latin:
                 continue
             return s
+    return ""
+
+
+def get_final_source_text(cue: SubtitleCue) -> str:
+    """Canonical accessor for finalized Chinese / original source dialogue text.
+
+    Contract:
+    - Returns repaired_source if available and non-empty
+    - Otherwise returns fused_text / source_text if available and non-empty
+    - Otherwise returns ocr_text / asr_text if available
+    """
+    for val in [
+        getattr(cue, "repaired_source", None),
+        getattr(cue, "fused_text", None),
+        getattr(cue, "source_text", None),
+        getattr(cue, "ocr_text", None),
+        getattr(cue, "asr_text", None),
+    ]:
+        if val is not None and str(val).strip():
+            return str(val).strip()
     return ""
 
 
