@@ -269,10 +269,10 @@ class PatchCoverCleaner:
                 zh_x1, zh_x2 = min(zh_xs), max(zh_xs)
                 zh_y1, zh_y2 = min(zh_ys), max(zh_ys)
 
-                cover_x1 = max(0, min(vi_x1, zh_x1 - 14))
-                cover_x2 = min(width, max(vi_x2, zh_x2 + 14))
-                cover_y1 = max(int(height * 0.68), min(vi_y1, zh_y1 - 6))
-                cover_y2 = min(int(height * 0.98), max(vi_y2, zh_y2 + 6))
+                cover_x1 = max(0, min(vi_x1, zh_x1 - 18))
+                cover_x2 = min(width, max(vi_x2, zh_x2 + 18))
+                cover_y1 = max(int(height * 0.68), min(vi_y1, zh_y1 - 10))
+                cover_y2 = min(int(height * 0.98), max(vi_y2, zh_y2 + 10))
             else:
                 cover_x1, cover_y1, cover_x2, cover_y2 = vi_x1, vi_y1, vi_x2, vi_y2
 
@@ -338,20 +338,20 @@ class PatchCoverCleaner:
         h, w = frame.shape[:2]
 
         if alpha_mask is not None and np.any(alpha_mask > 0.001):
-            k_blur = 15
-            patch = cv2.GaussianBlur(out, (k_blur, k_blur), 6.0)
-            patch = (patch.astype(np.float32) * 0.40).astype(np.uint8)
-            alpha_3d = np.repeat((alpha_mask * 0.85)[:, :, np.newaxis], 3, axis=2)
+            k_blur = 19
+            patch = cv2.GaussianBlur(out, (k_blur, k_blur), 8.0)
+            patch = (patch.astype(np.float32) * 0.20).astype(np.uint8)
+            alpha_3d = np.repeat((alpha_mask * 0.95)[:, :, np.newaxis], 3, axis=2)
             out = (1.0 - alpha_3d) * out.astype(np.float32) + alpha_3d * patch.astype(np.float32)
             out = np.clip(out, 0, 255).astype(np.uint8)
 
         if vi_backing_mask is not None and np.any(vi_backing_mask > 0.001):
-            blur_sigma_bg = 12.0
-            k_bg = 27
+            blur_sigma_bg = 16.0
+            k_bg = 35
             blurred_bg = cv2.GaussianBlur(out, (k_bg, k_bg), blur_sigma_bg)
-            dark_tint_bg = 0.55
+            dark_tint_bg = 0.68  # 68% dark tint to cleanly obscure Chinese text
             blurred_bg = (blurred_bg.astype(np.float32) * (1.0 - dark_tint_bg)).astype(np.uint8)
-            backing_opacity = 0.95
+            backing_opacity = 0.98
             alpha_bg_3d = np.repeat((vi_backing_mask * backing_opacity)[:, :, np.newaxis], 3, axis=2)
             out = (1.0 - alpha_bg_3d) * out.astype(np.float32) + alpha_bg_3d * blurred_bg.astype(np.float32)
             out = np.clip(out, 0, 255).astype(np.uint8)

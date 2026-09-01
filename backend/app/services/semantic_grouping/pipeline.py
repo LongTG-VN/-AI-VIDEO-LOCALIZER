@@ -59,6 +59,10 @@ class SemanticGroupingPipeline:
                 if alloc.cue_id in cue_map:
                     target_cue = cue_map[alloc.cue_id]
                     target_cue.translated_text = alloc.allocated_vi
+                    target_cue.draft_translation = alloc.allocated_vi
+                    target_cue.final_translation = alloc.allocated_vi
+                    target_cue.quality_status = "PASS"
+                    target_cue.quality_version = self.config.semantic_translation_group_version
 
         # 4. Save Tracing Artifacts
         if save_trace_dir:

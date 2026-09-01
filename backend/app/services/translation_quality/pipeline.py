@@ -134,6 +134,16 @@ class TranslationQualityPipeline:
         draft_map = {c.id: c.translated_text or "" for c in cues}
         self.audit_artifacts["draft_translation.json"] = draft_map
 
+        # Initialize canonical contract fields on every cue
+        for c in cues:
+            if c.translated_text and not c.draft_translation:
+                c.draft_translation = c.translated_text
+            if not c.final_translation and c.translated_text:
+                c.final_translation = c.translated_text
+            if c.quality_status == "PENDING" and c.final_translation:
+                c.quality_status = "PASS"
+            c.quality_version = self.config.translation_quality_version
+
         # PASS 2, 3, 4, 5, 6: MULTI-PASS REVIEW
         all_issues_by_cue: dict[str, list[QualityIssue]] = {c.id: [] for c in cues}
 
@@ -282,8 +292,11 @@ class TranslationQualityPipeline:
                         next_failed.add(cue.id)
                     else:
                         cues_repaired_count += 1
+                        cue.quality_status = "REPAIRED"
+                        cue.repaired_translation = cue.translated_text
+                        cue.final_translation = cue.translated_text
                         res = report.cue_results[cue.id]
-                        res.status = "PASS"
+                        res.status = "REPAIRED"
                         res.attempts = retry_round
                         res.final_translation = cue.translated_text or ""
                         if retry_round == 1:
@@ -299,9 +312,12 @@ class TranslationQualityPipeline:
                 res.attempts = self.config.max_retries
                 target_cue = next((c for c in cues if c.id == cid), None)
                 if target_cue:
+                    target_cue.quality_status = "NEEDS_REVIEW"
                     target_cue.needs_review = True
                     target_cue.review_notes = "; ".join([iss.message for iss in all_issues_by_cue.get(cid, [])])
+                    target_cue.final_translation = target_cue.repaired_translation or target_cue.draft_translation or target_cue.translated_text or ""
                     res.review_notes = target_cue.review_notes
+                    res.final_translation = target_cue.final_translation
 
             metrics["retry_distribution"]["needs_review"] = len(current_failed_ids)
 
@@ -325,6 +341,7 @@ class TranslationQualityPipeline:
             for cid, pol_text in polished_map.items():
                 t_cue = next((c for c in cues if c.id == cid), None)
                 if t_cue:
+                    t_cue.final_translation = pol_text
                     t_cue.translated_text = pol_text
                     if cid in report.cue_results:
                         report.cue_results[cid].final_translation = pol_text
@@ -343,6 +360,7 @@ class TranslationQualityPipeline:
             for cid, pat_text in patches_map.items():
                 t_cue = next((c for c in cues if c.id == cid), None)
                 if t_cue:
+                    t_cue.final_translation = pat_text
                     t_cue.translated_text = pat_text
                     if cid in report.cue_results:
                         report.cue_results[cid].final_translation = pat_text
@@ -356,6 +374,19 @@ class TranslationQualityPipeline:
             }
             for iss in val_issues:
                 issue_counts[iss.type] = issue_counts.get(iss.type, 0) + 1
+
+        # PASS 10.1: CANONICAL FIELD CONSOLIDATION & FINAL COVERAGE INVARIANT
+        for cue in cues:
+            if not cue.final_translation and cue.translated_text:
+                cue.final_translation = cue.translated_text
+            if not cue.translated_text and cue.final_translation:
+                cue.translated_text = cue.final_translation
+            if cue.id in report.cue_results:
+                report.cue_results[cue.id].final_translation = cue.final_translation or ""
+                report.cue_results[cue.id].status = cue.quality_status
+
+            if cue.quality_status == "PASS" and not cue.final_translation:
+                logger.warning("Critical coverage invariant failure: PASS cue %s has empty final_translation", cue.id)
 
         t_elapsed = time.time() - t_start
         metrics["pipeline_time_s"] = round(t_elapsed, 3)

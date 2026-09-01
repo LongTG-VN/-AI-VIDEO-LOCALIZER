@@ -5,7 +5,7 @@ from dataclasses import dataclass, field
 from enum import Enum
 from typing import Any
 
-from app.models.project import SubtitleCue
+from app.models.project import SubtitleCue, get_final_vi_text
 from app.services.semantic_context import normalize_discourse_mode
 
 # Generic noise patterns for non-dialogue artifacts and isolated OCR noise.
@@ -390,13 +390,21 @@ class UtteranceEngine:
         filtered: list[dict[str, Any]] = []
         suppressed_count = 0
 
+        has_any_translation = any(get_final_vi_text(c) for c in cues) if translated else False
+
         for cue in cues:
             source = (cue.source_text or "").strip()
-            translated_text = (
-                (cue.translated_text or "").strip()
-                if translated and cue.translated_text
-                else source
-            )
+            if translated:
+                vi_text = get_final_vi_text(cue)
+                if not vi_text:
+                    if not has_any_translation:
+                        translated_text = source
+                    else:
+                        continue
+                else:
+                    translated_text = vi_text
+            else:
+                translated_text = source
             if (
                 not source
                 or not translated_text

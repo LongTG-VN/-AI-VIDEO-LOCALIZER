@@ -37,6 +37,11 @@ class SubtitleCue(BaseModel):
     discourse_mode: Literal["direct_dialogue", "monologue", "narration", "system", "unknown"] = "unknown"
     source_text: str
     translated_text: str | None = None
+    draft_translation: str | None = None
+    quality_status: Literal["PASS", "REPAIRED", "NEEDS_REVIEW", "PENDING"] = "PENDING"
+    repaired_translation: str | None = None
+    final_translation: str | None = None
+    quality_version: str | None = "v2"
     confidence: float | None = Field(default=None, ge=0, le=1)
     asr_confidence: float | None = Field(default=None, ge=0, le=1)
     ocr_confidence: float | None = Field(default=None, ge=0, le=1)
@@ -61,6 +66,29 @@ class SubtitleCue(BaseModel):
     segmentation_method: str | None = None
     source_corrections: list[dict[str, Any]] = Field(default_factory=list)
     word_timestamps: list[dict[str, Any]] = Field(default_factory=list)
+
+
+def get_final_vi_text(cue: SubtitleCue) -> str:
+    """Canonical accessor for finalized Vietnamese subtitle translation.
+
+    Contract:
+    - Returns final_translation if non-empty
+    - Otherwise returns repaired_translation if non-empty
+    - Otherwise returns translated_text if non-empty and not identical to source_text
+    - Otherwise returns draft_translation if non-empty
+    - NEVER silently returns Chinese source when translated text is requested
+    """
+    for val in [
+        getattr(cue, "final_translation", None),
+        getattr(cue, "repaired_translation", None),
+        getattr(cue, "translated_text", None),
+        getattr(cue, "draft_translation", None),
+    ]:
+        if val is not None and str(val).strip():
+            s = str(val).strip()
+            if s != (cue.source_text or "").strip():
+                return s
+    return ""
 
 
 class Character(BaseModel):
