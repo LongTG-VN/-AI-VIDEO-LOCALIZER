@@ -72,10 +72,10 @@ def get_final_vi_text(cue: SubtitleCue) -> str:
     """Canonical accessor for finalized Vietnamese subtitle translation.
 
     Contract:
-    - Returns final_translation if non-empty
-    - Otherwise returns repaired_translation if non-empty
-    - Otherwise returns translated_text if non-empty and not identical to source_text
-    - Otherwise returns draft_translation if non-empty
+    - Returns final_translation if non-empty and valid Vietnamese
+    - Otherwise returns repaired_translation if non-empty and valid Vietnamese
+    - Otherwise returns translated_text if non-empty, not identical to source_text, and valid Vietnamese
+    - Otherwise returns draft_translation if non-empty and valid Vietnamese
     - NEVER silently returns Chinese source when translated text is requested
     """
     for val in [
@@ -86,8 +86,14 @@ def get_final_vi_text(cue: SubtitleCue) -> str:
     ]:
         if val is not None and str(val).strip():
             s = str(val).strip()
-            if s != (cue.source_text or "").strip():
-                return s
+            if s == (cue.source_text or "").strip():
+                continue
+            import re
+            has_chinese = bool(re.search(r"[\u4e00-\u9fff]", s))
+            has_latin = bool(re.search(r"[a-zA-Zà-ỹÀ-Ỹ]", s))
+            if has_chinese and not has_latin:
+                continue
+            return s
     return ""
 
 

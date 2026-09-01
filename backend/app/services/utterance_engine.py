@@ -11,7 +11,7 @@ from app.services.semantic_context import normalize_discourse_mode
 # Generic noise patterns for non-dialogue artifacts and isolated OCR noise.
 NOISE_SUBTITLE_PATTERNS = {
     "10.5o", "10:50", "MILK", "MILK MILK", "IN-CN", "CN-IN", "755135", "CN",
-    "...", "西", "T", "Y", "1", "0", "工", "国", "LAA",
+    "...", "西", "T", "Y", "1", "0", "工", "国", "LAA", "AL",
 }
 
 NOISE_REPLACE_PATTERNS = [

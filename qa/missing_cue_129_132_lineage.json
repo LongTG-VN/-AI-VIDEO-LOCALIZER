@@ -1,0 +1,126 @@
+{
+  "cue_id": "434f5d1e-6981-4eb9-be44-2f97a11a5afc",
+  "start": 129.71,
+  "end": 131.35,
+  "source_text": "那表情怎么形容呢",
+  "source_integrity_status": "REPAIRED",
+  "semantic_group_id": "grp_434f5d1e",
+  "draft_translation": "那表情怎么形容呢你家养了条金毛它蹲你旁边",
+  "quality_status": "PASS",
+  "repaired_translation": null,
+  "final_translation": "那表情怎么形容呢你家养了条金毛它蹲你旁边",
+  "get_final_vi_text_result": "那表情怎么形容呢你家养了条金毛它蹲你旁边",
+  "utterance_input": {
+    "id": "434f5d1e-6981-4eb9-be44-2f97a11a5afc",
+    "start": 129.71,
+    "end": 131.35,
+    "speaker_id": "speaker_1",
+    "speaker_character_id": null,
+    "addressee_id": null,
+    "addressee_character_id": null,
+    "discourse_mode": "unknown",
+    "source_text": "那表情怎么形容呢",
+    "translated_text": "那表情怎么形容呢你家养了条金毛它蹲你旁边",
+    "draft_translation": "那表情怎么形容呢你家养了条金毛它蹲你旁边",
+    "quality_status": "PASS",
+    "repaired_translation": null,
+    "final_translation": "那表情怎么形容呢你家养了条金毛它蹲你旁边",
+    "quality_version": "v2",
+    "confidence": 0.0,
+    "asr_confidence": null,
+    "ocr_confidence": null,
+    "ocr_start": 129.4,
+    "ocr_end": 132.1,
+    "ocr_text": "那表情怎么形容呢",
+    "ocr_regions": [
+      {
+        "text": "那表情怎么形容呢",
+        "confidence": 1.0,
+        "points": [
+          [
+            0.3563,
+            0.875
+          ],
+          [
+            0.6414,
+            0.875
+          ],
+          [
+            0.6414,
+            0.9444
+          ],
+          [
+            0.3563,
+            0.9444
+          ]
+        ]
+      }
+    ],
+    "ocr_evidence": [
+      {
+        "id": "6d30228e-d6de-49ce-a77e-adef646e97f5",
+        "text": "那表情怎么形容呢",
+        "confidence": 1.0,
+        "start": 129.4,
+        "end": 132.1,
+        "regions": [
+          {
+            "text": "那表情怎么形容呢",
+            "confidence": 1.0,
+            "points": [
+              [
+                0.3563,
+                0.875
+              ],
+              [
+                0.6414,
+                0.875
+              ],
+              [
+                0.6414,
+                0.9444
+              ],
+              [
+                0.3563,
+                0.9444
+              ]
+            ]
+          }
+        ],
+        "matched_span_start": null,
+        "matched_span_end": null,
+        "match_score": 0.4
+      }
+    ],
+    "translation_confidence": 0.0,
+    "relationship_confidence": null,
+    "needs_review": true,
+    "review_notes": "Vietnamese translation contains raw Chinese characters.",
+    "critic_score": null,
+    "critic_flags": [],
+    "original_source_cue_ids": [
+      "434f5d1e-6981-4eb9-be44-2f97a11a5afc"
+    ],
+    "source_integrity_status": "REPAIRED",
+    "source_confidence": 0.95,
+    "segmentation_method": "reconciled",
+    "source_corrections": [
+      {
+        "original_asr": "只爪子搭桌沿下巴？",
+        "corrected_text": "那表情怎么形容呢",
+        "evidence": "OCR interval [129.40s - 132.10s]: '那表情怎么形容呢' (conf=1.00)",
+        "confidence": 1.0,
+        "source": "ocr_reconciliation",
+        "span_start": null,
+        "span_end": null
+      }
+    ],
+    "word_timestamps": []
+  },
+  "render_cue_id": "sub_062",
+  "render_text": "那表情怎么形容呢你家养了条金毛它蹲你旁边",
+  "ass_event": "Dialogue: 0,0:02:09.71,0:02:11.35,Default,,0,0,0,,那表情怎么形容呢你家养了条金毛它蹲你旁边",
+  "first_bad_stage": "TRANSLATION_FINAL",
+  "root_cause": "The source cue 434f5d1e was populated with unsegmented Chinese text ('那表情怎么形容呢你家养了条金毛它蹲你旁边') in final_translation, causing raw Chinese text to be passed to UtteranceEngine and rendered into ASS.",
+  "corrected_final_translation": "Biết miêu tả biểu cảm đó thế nào nhỉ,"
+}

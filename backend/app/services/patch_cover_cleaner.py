@@ -446,28 +446,19 @@ class PatchCoverCleaner:
         for ctx in contexts:
             bbox = ctx["bbox"]
             vi_mask = self.create_rounded_rect_mask(height, width, bbox, radius=10, feather=8)
-            alpha_mask = None
-            if ctx.get("chinese_polygons"):
-                alpha_mask = np.zeros((height, width), dtype=np.uint8)
-                for poly in ctx["chinese_polygons"]:
-                    pts = np.array([[int(p[0] * width), int(p[1] * height)] for p in poly], dtype=np.int32)
-                    if len(pts) >= 3:
-                        cv2.fillPoly(alpha_mask, [pts], 255)
-                alpha_mask = cv2.GaussianBlur(alpha_mask, (15, 15), 6).astype(np.float32) / 255.0
-
             context_masks.append({
                 "start": ctx["start"],
                 "end": ctx["end"],
                 "vi_mask": vi_mask,
-                "alpha_mask": alpha_mask,
+                "alpha_mask": None,
             })
 
         patched_frames = 0
         frame_idx = 0
 
         while True:
-            ret, frame = cap.read()
-            if not ret or frame is None:
+            ret, cap_frame = cap.read()
+            if not ret or cap_frame is None:
                 break
 
             current_time = frame_idx / max(1.0, fps)
@@ -475,19 +466,15 @@ class PatchCoverCleaner:
             active = [cm for cm in context_masks if cm["start"] <= current_time <= cm["end"]]
             if active:
                 combined_vi_mask = np.maximum.reduce([cm["vi_mask"] for cm in active])
-                alpha_masks = [cm["alpha_mask"] for cm in active if cm["alpha_mask"] is not None]
-                combined_alpha = np.maximum.reduce(alpha_masks) if alpha_masks else None
-
                 out_frame = self.apply_patch_cover(
-                    frame,
-                    alpha_mask=combined_alpha,
+                    cap_frame,
                     vi_backing_mask=combined_vi_mask,
                 )
+                write_frame(out_frame)
                 patched_frames += 1
             else:
-                out_frame = frame
+                write_frame(cap_frame)
 
-            write_frame(out_frame)
             frame_idx += 1
 
         cap.release()
