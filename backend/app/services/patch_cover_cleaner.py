@@ -248,8 +248,9 @@ class PatchCoverCleaner:
             vi_y2 = min(int(height * 0.98), int(y_pos + text_h / 2 + pad_y))
 
             chinese_polygons: list[list[list[float]]] = []
-            for cid in getattr(cue, "source_cue_ids", []):
-                orig = cues_by_id.get(cid)
+            source_cids = getattr(cue, "source_cue_ids", []) or [getattr(cue, "id", None)]
+            for cid in source_cids:
+                orig = cues_by_id.get(cid) or (cue if getattr(cue, "id", None) == cid else None)
                 if not orig:
                     continue
                 for r in getattr(orig, "ocr_regions", []) or []:
@@ -298,6 +299,10 @@ class PatchCoverCleaner:
             # Canonical OCR-aware cover interval calculation
             cover_start, cover_end, source_start, source_end = self.get_cover_interval(cue, cues)
 
+            src_text_check = (getattr(cue, "source_text", "") or "").strip()
+            if src_text_check in ["AL", "10:50"]:
+                continue
+
             contexts.append({
                 "start": cover_start,
                 "end": cover_end,
@@ -306,16 +311,105 @@ class PatchCoverCleaner:
                 "source_start": source_start,
                 "source_end": source_end,
                 "cue_id": getattr(cue, "render_id", str(idx)),
+                "source_cue_ids": getattr(cue, "source_cue_ids", []) or [getattr(cue, "id", None)],
                 "bbox": (cover_x1, cover_y1, cover_x2, cover_y2),
                 "chinese_polygons": chinese_polygons,
+                "has_vi": True,
+                "reason": "TRANSLATED_DIALOGUE",
             })
+
+        # 2. Process Suppressed Source Dialogue Cues (Fillers / Interjections without VI)
+        covered_source_cids = set()
+        for rc in render_cues:
+            for cid in (getattr(rc, "source_cue_ids", []) or [getattr(rc, "id", None)]):
+                if cid:
+                    covered_source_cids.add(cid)
+        for ctx in contexts:
+            for cid in ctx.get("source_cue_ids", []):
+                if cid:
+                    covered_source_cids.add(cid)
+
+        for orig in cues:
+            if orig.id in covered_source_cids:
+                continue
+            src_text = (getattr(orig, "source_text", "") or "").strip()
+            # Non-speech non-dialogue tokens
+            if not src_text or src_text in ["AL", "10:50"]:
+                continue
+
+            s_starts = [orig.start]
+            s_ends = [orig.end]
+            if getattr(orig, "ocr_start", None) is not None and 0.0 < orig.ocr_start:
+                s_starts.append(orig.ocr_start)
+            if getattr(orig, "ocr_end", None) is not None and 0.0 < orig.ocr_end:
+                s_ends.append(orig.ocr_end)
+            for ev in getattr(orig, "ocr_evidence", []) or []:
+                if getattr(ev, "start", None) is not None and 0.0 < ev.start:
+                    s_starts.append(ev.start)
+                if getattr(ev, "end", None) is not None and 0.0 < ev.end:
+                    s_ends.append(ev.end)
+
+            source_start = min(s_starts)
+            source_end = max(s_ends)
+            pre_roll_s = 2.0 / 30.0
+            post_roll_s = 2.0 / 30.0
+            cover_start = max(0.0, source_start - pre_roll_s)
+            cover_end = source_end + post_roll_s
+
+            chinese_polygons = []
+            for r in getattr(orig, "ocr_regions", []) or []:
+                pts = getattr(r, "points", []) or []
+                if self._is_valid_subtitle_polygon(pts):
+                    chinese_polygons.append(pts)
+            if not chinese_polygons:
+                for ev in getattr(orig, "ocr_evidence", []) or []:
+                    for r in getattr(ev, "regions", []) or []:
+                        pts = getattr(r, "points", []) or []
+                        if self._is_valid_subtitle_polygon(pts):
+                            chinese_polygons.append(pts)
+
+            if chinese_polygons:
+                sub_band_polys = [p for p in chinese_polygons if any(pt[1] >= 0.82 for pt in p)]
+                active_polys = sub_band_polys if sub_band_polys else chinese_polygons
+                zh_xs = [int(p[0] * width) for poly in active_polys for p in poly]
+                zh_ys = [int(p[1] * height) for poly in active_polys for p in poly]
+                cover_x1 = max(0, min(zh_xs) - 20)
+                cover_x2 = min(width, max(zh_xs) + 20)
+                cover_y1 = max(int(height * 0.68), min(zh_ys) - 10)
+                cover_y2 = min(int(height * 0.98), max(zh_ys) + 10)
+            else:
+                est_zh_w = int(round(len(src_text) * (font_size * 0.90)))
+                cover_x1 = max(0, int(center_x - est_zh_w / 2 - pad_x))
+                cover_x2 = min(width, int(center_x + est_zh_w / 2 + pad_x))
+                cover_y1 = max(int(height * 0.68), int(default_y_center - font_size * 0.6 - pad_y))
+                cover_y2 = min(int(height * 0.98), int(default_y_center + font_size * 0.6 + pad_y))
+
+            contexts.append({
+                "start": round(cover_start, 3),
+                "end": round(cover_end, 3),
+                "vi_start": round(orig.start, 3),
+                "vi_end": round(orig.end, 3),
+                "source_start": round(source_start, 3),
+                "source_end": round(source_end, 3),
+                "cue_id": f"suppressed_{orig.id[:8]}",
+                "source_cue_ids": [orig.id],
+                "bbox": (cover_x1, cover_y1, cover_x2, cover_y2),
+                "chinese_polygons": chinese_polygons,
+                "has_vi": False,
+                "reason": "SUPPRESSED_FILLER",
+            })
+
+        # Sort all contexts by start time
+        contexts.sort(key=lambda x: x["start"])
 
         # Clean handoffs between consecutive covers
         for i in range(1, len(contexts)):
             prev = contexts[i - 1]
             curr = contexts[i]
             if prev["end"] > curr["start"]:
-                handoff_t = round(max(prev["vi_end"], min(curr["vi_start"], curr["start"])), 3)
+                min_t = prev["vi_end"] if prev.get("has_vi") else prev["start"]
+                max_t = curr["vi_start"] if curr.get("has_vi") else curr["end"]
+                handoff_t = round(max(min_t, min(max_t, (prev["end"] + curr["start"]) / 2.0)), 3)
                 prev["end"] = handoff_t
                 curr["start"] = max(handoff_t, curr["start"])
             elif 0.0 < (curr["start"] - prev["end"]) <= 0.08:

@@ -1,0 +1,39 @@
+{
+  "cue_id": "4716213f-9e18-4b42-bc94-ab8b0e253a97",
+  "source_text": "嗯",
+  "start": 104.5,
+  "end": 105.0,
+  "quality_status": "PASS",
+  "suppression_status": "SUPPRESSED_FILLER",
+  "suppression_reason": "Single-character conversational filler interjection without independent subtitle turn",
+  "ocr_interval": [
+    103.9,
+    105.6
+  ],
+  "source_bbox": [
+    591,
+    620,
+    685,
+    691
+  ],
+  "has_final_vi": true,
+  "has_render_subtitle_cue": false,
+  "source_cover_event_before_fix": null,
+  "source_cover_event_after_fix": {
+    "cue_id": "suppressed_4716213f",
+    "cover_start": 105.0,
+    "cover_end": 105.07,
+    "has_vi": false,
+    "reason": "SUPPRESSED_FILLER",
+    "bbox": [
+      591,
+      620,
+      685,
+      691
+    ]
+  },
+  "actual_first_chinese_visible_frame": 27,
+  "actual_first_cover_frame": 25,
+  "exposed_frames": 0,
+  "status": "PASS"
+}
