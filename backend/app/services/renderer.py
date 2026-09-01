@@ -245,9 +245,13 @@ class Renderer:
 
             # 4. Hardware Encoder Selection (NVENC vs libx264)
             encoder_used = "libx264"
-            video_codec_args = ["-c:v", "libx264", "-preset", "medium", "-crf", "18"]
+            video_codec_args = ["-c:v", "libx264", "-preset", "medium", "-crf", "18", "-pix_fmt", "yuv420p"]
 
-            # V10 build signature & logging
+            if options.use_nvenc and check_nvenc_available(self.ffmpeg_bin):
+                encoder_used = "h264_nvenc"
+                video_codec_args = ["-c:v", "h264_nvenc", "-preset", "p4", "-cq", "20", "-b:v", "0", "-pix_fmt", "yuv420p"]
+
+            # V11 build signature & logging
             try:
                 git_head = subprocess.check_output(
                     ["git", "rev-parse", "HEAD"],
@@ -255,20 +259,20 @@ class Renderer:
                     text=True,
                 ).strip()
             except Exception:
-                git_head = "48a1448ee96d546499a7ad6f51e9dc85f465a47a"
+                git_head = "fb0706cdfca8baa42c39a2ed94e6e8890e751cd1"
 
             patch_cleaner_temp = PatchCoverCleaner(
                 config=visual_edit.patch_cover if visual_edit else None,
                 ffmpeg_bin=self.ffmpeg_bin,
             )
-            v10_contexts = patch_cleaner_temp.build_render_cue_contexts(
+            v11_contexts = patch_cleaner_temp.build_render_cue_contexts(
                 project.cues, project.width or 1280, project.height or 720
             )
 
             logger.info(
-                "\n[V10_RENDER]\nHEAD=%s\nsuppressed_glyph_tracking=v10\nsource_cover_timeline_events=%d\noutput=%s",
+                "\n[V11_RENDER]\nHEAD=%s\nsuppressed_glyph_tracking=v11\nsource_cover_timeline_events=%d\noutput=%s",
                 git_head,
-                len(v10_contexts),
+                len(v11_contexts),
                 output_path.resolve(),
             )
 
@@ -286,7 +290,7 @@ class Renderer:
                 "-b:a",
                 "192k",
                 "-metadata",
-                f"comment=V10_FRESH_RENDER_HEAD_{git_head}",
+                f"comment=V11_UNIVERSAL_PLAYABLE_HEAD_{git_head}",
                 "-movflags",
                 "+faststart",
                 str(burned),
@@ -299,7 +303,7 @@ class Renderer:
                 if encoder_used == "h264_nvenc":
                     logger.warning("NVENC encode failed, falling back to libx264...")
                     encoder_used = "libx264 (fallback)"
-                    video_codec_args = ["-c:v", "libx264", "-preset", "medium", "-crf", "18"]
+                    video_codec_args = ["-c:v", "libx264", "-preset", "medium", "-crf", "18", "-pix_fmt", "yuv420p"]
                     cmd_fallback = [self.ffmpeg_bin, "-y", "-i", str(cleaned_video_path), "-i", str(source)]
                     for sticker in options.stickers:
                         cmd_fallback.extend(["-i", sticker.path])
